@@ -14,12 +14,15 @@ struct ReviewView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text(mediaTitle).font(.title).fontWeight(.semibold)
+                //Text(mediaTitle).font(.title).fontWeight(.semibold)
                 
                 HStack(spacing: 16) {
-                    AsyncImageView(url: nil, width: 50, height: 50, cornerRadius: 25, placeholder: nil)
+                    AsyncImageView(url: review.authorAvatarURL, width: 50, height: 50, cornerRadius: 25, placeholder: .init(resource: .imageMalePersonPlaceholder))
                     VStack(alignment: .leading) {
-                        Text("Written by \(review.authorString) on \(review.createdAt)")
+                        Text("\(review.authorString)")
+                            .textStyle(.mediumTitle)
+                        Text("\(review.createdAtAbsoluteString)")
+                            .textStyle(.mediumSubtitle)
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text(.init(review.content))

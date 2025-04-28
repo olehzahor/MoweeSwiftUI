@@ -31,15 +31,11 @@ struct MediasSectionView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(section.title)
-                    .textStyle(.sectionTitle)
-                Spacer()
-                NavigationLink(destination: MediasListView(section: section)) {
-                    Text("See All")
-                }
+            SectionHeaderView(
+                title: section.title,
+                isButtonHidden: viewState != .loaded) {
+                AnyView(MediasListView(section: section))
             }
-            
             Group {
                 switch viewState {
                 case .loading:

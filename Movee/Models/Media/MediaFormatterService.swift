@@ -11,9 +11,15 @@ struct MediaFormatterService {
     static let shared = MediaFormatterService()
     
     enum DateStyle {
-        case short, full
+        case short, full, relative
     }
     
+    private let iso8601Formatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
     private let parseDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -50,7 +56,16 @@ struct MediaFormatterService {
         return formatter
     }()
     
+    private let relativeDateFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter
+    }()
+        
     func parse(dateString: String) -> Date? {
+        if let date = iso8601Formatter.date(from: dateString) {
+            return date
+        }
         return parseDateFormatter.date(from: dateString)
     }
     
@@ -61,6 +76,8 @@ struct MediaFormatterService {
             shortDisplayDateFormatter.string(from: date)
         case .full:
             fullDisplayDateFormatter.string(from: date)
+        case .relative:
+            relativeDateFormatter.localizedString(for: date, relativeTo: Date())
         }
     }
     
@@ -79,6 +96,6 @@ struct MediaFormatterService {
         let seconds = TimeInterval(minutes * 60)
         return durationFormatter.string(from: seconds) ?? "N/A"
     }
-    
+        
     private init() {}
 }

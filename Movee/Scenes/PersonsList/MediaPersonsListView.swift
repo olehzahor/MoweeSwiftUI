@@ -38,8 +38,8 @@ struct MediaPersonsListView: View {
         }.navigationTitle(viewModel.navigationTitle)
     }
     
-    init(persons: [MediaPerson]) {
-        _viewModel = StateObject(wrappedValue: MediaPersonsListViewModel(persons: persons))
+    init(persons: [MediaPerson]? = []) {
+        _viewModel = StateObject(wrappedValue: MediaPersonsListViewModel(persons: persons ?? []))
     }
 }
 
