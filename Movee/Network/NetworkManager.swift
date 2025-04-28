@@ -17,6 +17,32 @@ final class NetworkManager {
         self.session = session
     }
     
+    private let jsonDecoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        
+        // ISO8601 formatter supporting fractional seconds
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [
+            .withInternetDateTime,
+            .withFractionalSeconds
+        ]
+        
+        // Custom strategy: try fractional-second parser, else throw
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateStr = try container.decode(String.self)
+            if let date = isoFormatter.date(from: dateStr) {
+                return date
+            }
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid ISO8601 date: \(dateStr)"
+            )
+        }
+        
+        return decoder
+    }()
+    
     func request<T: Decodable>(url: URL,
                                method: HTTPMethod = .get,
                                parameters: [String: Any]? = nil) -> AnyPublisher<T, Error> {
@@ -78,7 +104,7 @@ final class NetworkManager {
             }
             .tryMap { (data, httpResponse) -> T in
                 do {
-                    let decoded = try JSONDecoder().decode(T.self, from: data)
+                    let decoded = try self.jsonDecoder.decode(T.self, from: data)
                     Logger.shared.log("Successfully decoded response from \(url.absoluteString)", level: .info)
                     return decoded
                 } catch {

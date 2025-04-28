@@ -8,87 +8,17 @@
 import SwiftUI
 import Combine
 
+
+
 // TODO: state driven views
-struct MediaReviewView: View {
-    var review: Review
-    
-    var body: some View {
-        ZStack {
-            Color(.secondarySystemBackground)
-            VStack(alignment: .leading) {
-                Text(.init(review.content))
-                    .font(.system(.callout))
-                    .multilineTextAlignment(.leading)
-                Spacer()
-                Divider().padding(.bottom, 8)
-                HStack {
-                    Text("⭐️ 7.0")
-                    Spacer()
-                    Text("Reviewed by \(review.authorString) two years ago ")
-                }.font(.caption)
-            }.padding()
-        }
-        .clipShape(.rect(cornerRadius: 8))
-        .tint(.secondary)
-    }
-}
-
-struct MediaReviewsCarouselView: View {
-    var reviews: [Review]
-    var horizontalPadding: CGFloat = 20
-    @State private var selectedReview: Review? = nil
-    
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(reviews) { review in
-                    MediaReviewView(review: review)
-                        .containerRelativeFrame(.horizontal)
-                        .onTapGesture {
-                            selectedReview = review
-                        }
-                }
-            }
-            .frame(height: 250)
-            .scrollTargetLayout()
-        }
-        .contentMargins(horizontalPadding, for: .scrollContent)
-        .scrollTargetBehavior(.viewAligned)
-        .padding(.horizontal, -horizontalPadding)
-        .sheet(item: $selectedReview) { review in
-            ReviewView(mediaTitle: "Hello there", review: review)
-        }
-    }
-}
-
-struct MediaFactRowView: View {
-    var fact: KeyValueItem<String>
-    
-    var body: some View {
-        VStack {
-            HStack(alignment: .top) {
-                Text(fact.key).font(.headline)
-                Spacer()
-                Text(fact.value).font(.headline).foregroundStyle(.secondary)
-                    .multilineTextAlignment(.trailing)
-            }.padding(.vertical, 4)
-            Divider()
-        }
-    }
-}
 
 
-struct MediaFactsView: View {
-    var facts: [KeyValueItem<String>]
-    
-    var body: some View {
-        VStack {
-            ForEach(facts) { fact in
-                MediaFactRowView(fact: fact)
-            }
-        }
-    }
-}
+
+
+
+
+
+
 /*                HStack {
  Group {
      Button("IMDB") { }
@@ -109,7 +39,7 @@ struct MediaDetailsView: View {
     
     var body: some View {
         if let media = viewModel.media {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
                     BackdropStrechyHeaderView(backdropURL: media.backdropURL)
                         .aspectRatio(4/3, contentMode: .fit)
@@ -124,7 +54,7 @@ struct MediaDetailsView: View {
                                 if let tagline = media.tagline, !tagline.isEmpty {
                                     Text(tagline)
                                 } else if viewModel.isInWatchlist == nil {
-                                    Text("#############################")
+                                    Text(verbatim: .placeholder(.long))
                                         .redacted(reason: .placeholder)
                                         .shimmering()
                                 }
@@ -132,47 +62,36 @@ struct MediaDetailsView: View {
                             Text(media.overview)
                                 .textStyle(.mediumText)
                         }
-                        HStack {
-                            Text("Cast and Crew")
-                                .textStyle(.sectionTitle)
-                            Spacer()
-                            NavigationLink {
-                                MediaPersonsListView(persons: viewModel.credits)
-                            } label: {
-                                Text("See all")
-                            }
-                        }
-                        PersonsCarouselView(persons: viewModel.credits)
-                            .onFirstAppear {
-                                viewModel.fetchCredits()
-                            }
+//                        ForEach(viewModel.credits ?? []) { credit in
+//                            Text(credit.name)
+//                        }
+                        PersonsSectionView(persons: viewModel.credits)
                         if let relatedSection = viewModel.relatedSection {
                             MediasSectionView(
                                 section: relatedSection,
                                 medias: viewModel.related,
                                 errorMessage: nil,
-                                isLoading: viewModel.related.isEmpty,
+                                isLoading: viewModel.isLoading(.related),
                                 retry: { }
-                            ).onFirstAppear {
-                                viewModel.fetchRelated()
-                            }
+                            )
                         }
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
                         
-                        if !viewModel.reviews.isEmpty {
+                        if let reviews = viewModel.reviews, !reviews.isEmpty {
                             Text("Reviews")
                                 .textStyle(.sectionTitle)
-                            MediaReviewsCarouselView(reviews: viewModel.reviews).onFirstAppear {
-                                viewModel.fetchReviews()
-                            }
+                            MediaReviewsCarouselView(reviews: reviews)
                         }
                         
                         //MediaTrailerView()
                     }
                     .padding(.horizontal, 20)
                 }
+            }
+            .onFirstAppear {
+                viewModel.fetchInitialData()
             }
             .onScrollGeometryChange(for: CGFloat.self, of: \.contentOffset.y) { _, newValue in
                 isScrolledDown = newValue >= 1

@@ -10,15 +10,20 @@ import Combine
 
 //TODO: create template or even base class for ViewModels with wrappers for combine calls, errors handling and cancellables management
 
+extension MediaDetailsViewModel {
+    enum Section {
+        case credits, related, reviews
+    }
+}
+
 final class MediaDetailsViewModel: ObservableObject {
     @Published var media: Media? {
         didSet { updateWatchlistStatus() }
     }
     
-    @Published var credits: [MediaPerson] = []
-    
-    @Published var related: [Media] = []
-    @Published var reviews: [Review] = []
+    @Published var credits: [MediaPerson]?
+    @Published var related: [Media]?
+    @Published var reviews: [Review]?
     
     @Published var isInWatchlist: Bool? = nil
     
@@ -43,18 +48,33 @@ final class MediaDetailsViewModel: ObservableObject {
         }
     }
     
+    func toggleWatchlist() {
+        guard let media else { return }
+        Task {
+            await WatchlistManager.shared.toggleWatchlist(media)
+            updateWatchlistStatus()
+        }
+    }
+        
+    private func handleCreditsResponse(_ response: CreditsResponse) async {
+        let cast = response.cast.map({ MediaPerson(castMember: $0) })
+        let crew = response.crew.map({ MediaPerson(crewMember: $0) })
+        var credits = cast + crew
+        credits.sort { $0.order ?? .max <= $1.order ?? .max }
+        if let index = credits.firstIndex(where: { $0.role == "Director" }) {
+            credits.insert(credits.remove(at: index), at: 0)
+        }
+        await MainActor.run { [credits] in
+            self.credits = credits
+        }
+    }
+    
     func fetchCredits() {
         guard let mediaID = media?.id else { return }
         TMDBAPIClient.shared.fetchMovieCredits(movieID: mediaID).sink { completion in
             
         } receiveValue: { [unowned self] response in
-            let cast = response.cast.map({ MediaPerson(castMember: $0) })
-            let crew = response.crew.map({ MediaPerson(crewMember: $0) })
-            credits = cast + crew
-            credits.sort { $0.order ?? .max <= $1.order ?? .max }
-            if let index = credits.firstIndex(where: { $0.role == "Director" }) {
-                credits.insert(credits.remove(at: index), at: 0)
-            }
+            Task { await handleCreditsResponse(response) }
         }.store(in: &cancellables)
     }
     
@@ -75,14 +95,43 @@ final class MediaDetailsViewModel: ObservableObject {
         }.store(in: &cancellables)
     }
     
-    func toggleWatchlist() {
-        guard let media else { return }
-        Task {
-            await WatchlistManager.shared.toggleWatchlist(media)
-            updateWatchlistStatus()
+    func fetchInitialData() {
+        fetchCredits()
+        fetchRelated()
+        fetchReviews()
+    }
+    
+    private func isEmpty<T>(_ array: [T]?) -> Bool {
+        (array ?? []).isEmpty
+    }
+
+    private func isNotNilAndEmpty<T>(_ array: [T]?) -> Bool {
+        guard let array else { return false }
+        return array.isEmpty
+    }
+    
+    func isLoading(_ section: Section) -> Bool {
+        switch section {
+        case .credits:
+            isEmpty(credits)
+        case .related:
+            isEmpty(related)
+        case .reviews:
+            isEmpty(reviews)
         }
     }
-        
+    
+    func isReadyForDisplay(_ section: Section) -> Bool {
+        switch section {
+        case .credits:
+            isNotNilAndEmpty(credits)
+        case .related:
+            isNotNilAndEmpty(related)
+        case .reviews:
+            isNotNilAndEmpty(reviews)
+        }
+    }
+    
     init(media: Media) {
         self.media = media
         switch media.mediaType {

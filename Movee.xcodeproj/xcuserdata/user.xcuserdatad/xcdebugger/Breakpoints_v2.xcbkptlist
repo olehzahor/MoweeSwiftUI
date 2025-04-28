@@ -30,8 +30,8 @@
             filePath = "Movee/Scenes/MediaDetails/MediaDetailsViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "subscribeTo(publisher:transform:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -65,6 +65,22 @@
             startingLineNumber = "37"
             endingLineNumber = "37"
             landmarkName = "fetchMedias()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "77F1E5AD-1956-4C27-8C8C-B09A47292CDE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Movee/Scenes/MediaDetails/MediaDetailsViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "handleCreditsResponse(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
