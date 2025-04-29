@@ -8,29 +8,6 @@
 import SwiftUI
 import Combine
 
-
-
-// TODO: state driven views
-
-
-
-
-
-
-
-
-/*                HStack {
- Group {
-     Button("IMDB") { }
-     Spacer()
-     Label("Lightning", systemImage: "bolt.fill")
-         .labelStyle(.titleAndIcon)
-     Button("👍") { }
-     Button("👎") { }
- }.buttonStyle(.bordered)
-}.padding(.vertical)
-*/
-
 struct MediaDetailsView: View {
     @StateObject var viewModel: MediaDetailsViewModel
     
@@ -50,40 +27,35 @@ struct MediaDetailsView: View {
                         .saveSize(in: $headerSize)
                     VStack(alignment: .leading, spacing: 16) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Group {
-                                if let tagline = media.tagline, !tagline.isEmpty {
-                                    Text(tagline)
-                                } else if viewModel.isInWatchlist == nil {
-                                    Text(verbatim: .placeholder(.long))
-                                        .redacted(reason: .placeholder)
-                                        .shimmering()
-                                }
-                            }.textStyle(.tagline)
+                            MediaTaglineView(
+                                tagline: viewModel.media?.tagline,
+                                isLoading: viewModel.state.isLoading(.details)
+                            )
                             Text(media.overview)
                                 .textStyle(.mediumText)
                         }
-//                        ForEach(viewModel.credits ?? []) { credit in
-//                            Text(credit.name)
-//                        }
+                        
                         PersonsSectionView(persons: viewModel.credits)
-                        if let relatedSection = viewModel.relatedSection {
-                            MediasSectionView(
-                                section: relatedSection,
-                                medias: viewModel.related,
-                                errorMessage: nil,
-                                isLoading: viewModel.isLoading(.related),
-                                retry: { }
-                            )
-                        }
+                            .hideWhen(viewModel.state.isEmpty(.credits))
+                        
+                        MediasSectionView(
+                            section: viewModel.relatedSection,
+                            medias: viewModel.related,
+                            errorMessage: nil,
+                            retry: { viewModel.fetchRelated() }
+                        )
+                        .hideWhen(viewModel.state.isEmpty(.related))
+                        
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
-                        
-                        if let reviews = viewModel.reviews, !reviews.isEmpty {
+
+                        Group {
                             Text("Reviews")
                                 .textStyle(.sectionTitle)
-                            MediaReviewsCarouselView(reviews: reviews)
+                            MediaReviewsCarouselView(reviews: viewModel.reviews ?? [])
                         }
+                        .hideWhen(!viewModel.state.isLoaded(.reviews))
                         
                         //MediaTrailerView()
                     }
@@ -129,6 +101,7 @@ struct MediaDetailsView: View {
     }
 }
 
+
 struct MediaDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
@@ -136,3 +109,15 @@ struct MediaDetailsView_Previews: PreviewProvider {
         }
     }
 }
+
+/*                HStack {
+ Group {
+     Button("IMDB") { }
+     Spacer()
+     Label("Lightning", systemImage: "bolt.fill")
+         .labelStyle(.titleAndIcon)
+     Button("👍") { }
+     Button("👎") { }
+ }.buttonStyle(.bordered)
+}.padding(.vertical)
+*/

@@ -11,12 +11,15 @@ struct MediasSectionView: View {
     let section: MediasSection
     let medias: [Media]?
     let errorMessage: String?
-    let isLoading: Bool
     var retry: () -> Void
     var horizontalPadding: CGFloat = 20
 
     enum ViewState {
         case loading, loaded, error
+    }
+    
+    var isLoading: Bool {
+        medias == nil
     }
 
     var viewState: ViewState {
@@ -82,8 +85,9 @@ extension Media {
     static let placeholder = Media(
         id: -1,
         mediaType: .movie,
-        title: "#############",
+        title: .placeholder(.short),
         originalTitle: "",
+        tagline: "",
         overview: "",
         posterPath: nil,
         backdropPath: nil,

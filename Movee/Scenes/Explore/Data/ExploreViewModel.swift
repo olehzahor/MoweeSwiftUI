@@ -12,38 +12,27 @@ class ExploreViewModel: ObservableObject {
     @Published var sections: [MediasSection]
     
     @Published var medias: [MediasSection: [Media]] = [:]
-    @Published var isLoading: [MediasSection: Bool] = [:]
-    @Published var errors: [MediasSection: Error] = [:]
+    
+    @Published private(set) var state = ViewLoadingState<MediasSection>()
     
     private var cancellables = Set<AnyCancellable>()
-    
-    private func isLoading(_ section: MediasSection) -> Bool {
-        isLoading[section] ?? false
-    }
-        
+            
     func fetchMedias(section: MediasSection) {
-        guard !isLoading(section) else { return }
+        guard !state.isLoading(section) else { return }
         
-        isLoading[section] = true
+        state.setLoading(section)
 
         section.publisherBuilder(1)
             .sink { [unowned self] completion in
-                isLoading[section] = false
                 if case .failure(let error) = completion {
-                    errors[section] = error
+                    state.setError(section, error)
                 }
             } receiveValue: { [unowned self] response in
-                if !response.results.isEmpty {
-                    isLoading[section] = false
-                    medias[section] = response.results
-                }
+                medias[section] = response.results
+                state.setLoaded(section, isEmpty: response.results.isEmpty)
             }.store(in: &cancellables)
     }
-    
-    func isSectionLoaded(_ section: MediasSection) -> Bool {
-        !((medias[section] ?? []).isEmpty)
-    }
-    
+        
     init(sections: [MediasSection]) {
         self.sections = sections
     }

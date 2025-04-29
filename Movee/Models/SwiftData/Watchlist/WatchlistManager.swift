@@ -39,7 +39,9 @@ class WatchlistManager: WatchlistManagerInterface {
     }
     
     var itemsPublisher: AnyPublisher<[WatchlistItem], Never> {
-        itemsSubject.eraseToAnyPublisher()
+        itemsSubject
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func addToWatchlist(_ media: Media) async {

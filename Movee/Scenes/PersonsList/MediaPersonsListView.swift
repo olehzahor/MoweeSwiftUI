@@ -12,7 +12,7 @@ struct MediaPersonsListView: View {
     
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
-        count: 3
+        count: 4
     )
     
     var body: some View {
