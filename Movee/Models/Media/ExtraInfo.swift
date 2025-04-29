@@ -17,7 +17,6 @@ struct MovieExtra: Codable {
     let adult: Bool
     //let belongsToCollection: BelongsToCollection?
     let budget: Int?
-    let tagline: String?
     let homepage: String?
     let imdbID: String?
     let productionCompanies: [ProductionCompany]?
@@ -32,7 +31,6 @@ struct MovieExtra: Codable {
         self.adult = movie.adult
         //self.belongsToCollection = movie.belongsToCollection
         self.budget = movie.budget
-        self.tagline = movie.tagline
         self.homepage = movie.homepage
         self.imdbID = movie.imdbID
         self.productionCompanies = movie.productionCompanies

@@ -20,6 +20,7 @@ struct Media: Codable, Identifiable {
     // Normalized common properties.
     let title: String                // Display title (movie.title or tvshow.name)
     let originalTitle: String        // movie.originalTitle or tvshow.originalName
+    let tagline: String?
     let overview: String
     let posterPath: String?
     let backdropPath: String?
@@ -72,14 +73,5 @@ extension Media {
     var releaseYear: Int {
         guard let date = parsedReleaseDate else { return 1888 }
         return Calendar.current.component(.year, from: date)
-    }
-    
-    var tagline: String? {
-        switch extra {
-        case .movie(let data):
-            return data.tagline
-        default:
-            return nil
-        }
     }
 }

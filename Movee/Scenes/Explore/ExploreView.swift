@@ -18,17 +18,23 @@ struct ExploreView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         ForEach(viewModel.sections) { section in
-                            MediasSectionView(
-                                section: section,
-                                medias: viewModel.medias[section],
-                                errorMessage: viewModel.errors[section]?.localizedDescription,
-                                isLoading: viewModel.isLoading[section] ?? false,
-                                retry: { viewModel.fetchMedias(section: section) }
-                            ).onFirstAppear {
+                            Group {
+                                if viewModel.state.isEmpty(section) {
+                                    EmptyView()
+                                } else {
+                                    MediasSectionView(
+                                        section: section,
+                                        medias: viewModel.medias[section],
+                                        errorMessage: viewModel.state.getErrorMessage(section),
+                                        retry: { viewModel.fetchMedias(section: section) }
+                                    )
+                                }
+                            }.onFirstAppear {
                                 viewModel.fetchMedias(section: section)
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 20)
+                            
                         }
                     }
                 }

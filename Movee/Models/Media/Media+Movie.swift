@@ -12,6 +12,7 @@ extension Media {
 
         self.title = movie.title
         self.originalTitle = movie.originalTitle
+        self.tagline = movie.tagline
         self.overview = movie.overview
         self.posterPath = movie.posterPath
         self.backdropPath = movie.backdropPath

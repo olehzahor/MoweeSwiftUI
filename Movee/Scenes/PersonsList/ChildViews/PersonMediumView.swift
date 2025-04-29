@@ -20,10 +20,10 @@ struct PersonMediumView: View {
                 placeholder: person.placeholderImage
             ).aspectRatio(2/3, contentMode: .fit)
             Text(person.name)
-                .textStyle(.mediumTitle)
+                .textStyle(.smallTitle)
             if let role = person.role {
                 Text(role)
-                    .textStyle(.mediumSubtitle)
+                    .textStyle(.smallSubtitle)
             }
         }
     }

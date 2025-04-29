@@ -47,11 +47,11 @@ extension Array where Element == MediasSection {
 //                .map { $0.map { Media(movie: $0) } }
 //                .eraseToAnyPublisher()
 //        }),
-//        MediasSection(title: "Popular TV Shows", publisherBuilder: { page in
-//            TMDBAPIClient.shared.fetchPopularTVShows(page: page)
-//                .map { $0.map { Media(tvShow: $0) } }
-//                .eraseToAnyPublisher()
-//        })
+        MediasSection(title: "Popular TV Shows", publisherBuilder: { page in
+            TMDBAPIClient.shared.fetchPopularTVShows(page: page)
+                .map { $0.map { Media(tvShow: $0) } }
+                .eraseToAnyPublisher()
+        })
     ]
 }
 

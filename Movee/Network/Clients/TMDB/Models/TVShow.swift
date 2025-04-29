@@ -14,7 +14,7 @@ struct TVShow: Codable, Identifiable {
     let createdBy: [Person]?
     let episodeRunTime: [Int]?
     let firstAirDate: String?
-    let genreIDs: [Int]
+    let genreIDs: [Int]?
     let genres: [Genre]?
     let homepage: String?
     let inProduction: Bool?
@@ -25,13 +25,14 @@ struct TVShow: Codable, Identifiable {
     let networks: [Network]?
     let numberOfEpisodes: Int?
     let numberOfSeasons: Int?
-    let originCountry: [String]
-    let originalLanguage: String
+    let originCountry: [String]?
+    let originalLanguage: String?
     let overview: String
     let popularity: Double
     let productionCompanies: [ProductionCompany]?
     let seasons: [Season]?
     let status: String?
+    let tagline: String?
     let type: String?
     let voteAverage: Double
     let voteCount: Int
@@ -56,6 +57,7 @@ struct TVShow: Codable, Identifiable {
         case productionCompanies = "production_companies"
         case seasons
         case status, type
+        case tagline
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
         case genreIDs = "genre_ids"

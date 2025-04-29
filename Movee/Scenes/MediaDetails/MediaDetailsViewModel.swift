@@ -12,11 +12,12 @@ import Combine
 
 extension MediaDetailsViewModel {
     enum Section {
-        case credits, related, reviews
+        case initial, details, watchlist, credits, related, reviews
     }
 }
 
 final class MediaDetailsViewModel: ObservableObject {
+    private var mediaID: Int
     @Published var media: Media? {
         didSet { updateWatchlistStatus() }
     }
@@ -26,12 +27,16 @@ final class MediaDetailsViewModel: ObservableObject {
     @Published var reviews: [Review]?
     
     @Published var isInWatchlist: Bool? = nil
+    @Published var state = ViewLoadingState<Section>()
+    
+    var isLoadedDetails: Bool {
+        state.isLoaded(.details)
+    }
     
     private var cancellables = Set<AnyCancellable>()
 
-    private(set) lazy var relatedSection: MediasSection? = { () -> MediasSection? in
-        guard let mediaID = media?.id else { return nil }
-        return MediasSection(title: "Related", fullTitle: "\(media?.title ?? ""): related") { page in
+    private(set) lazy var relatedSection: MediasSection = {
+        MediasSection(title: "Related", fullTitle: "\(media?.title ?? ""): related") { [unowned self] page in
             TMDBAPIClient.shared.fetchMovieRelated(movieID: mediaID, page: page)
                 .map { $0.map { Media(movie: $0) } }
                 .eraseToAnyPublisher()
@@ -40,9 +45,11 @@ final class MediaDetailsViewModel: ObservableObject {
 
     private func updateWatchlistStatus() {
         guard let media else { return }
+        state.setLoading(.watchlist)
         Task {
             let isInWatchlist = await WatchlistManager.shared.isInWatchlist(media)
             await MainActor.run {
+                state.setLoaded(.watchlist, isEmpty: false)
                 self.isInWatchlist = isInWatchlist
             }
         }
@@ -52,7 +59,7 @@ final class MediaDetailsViewModel: ObservableObject {
         guard let media else { return }
         Task {
             await WatchlistManager.shared.toggleWatchlist(media)
-            updateWatchlistStatus()
+            await MainActor.run { updateWatchlistStatus() }
         }
     }
         
@@ -66,74 +73,13 @@ final class MediaDetailsViewModel: ObservableObject {
         }
         await MainActor.run { [credits] in
             self.credits = credits
+            self.state.setLoaded(.credits, isEmpty: credits.isEmpty)
         }
     }
     
-    func fetchCredits() {
-        guard let mediaID = media?.id else { return }
-        TMDBAPIClient.shared.fetchMovieCredits(movieID: mediaID).sink { completion in
-            
-        } receiveValue: { [unowned self] response in
-            Task { await handleCreditsResponse(response) }
-        }.store(in: &cancellables)
-    }
-    
-    func fetchRelated() {
-        guard let relatedSection else { return }
-        relatedSection.publisherBuilder(1).sink { completion in
-            
-        } receiveValue: { [unowned self] response in
-            related = response.results
-        }.store(in: &cancellables)
-    }
-    
-    func fetchReviews() {
-        TMDBAPIClient.shared.fetchMovieReviews(movieID: media!.id) .sink { completion in
-            
-        } receiveValue: { [unowned self] response in
-            self.reviews = response.results
-        }.store(in: &cancellables)
-    }
-    
-    func fetchInitialData() {
-        fetchCredits()
-        fetchRelated()
-        fetchReviews()
-    }
-    
-    private func isEmpty<T>(_ array: [T]?) -> Bool {
-        (array ?? []).isEmpty
-    }
-
-    private func isNotNilAndEmpty<T>(_ array: [T]?) -> Bool {
-        guard let array else { return false }
-        return array.isEmpty
-    }
-    
-    func isLoading(_ section: Section) -> Bool {
-        switch section {
-        case .credits:
-            isEmpty(credits)
-        case .related:
-            isEmpty(related)
-        case .reviews:
-            isEmpty(reviews)
-        }
-    }
-    
-    func isReadyForDisplay(_ section: Section) -> Bool {
-        switch section {
-        case .credits:
-            isNotNilAndEmpty(credits)
-        case .related:
-            isNotNilAndEmpty(related)
-        case .reviews:
-            isNotNilAndEmpty(reviews)
-        }
-    }
-    
-    init(media: Media) {
-        self.media = media
+    func fetchDetails() {
+        guard let media else { return }
+        state.setLoading(.details)
         switch media.mediaType {
         case .movie:
             subscribeTo(
@@ -148,7 +94,56 @@ final class MediaDetailsViewModel: ObservableObject {
         }
     }
     
+    func fetchCredits() {
+        guard let mediaID = media?.id else { return }
+        state.setLoading(.credits)
+        TMDBAPIClient.shared.fetchMovieCredits(movieID: mediaID).sink { [unowned self] completion in
+            if case let .failure(error) = completion {
+                self.state.setError(.credits, error)
+            }
+        } receiveValue: { [unowned self] response in
+            Task { await handleCreditsResponse(response) }
+        }.store(in: &cancellables)
+    }
+    
+    func fetchRelated() {
+        relatedSection.publisherBuilder(1).sink { completion in
+            if case let .failure(error) = completion {
+                self.state.setError(.related, error)
+            }
+        } receiveValue: { [unowned self] response in
+            related = response.results
+            state.setLoaded(.related, isEmpty: response.results.isEmpty)
+        }.store(in: &cancellables)
+    }
+    
+    func fetchReviews() {
+        TMDBAPIClient.shared.fetchMovieReviews(movieID: media!.id) .sink { completion in
+            if case let .failure(error) = completion {
+                self.state.setError(.reviews, error)
+            }
+        } receiveValue: { [unowned self] response in
+            self.reviews = response.results
+            self.state.setLoaded(.reviews, isEmpty: response.results.isEmpty)
+        }.store(in: &cancellables)
+    }
+        
+    func fetchInitialData() {
+        fetchDetails()
+        fetchCredits()
+        fetchRelated()
+        fetchReviews()
+    }
+        
+    init(media: Media) {
+        self.media = media
+        self.mediaID = media.id
+        self.state.setLoaded(.initial, isEmpty: false)
+        fetchDetails()
+    }
+    
     init(mediaID: Int, mediaType: MediaType) {
+        self.mediaID = mediaID
         switch mediaType {
         case .movie:
             subscribeTo(
@@ -168,9 +163,11 @@ final class MediaDetailsViewModel: ObservableObject {
             .sink { [weak self] completion in
                 if case .failure(let error) = completion {
                     print("Error fetching media details: \(error)")
+                    self?.state.setError(.details, error)
                 }
             } receiveValue: { [weak self] value in
                 self?.media = transform(value)
+                self?.state.setLoaded(.details, isEmpty: false)
             }
             .store(in: &cancellables)
     }
