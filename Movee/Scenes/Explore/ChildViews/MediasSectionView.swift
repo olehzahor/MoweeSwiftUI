@@ -69,7 +69,7 @@ struct MediasSectionView: View {
                                     switch media.object {
                                     case .media(let media):
                                         MediaDetailsView(media: media)
-                                    case .none:
+                                    default:
                                         EmptyView()
                                     }
                                 } label: {

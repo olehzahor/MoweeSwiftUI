@@ -5,6 +5,8 @@
 //  Created by user on 4/10/25.
 //
 
+import Foundation
+
 // BelongsToCollection
 struct BelongsToCollection: Codable {
     let id: Int
@@ -70,15 +72,41 @@ struct Episode: Codable {
 // Season (for TV show seasons)
 struct Season: Codable, Identifiable {
     let id: Int
+    let airDate: String?
+    let episodeCount: Int
     let name: String
     let overview: String
-    let episodeCount: Int
+    let posterPath: String?
     let seasonNumber: Int
-    
+    let voteAverage: Double?
+
     enum CodingKeys: String, CodingKey {
-        case id, name, overview
-        case episodeCount = "episode_count"
-        case seasonNumber = "season_number"
+        case id
+        case airDate       = "air_date"
+        case episodeCount  = "episode_count"
+        case name
+        case overview
+        case posterPath    = "poster_path"
+        case seasonNumber  = "season_number"
+        case voteAverage   = "vote_average"
+    }
+}
+
+extension Season {
+    var posterURL: URL? {
+        TMDBImageURLProvider.shared.url(path: posterPath, size: .w780)
+    }
+    
+    var parsedAirDate: Date? {
+        guard let airDate else { return nil }
+        return MediaFormatterService.shared.parse(dateString: airDate)
+    }
+    
+    var subtitle: String {
+        let yearString = parsedAirDate.map { String(Calendar.current.component(.year, from: $0)) }
+        return [ "\(episodeCount) eps", yearString ]
+            .compactMap { $0 }
+            .joined(separator: " · ")
     }
 }
 

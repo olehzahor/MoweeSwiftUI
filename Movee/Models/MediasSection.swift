@@ -8,9 +8,11 @@
 import Combine
 
 struct MediasSection {
+    typealias PublisherBuilder = (Int) -> AnyPublisher<PaginatedResponse<Media>, Error>
+    
     let title: String
     let fullTitle: String?
-    let publisherBuilder: (Int) -> AnyPublisher<PaginatedResponse<Media>, Error>
+    let publisherBuilder: PublisherBuilder
     
     init(title: String, fullTitle: String? = nil, publisherBuilder: @escaping (Int) -> AnyPublisher<PaginatedResponse<Media>, Error>) {
         self.title = title

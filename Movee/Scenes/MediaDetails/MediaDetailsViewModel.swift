@@ -26,6 +26,7 @@ final class MediaDetailsViewModel: ObservableObject {
     @Published var credits: [MediaPerson]?
     @Published var related: [Media]?
     @Published var reviews: [Review]?
+    @Published var seasons: [Season]?
     
     @Published var isInWatchlist: Bool? = nil
     @Published var state = ViewLoadingState<Section>()
@@ -179,6 +180,14 @@ final class MediaDetailsViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] value in
                 self?.media = transform(value)
+                
+                switch self?.media?.extra {
+                case .tvShow(let extra):
+                    self?.seasons = extra.seasons
+                default:
+                    break
+                }
+                
                 self?.state.setLoaded(.initial, isEmpty: false)
                 self?.state.setLoaded(.details, isEmpty: false)
             }
