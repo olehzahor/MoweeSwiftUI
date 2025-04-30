@@ -36,7 +36,7 @@ class PersonDetailsViewModel: ObservableObject {
             self.person = MediaPerson(person: person)
         }.store(in: &cancellables)
         
-        knownFor.publisherBuilder(1).sink { completion in
+        knownFor.publisherBuilder?(1).sink { completion in
             
         } receiveValue: { response in
             self.knownForMedias = response.results

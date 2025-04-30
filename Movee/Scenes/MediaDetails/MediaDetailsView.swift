@@ -36,7 +36,7 @@ struct MediaDetailsView: View {
                         }
                         
                         MediasSectionView(
-                            section: viewModel.relatedSection,
+                            section: .init(title: "Seasons"),
                             items: viewModel.seasons?.compactMap { .init(season: $0) },
                             errorMessage: nil,
                             retry: { viewModel.fetchRelated() }

@@ -27,7 +27,7 @@ class MediasListViewModel: ObservableObject {
         guard !isLoadingPage, hasMorePages else { return }
         isLoadingPage = true
         
-        section.publisherBuilder(currentPage)
+        section.publisherBuilder?(currentPage)
             .sink { [unowned self] completion in
                 isLoadingPage = false
                 if case .failure(let error) = completion {
