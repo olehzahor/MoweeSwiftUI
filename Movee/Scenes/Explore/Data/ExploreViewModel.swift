@@ -22,7 +22,7 @@ class ExploreViewModel: ObservableObject {
         
         state.setLoading(section)
 
-        section.publisherBuilder(1)
+        section.publisherBuilder?(1)
             .sink { [unowned self] completion in
                 if case .failure(let error) = completion {
                     state.setError(section, error)

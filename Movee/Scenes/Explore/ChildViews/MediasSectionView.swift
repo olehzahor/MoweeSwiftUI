@@ -36,7 +36,7 @@ struct MediasSectionView: View {
         VStack(alignment: .leading) {
             SectionHeaderView(
                 title: section.title,
-                isButtonHidden: viewState != .loaded) {
+                isButtonHidden: viewState != .loaded || section.publisherBuilder == nil) {
                 AnyView(MediasListView(section: section))
             }
             Group {

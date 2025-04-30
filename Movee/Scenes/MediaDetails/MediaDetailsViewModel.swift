@@ -122,7 +122,7 @@ final class MediaDetailsViewModel: ObservableObject {
     }
     
     func fetchRelated() {
-        relatedSection.publisherBuilder(1).sink { completion in
+        relatedSection.publisherBuilder?(1).sink { completion in
             if case let .failure(error) = completion {
                 self.state.setError(.related, error)
             }

@@ -12,9 +12,9 @@ struct MediasSection {
     
     let title: String
     let fullTitle: String?
-    let publisherBuilder: PublisherBuilder
+    let publisherBuilder: PublisherBuilder?
     
-    init(title: String, fullTitle: String? = nil, publisherBuilder: @escaping (Int) -> AnyPublisher<PaginatedResponse<Media>, Error>) {
+    init(title: String, fullTitle: String? = nil, publisherBuilder: PublisherBuilder? = nil) {
         self.title = title
         self.fullTitle = fullTitle
         self.publisherBuilder = publisherBuilder
