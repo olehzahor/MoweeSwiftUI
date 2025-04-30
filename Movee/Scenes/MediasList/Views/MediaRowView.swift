@@ -30,21 +30,19 @@ struct MediaRowView: View {
             MediaPosterView(posterURL: posterURL).saveSize(in: $posterSize)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.leading)
+                    .textStyle(.mediumTitle)
                 Text( "\(String(year)) · \(genre)")
-                    .font(.subheadline)
+                    .multilineTextAlignment(.leading)
+                    .textStyle(.mediumSubtitle)
                     .fontWeight(.semibold)
                     .lineLimit(subtitleLineLimit)
                 FoldableTextView(text: overview, lineLimit: nil) {
                     isExpanded = true
                 }
-                .font(.subheadline)
-//                Text(overview)
-//                    .onTapGesture {
-//                        isExpanded.toggle()
-//                    }.font(.subheadline)
-            }.frame(maxWidth: .infinity, alignment: .leading)
+                .textStyle(.mediumText)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }.frame(maxHeight: maxHeight)
     }
     

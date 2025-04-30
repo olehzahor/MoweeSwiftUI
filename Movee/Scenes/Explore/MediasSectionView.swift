@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MediasSectionView: View {
+    // TODO: two inits; one with Media and other with Item arrays
     let section: MediasSection
     let medias: [Media]?
     let errorMessage: String?

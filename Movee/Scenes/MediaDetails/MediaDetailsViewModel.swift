@@ -17,7 +17,8 @@ extension MediaDetailsViewModel {
 }
 
 final class MediaDetailsViewModel: ObservableObject {
-    private var mediaID: Int
+    private var mediaIdentifier: MediaIdentifier
+    
     @Published var media: Media? {
         didSet { updateWatchlistStatus() }
     }
@@ -37,9 +38,16 @@ final class MediaDetailsViewModel: ObservableObject {
 
     private(set) lazy var relatedSection: MediasSection = {
         MediasSection(title: "Related", fullTitle: "\(media?.title ?? ""): related") { [unowned self] page in
-            TMDBAPIClient.shared.fetchMovieRelated(movieID: mediaID, page: page)
-                .map { $0.map { Media(movie: $0) } }
-                .eraseToAnyPublisher()
+            switch mediaIdentifier.type {
+            case .movie:
+                TMDBAPIClient.shared.fetchMovieRelated(movieID: mediaIdentifier.id, page: page)
+                    .map { $0.map { Media(movie: $0) } }
+                    .eraseToAnyPublisher()
+            case .tvShow:
+                TMDBAPIClient.shared.fetchTVShowRelated(tvShowID: mediaIdentifier.id, page: page)
+                    .map { $0.map { Media(tvShow: $0) } }
+                    .eraseToAnyPublisher()
+            }
         }
     }()
 
@@ -78,26 +86,32 @@ final class MediaDetailsViewModel: ObservableObject {
     }
     
     func fetchDetails() {
-        guard let media else { return }
         state.setLoading(.details)
-        switch media.mediaType {
+        switch mediaIdentifier.type {
         case .movie:
             subscribeTo(
-                publisher: TMDBAPIClient.shared.fetchMovieDetails(movieID: media.id),
+                publisher: TMDBAPIClient.shared.fetchMovieDetails(movieID: mediaIdentifier.id),
                 transform: { Media(movie: $0) }
             )
         case .tvShow:
             subscribeTo(
-                publisher: TMDBAPIClient.shared.fetchTVShowDetails(tvShowID: media.id),
+                publisher: TMDBAPIClient.shared.fetchTVShowDetails(tvShowID: mediaIdentifier.id),
                 transform: { Media(tvShow: $0) }
             )
         }
     }
     
     func fetchCredits() {
-        guard let mediaID = media?.id else { return }
         state.setLoading(.credits)
-        TMDBAPIClient.shared.fetchMovieCredits(movieID: mediaID).sink { [unowned self] completion in
+        
+        let publisher = switch mediaIdentifier.type {
+        case .movie:
+            TMDBAPIClient.shared.fetchMovieCredits(movieID: mediaIdentifier.id)
+        case .tvShow:
+            TMDBAPIClient.shared.fetchTVShowCredits(tvShowID: mediaIdentifier.id)
+        }
+        
+        publisher.sink { [unowned self] completion in
             if case let .failure(error) = completion {
                 self.state.setError(.credits, error)
             }
@@ -117,8 +131,19 @@ final class MediaDetailsViewModel: ObservableObject {
         }.store(in: &cancellables)
     }
     
+    private lazy var publishers: [Section: AnyPublisher] = [
+        .credits: TMDBAPIClient.shared.fetchMovieReviews(movieID: mediaIdentifier.id)
+    ]
+    
     func fetchReviews() {
-        TMDBAPIClient.shared.fetchMovieReviews(movieID: media!.id) .sink { completion in
+        let publisher = switch mediaIdentifier.type {
+        case .movie:
+            TMDBAPIClient.shared.fetchMovieReviews(movieID: mediaIdentifier.id)
+        case .tvShow:
+            TMDBAPIClient.shared.fetchTVShowReviews(tvShowID: mediaIdentifier.id)
+        }
+
+        publisher.sink { completion in
             if case let .failure(error) = completion {
                 self.state.setError(.reviews, error)
             }
@@ -137,25 +162,12 @@ final class MediaDetailsViewModel: ObservableObject {
         
     init(media: Media) {
         self.media = media
-        self.mediaID = media.id
+        self.mediaIdentifier = .init(id: media.id, type: media.mediaType)
         self.state.setLoaded(.initial, isEmpty: false)
-        fetchDetails()
     }
     
     init(mediaID: Int, mediaType: MediaType) {
-        self.mediaID = mediaID
-        switch mediaType {
-        case .movie:
-            subscribeTo(
-                publisher: TMDBAPIClient.shared.fetchMovieDetails(movieID: mediaID),
-                transform: { Media(movie: $0) }
-            )
-        case .tvShow:
-            subscribeTo(
-                publisher: TMDBAPIClient.shared.fetchTVShowDetails(tvShowID: mediaID),
-                transform: { Media(tvShow: $0) }
-            )
-        }
+        self.mediaIdentifier = .init(id: mediaID, type: mediaType)
     }
     
     private func subscribeTo<T>(publisher: AnyPublisher<T, Error>, transform: @escaping (T) -> Media) {
@@ -167,6 +179,7 @@ final class MediaDetailsViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] value in
                 self?.media = transform(value)
+                self?.state.setLoaded(.initial, isEmpty: false)
                 self?.state.setLoaded(.details, isEmpty: false)
             }
             .store(in: &cancellables)

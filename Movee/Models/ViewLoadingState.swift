@@ -34,9 +34,9 @@ struct ViewLoadingState<T: Hashable> {
             empty.append(section)
         } else {
             empty.removeAll { $0 == section }
-            Logger.shared.log("Set loaded: \(section), isEmpty: \(isEmpty)\n\(description)", level: .info)
+            //Logger.shared.log("Set loaded: \(section), isEmpty: \(isEmpty)\n\(description)", level: .info)
         }
-        Logger.shared.log("Current state after setLoaded:\n\(description)", level: .debug)
+        //Logger.shared.log("Current state after setLoaded:\n\(description)", level: .debug)
     }
     
     func isLoading(_ section: T) -> Bool {
@@ -46,7 +46,7 @@ struct ViewLoadingState<T: Hashable> {
     mutating func setLoading(_ section: T) {
         loading.append(section)
         loaded.removeAll { $0 == section }
-        Logger.shared.log("Set loading: \(section)\n\(description)", level: .info)
+        //Logger.shared.log("Set loading: \(section)\n\(description)", level: .info)
     }
     
     func isEmpty(_ section: T) -> Bool {
@@ -64,6 +64,6 @@ struct ViewLoadingState<T: Hashable> {
     mutating func setError(_ section: T, _ error: Error) {
         errors[section] = error
         loaded.removeAll { $0 == section }
-        Logger.shared.log("Set error: \(error) for section: \(section)\n\(description)", level: .error)
+        //Logger.shared.log("Set error: \(error) for section: \(section)\n\(description)", level: .error)
     }
 }

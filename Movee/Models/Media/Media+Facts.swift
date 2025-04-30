@@ -48,7 +48,7 @@ extension Media {
         
         // 3. Language: Use spokenLanguages if available.
         if let spokenLanguages = movieExtra.spokenLanguages, !spokenLanguages.isEmpty {
-            let languages = spokenLanguages.compactMap { $0.name }.joined(separator: ", ")
+            let languages = spokenLanguages.compactMap { $0.englishName }.joined(separator: ", ")
             if !languages.isEmpty {
                 items.append(.init(key: "Language", value: languages))
             }
@@ -117,10 +117,13 @@ extension Media {
         }
         
         // 7. Language: assuming languages are available.
-        if let languages = tvShowExtra.languages, !languages.isEmpty {
-            items.append(.init(key: "Language", value: languages.joined(separator: ", ")))
+        if let spokenLanguages = tvShowExtra.spokenLanguages, !spokenLanguages.isEmpty {
+            let languages = spokenLanguages.compactMap { $0.englishName }.joined(separator: ", ")
+            if !languages.isEmpty {
+                items.append(.init(key: "Language", value: languages))
+            }
         }
-        
+
         // 8. Rating
         items.append(.init(key: "Rating", value: "\(ratingString) (\(voteCount) votes)"))
         

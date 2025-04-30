@@ -15,6 +15,15 @@ struct PaginatedResponse<T: Decodable>: Decodable {
 }
 
 extension PaginatedResponse {
+    static func wrap<U: Decodable>(_ value: [U]) -> PaginatedResponse<U> {
+        return PaginatedResponse<U>(
+            page: 1,
+            results: value,
+            total_pages: 1,
+            total_results: 1
+        )
+    }
+    
     func map<U: Decodable>(_ transform: (T) -> U) -> PaginatedResponse<U> {
         return PaginatedResponse<U>(
             page: self.page,

@@ -55,7 +55,7 @@ struct MediaDetailsView: View {
                                 .textStyle(.sectionTitle)
                             MediaReviewsCarouselView(reviews: viewModel.reviews ?? [])
                         }
-                        .hideWhen(!viewModel.state.isLoaded(.reviews))
+                        .hideWhen(viewModel.state.isLoading(.reviews) || viewModel.state.isEmpty(.reviews))
                         
                         //MediaTrailerView()
                     }
