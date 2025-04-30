@@ -37,9 +37,12 @@ struct MediaDetailsView: View {
                         
                         MediasSectionView(
                             section: .init(title: "Seasons"),
-                            items: viewModel.seasons?.compactMap { .init(season: $0) },
+                            items: viewModel.seasonModels,
                             errorMessage: nil,
                             retry: { viewModel.fetchRelated() }
+                        ).hideWhen(
+                            viewModel.media?.mediaType != .tvShow ||
+                            viewModel.state.isEmpty(.seasons)
                         )
                         
                         PersonsSectionView(persons: viewModel.credits)
