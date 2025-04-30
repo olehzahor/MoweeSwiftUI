@@ -59,21 +59,60 @@ struct SpokenLanguage: Codable {
     }
 }
 
-// Episode (for last/next episode details)
-struct Episode: Codable {
+// Episode (full details)
+struct Episode: Codable, Identifiable {
     let id: Int
+    let airDate: String?
+    let episodeNumber: Int
+    let episodeType: String?
     let name: String
     let overview: String
+    let productionCode: String?
+    let runtime: Int?
+    let seasonNumber: Int
+    let showID: Int?
+    let stillPath: String?
     let voteAverage: Double?
     let voteCount: Int?
-    // Add additional episode fields if needed
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case airDate         = "air_date"
+        case episodeNumber   = "episode_number"
+        case episodeType     = "episode_type"
+        case name
+        case overview
+        case productionCode  = "production_code"
+        case runtime
+        case seasonNumber    = "season_number"
+        case showID          = "show_id"
+        case stillPath       = "still_path"
+        case voteAverage     = "vote_average"
+        case voteCount       = "vote_count"
+    }
+}
+
+extension Episode {
+    var parsedAirDate: Date? {
+        guard let airDate else { return nil }
+        return MediaFormatterService.shared.parse(dateString: airDate)
+    }
+    
+    var formattedAirDate: String? {
+        MediaFormatterService.shared.format(date: parsedAirDate, style: .full)
+    }
+    
+    var stillURL: URL? {
+        TMDBImageURLProvider.shared.url(path: stillPath, size: .w342)
+    }
 }
 
 // Season (for TV show seasons)
 struct Season: Codable, Identifiable {
     let id: Int
     let airDate: String?
-    let episodeCount: Int
+    let episodes: [Episode]?
+    let episodeCount: Int?
     let name: String
     let overview: String
     let posterPath: String?
@@ -83,6 +122,7 @@ struct Season: Codable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id
         case airDate       = "air_date"
+        case episodes
         case episodeCount  = "episode_count"
         case name
         case overview
@@ -104,7 +144,7 @@ extension Season {
     
     var subtitle: String {
         let yearString = parsedAirDate.map { String(Calendar.current.component(.year, from: $0)) }
-        return [ "\(episodeCount) eps", yearString ]
+        return [ "\(episodeCount ?? 0) eps", yearString ]
             .compactMap { $0 }
             .joined(separator: " · ")
     }

@@ -69,6 +69,12 @@ struct MediasSectionView: View {
                                     switch media.object {
                                     case .media(let media):
                                         MediaDetailsView(media: media)
+                                    case .season(let season, let tvShowID):
+                                        if let tvShowID {
+                                            SeasonDetailsView(tvShowID: tvShowID, season: season)
+                                        } else {
+                                            EmptyView()
+                                        }
                                     default:
                                         EmptyView()
                                     }

@@ -12,7 +12,7 @@ import Combine
 
 extension MediaDetailsViewModel {
     enum Section {
-        case initial, details, watchlist, credits, related, reviews
+        case initial, details, seasons, watchlist, credits, related, reviews
     }
 }
 
@@ -27,6 +27,11 @@ final class MediaDetailsViewModel: ObservableObject {
     @Published var related: [Media]?
     @Published var reviews: [Review]?
     @Published var seasons: [Season]?
+    
+    var seasonModels: [MediaPosterView.DataModel]? {
+        guard let media, let seasons else { return nil }
+        return seasons.compactMap { .init(season: $0, media: media) }
+    }
     
     @Published var isInWatchlist: Bool? = nil
     @Published var state = ViewLoadingState<Section>()
@@ -88,6 +93,7 @@ final class MediaDetailsViewModel: ObservableObject {
     
     func fetchDetails() {
         state.setLoading(.details)
+        state.setLoading(.seasons)
         switch mediaIdentifier.type {
         case .movie:
             subscribeTo(
@@ -190,6 +196,7 @@ final class MediaDetailsViewModel: ObservableObject {
                 
                 self?.state.setLoaded(.initial, isEmpty: false)
                 self?.state.setLoaded(.details, isEmpty: false)
+                self?.state.setLoaded(.seasons, isEmpty: self?.seasons?.isEmpty ?? true)
             }
             .store(in: &cancellables)
     }
