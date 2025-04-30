@@ -84,42 +84,26 @@ struct CircularProgressBar: View {
 }
 
 struct MediaPosterView: View {
-    let posterURL: URL?
-    let title: String?
-    let rating: Double?
-    
-    // Initializer using poster URL and title
-    init(posterURL: URL?, title: String? = nil, rating: Double? = nil) {
-        self.posterURL = posterURL
-        self.title = title
-        self.rating = rating
-    }
-    
-    // Initializer using a Movie object
-    init(media: Media) {
-        self.posterURL = media.posterURL
-        self.title = media.title
-        self.rating = media.voteAverage
-    }
-    
+    let model: DataModel
+        
     var body: some View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
                 AsyncImageView(
-                    url: posterURL,
+                    url: model.posterURL,
                     width: 100,
                     height: 150,
                     cornerRadius: 8,
                     placeholder: .init(resource: .imageMalePersonPlaceholder)
                 )
-                if let rating, rating > 0 {
+                if let rating = model.rating, rating > 0 {
                     MediaRatingView(rating: rating)
                         .padding(.bottom, 4)
                         .padding(.trailing, 4)
                 }
             }
             
-            if let title {
+            if let title = model.title {
                 Text(title)
                     .textStyle(.mediaSmallTitle)
             }
@@ -127,10 +111,19 @@ struct MediaPosterView: View {
         .frame(width: 100)
         .tint(.primary)
     }
+    
+    init(_ data: DataModel) {
+        self.model = data
+    }
 }
 
 struct MediaPosterView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaPosterView(posterURL: URL(string: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=myke-simon-atsUqIm3wxo-unsplash.jpg&w=640"), title: "Beneath the Silence, a Storm Awaits", rating: 7.3)
+        MediaPosterView(.init(
+            title: "Beneath the Silence, a Storm Awaits",
+            subtitle: nil,
+            posterURL: URL(string: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=myke-simon-atsUqIm3wxo-unsplash.jpg&w=640"),
+            rating: 7.3,
+            object: nil))
     }
 }

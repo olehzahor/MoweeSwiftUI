@@ -27,7 +27,7 @@ struct MediaRowView: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            MediaPosterView(posterURL: posterURL).saveSize(in: $posterSize)
+            MediaPosterView(.init(posterURL: posterURL)).saveSize(in: $posterSize)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .multilineTextAlignment(.leading)

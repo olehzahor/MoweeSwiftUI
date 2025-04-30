@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct MediasSectionView: View {
-    // TODO: two inits; one with Media and other with Item arrays
     let section: MediasSection
-    let medias: [Media]?
+    let medias: [MediaPosterView.DataModel]?
     let errorMessage: String?
-    var retry: () -> Void
-    var horizontalPadding: CGFloat = 20
+    var retry: (() -> Void)?
+    var horizontalPadding: CGFloat
 
     enum ViewState {
         case loading, loaded, error
@@ -46,7 +45,7 @@ struct MediasSectionView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top) {
                             ForEach(0..<5, id: \.self) { _ in
-                                MediaPosterView(media: .placeholder)
+                                MediaPosterView(.placeholder)
                                     .redacted(reason: .placeholder)
                                     .shimmering()
                             }
@@ -58,7 +57,7 @@ struct MediasSectionView: View {
                         Text("Error: \(errorMessage ?? "")")
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
-                        Button("Retry", action: retry)
+                        Button("Retry", action: retry ?? {})
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
@@ -67,9 +66,14 @@ struct MediasSectionView: View {
                         HStack(alignment: .top) {
                             ForEach(medias ?? []) { media in
                                 NavigationLink {
-                                    MediaDetailsView(media: media)
+                                    switch media.object {
+                                    case .media(let media):
+                                        MediaDetailsView(media: media)
+                                    case .none:
+                                        EmptyView()
+                                    }
                                 } label: {
-                                    MediaPosterView(media: media)
+                                    MediaPosterView(media)
                                 }
                             }
                         }
@@ -79,24 +83,20 @@ struct MediasSectionView: View {
             }.animation(.easeOut, value: viewState)
         }
     }
-}
-
-// MARK: - MediaPerson placeholder
-extension Media {
-    static let placeholder = Media(
-        id: -1,
-        mediaType: .movie,
-        title: .placeholder(.short),
-        originalTitle: "",
-        tagline: "",
-        overview: "",
-        posterPath: nil,
-        backdropPath: nil,
-        popularity: 0,
-        voteAverage: 0,
-        voteCount: 0,
-        releaseDate: nil,
-        genreIDs: [],
-        genres: nil,
-        extra: nil)
+    
+    init(section: MediasSection, medias: [Media]?, errorMessage: String? = nil, retry: (() -> Void)? = nil, horizontalPadding: CGFloat = 20) {
+        self.section = section
+        self.medias = medias?.map { .init(media: $0) }
+        self.errorMessage = errorMessage
+        self.retry = retry
+        self.horizontalPadding = horizontalPadding
+    }
+    
+    init(section: MediasSection, items: [MediaPosterView.DataModel]?, errorMessage: String? = nil, retry: (() -> Void)? = nil, horizontalPadding: CGFloat = 20) {
+        self.section = section
+        self.medias = items
+        self.errorMessage = errorMessage
+        self.retry = retry
+        self.horizontalPadding = horizontalPadding
+    }
 }

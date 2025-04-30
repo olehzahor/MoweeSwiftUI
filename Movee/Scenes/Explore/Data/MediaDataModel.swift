@@ -8,29 +8,29 @@
 import Foundation
 
 extension MediaPosterView {
-    enum NavigationAction {
-        case media(Media)
-    }
+    struct DataModel: Identifiable {
+        enum Object {
+            case media(Media)
+        }
 
-    protocol MediaDataModel {
-        var title: String { get }
-        var subtitle: String? { get }
-        var posterURL: URL? { get }
-        var rating: Double? { get }
-        var navigation: NavigationAction { get }
+        var id: Int = -1
+        var title: String?
+        var subtitle: String?
+        var posterURL: URL?
+        var rating: Double?
+        var object: Object?
     }
 }
 
-extension Media: MediaPosterView.MediaDataModel {
-    var subtitle: String? {
-        nil
-    }
+extension MediaPosterView.DataModel {
+    static var placeholder = Self(title: .placeholder(.short))
     
-    var rating: Double? {
-        voteAverage
-    }
-    
-    var navigation: MediaPosterView.NavigationAction {
-        .media(self)
+    init(media: Media) {
+        self.id = media.id
+        self.title = media.title
+        self.subtitle = nil
+        self.posterURL = media.posterURL
+        self.rating = media.voteAverage
+        self.object = .media(media)
     }
 }
