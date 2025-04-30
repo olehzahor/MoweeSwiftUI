@@ -7,9 +7,14 @@
 
 import Foundation
 
+struct MediaIdentifier {
+    let id: Int
+    let type: MediaType
+}
+
 enum MediaType: String, Codable {
     case movie
-    case tvShow
+    case tvShow = "tv"
 }
 
 // MARK: - Top-Level Media Model
@@ -33,6 +38,57 @@ struct Media: Codable, Identifiable {
     
     // Type-specific extra info stored in an enum.
     let extra: ExtraInfo?
+
+    init(
+        id: Int,
+        mediaType: MediaType,
+        title: String,
+        originalTitle: String,
+        tagline: String?,
+        overview: String,
+        posterPath: String?,
+        backdropPath: String?,
+        popularity: Double,
+        voteAverage: Double,
+        voteCount: Int,
+        releaseDate: String?,
+        genreIDs: [Int],
+        genres: [Genre]?,
+        extra: ExtraInfo?
+    ) {
+        self.id = id
+        self.mediaType = mediaType
+        self.title = title
+        self.originalTitle = originalTitle
+        self.tagline = tagline
+        self.overview = overview
+        self.posterPath = posterPath
+        self.backdropPath = backdropPath
+        self.popularity = popularity
+        self.voteAverage = voteAverage
+        self.voteCount = voteCount
+        self.releaseDate = releaseDate
+        self.genreIDs = genreIDs
+        self.genres = genres
+        self.extra = extra
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let mediaType = try container.decode(MediaType.self, forKey: .mediaType)
+        switch mediaType {
+        case .movie:
+            let movie = try Movie(from: decoder)
+            self = Media(movie: movie)
+        case .tvShow:
+            let show  = try TVShow(from: decoder)
+            self = Media(tvShow: show)
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case mediaType = "media_type"
+    }
 }
 
 // MARK: - Extra Info Enum

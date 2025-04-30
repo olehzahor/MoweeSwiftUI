@@ -79,6 +79,11 @@ final class TMDBAPIClient {
     func fetchPersonDetails(personID: Int) -> AnyPublisher<Person, Error> {
         return getPublisher(for: "person/\(personID)")
     }
+
+    /// Fetch combined movie and TV credits for a person.
+    func fetchPersonCredits(personID: Int) -> AnyPublisher<PersonCombinedCreditsResponse, Error> {
+        return getPublisher(for: "person/\(personID)/combined_credits")
+    }
 }
 
 // MARK: - Private methods

@@ -59,6 +59,7 @@ struct TVShowExtra: Codable {
     let originCountry: [String]?
     let productionCompanies: [ProductionCompany]?
     let seasons: [Season]?
+    let spokenLanguages: [SpokenLanguage]?
     let status: String?
     let type: String?
     
@@ -77,6 +78,7 @@ struct TVShowExtra: Codable {
         self.originCountry = tvShow.originCountry
         self.productionCompanies = tvShow.productionCompanies
         self.seasons = tvShow.seasons
+        self.spokenLanguages = tvShow.spokenLanguages
         self.status = tvShow.status
         self.type = tvShow.type
     }

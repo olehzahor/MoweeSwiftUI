@@ -32,6 +32,7 @@ struct TVShow: Codable, Identifiable {
     let productionCompanies: [ProductionCompany]?
     let seasons: [Season]?
     let status: String?
+    let spokenLanguages: [SpokenLanguage]?
     let tagline: String?
     let type: String?
     let voteAverage: Double
@@ -57,6 +58,7 @@ struct TVShow: Codable, Identifiable {
         case productionCompanies = "production_companies"
         case seasons
         case status, type
+        case spokenLanguages = "spoken_languages"
         case tagline
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
