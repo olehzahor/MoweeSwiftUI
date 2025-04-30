@@ -11,6 +11,7 @@ extension MediaPosterView {
     struct DataModel: Identifiable {
         enum Object {
             case media(Media)
+            case season(Season)
         }
 
         var id: Int = -1
@@ -33,4 +34,13 @@ extension MediaPosterView.DataModel {
         self.rating = media.voteAverage
         self.object = .media(media)
     }
+    
+    init(season: Season) {
+        self.id = season.id
+        self.title = season.name
+        self.subtitle = season.subtitle
+        self.posterURL = season.posterURL
+        self.object = .season(season)
+    }
 }
+

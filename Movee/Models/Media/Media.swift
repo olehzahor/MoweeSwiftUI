@@ -95,15 +95,11 @@ struct Media: Codable, Identifiable {
 
 extension Media {
     var posterURL: URL? {
-        guard let posterPath else { return nil }
-        let baseURL = "https://image.tmdb.org/t/p/w154"
-        return URL(string: baseURL + posterPath)
+        TMDBImageURLProvider.shared.url(path: posterPath, size: .w154)
     }
     
     var backdropURL: URL? {
-        guard let backdropPath = backdropPath else { return nil }
-        let baseURL = "https://image.tmdb.org/t/p/w780"
-        return URL(string: baseURL + backdropPath)
+        TMDBImageURLProvider.shared.url(path: backdropPath, size: .w780)
     }
     
     var ratingString: String {

@@ -83,6 +83,10 @@ final class TMDBAPIClient {
     func fetchPersonCredits(personID: Int) -> AnyPublisher<PersonCombinedCreditsResponse, Error> {
         return getPublisher(for: "person/\(personID)/combined_credits")
     }
+
+    func fetchTVShowSeason(tvShowID: Int, seasonNumber: Int) -> AnyPublisher<Season, Error> {
+        return getPublisher(for: "tv/\(tvShowID)/season/\(seasonNumber)")
+    }
 }
 
 // MARK: - Private methods

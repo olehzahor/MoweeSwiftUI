@@ -35,6 +35,13 @@ struct MediaDetailsView: View {
                                 .textStyle(.mediumText)
                         }
                         
+                        MediasSectionView(
+                            section: viewModel.relatedSection,
+                            items: viewModel.seasons?.compactMap { .init(season: $0) },
+                            errorMessage: nil,
+                            retry: { viewModel.fetchRelated() }
+                        )
+                        
                         PersonsSectionView(persons: viewModel.credits)
                             .hideWhen(viewModel.state.isEmpty(.credits))
                         
