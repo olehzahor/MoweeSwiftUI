@@ -11,7 +11,7 @@ struct MediaDetailedInfoView: View {
     var title: String
     var posterURL: URL?
     var releaseDate: Date?
-    var duration: Int
+    var duration: Int?
     var genres: String
     var mediaRating: Double?
     
@@ -19,8 +19,14 @@ struct MediaDetailedInfoView: View {
         MediaFormatterService.shared.format(date: releaseDate)
     }
 
-    private var durationString: String {
-        MediaFormatterService.shared.format(duration: duration)
+    private var durationString: String? {
+        guard let duration else { return nil }
+        return MediaFormatterService.shared.format(duration: duration)
+    }
+    
+    private var subtitle: String {
+        let strings = [releaseDateString, durationString].compactMap { $0 }
+        return strings.joined(separator: " · ") + "\n\(genres)"
     }
     
     var body: some View {
@@ -31,7 +37,7 @@ struct MediaDetailedInfoView: View {
                 Text(title)
                     .textStyle(.mediaLargeTitle)
                     .lineLimit(3)
-                Text("\(releaseDateString) · \(durationString)\n\(genres)")
+                Text(subtitle)
                     .textStyle(.smallText)
                     .multilineTextAlignment(.center)
             }
@@ -44,7 +50,19 @@ struct MediaDetailedInfoView: View {
         title = media.title
         posterURL = media.posterURL
         releaseDate = media.parsedReleaseDate
-        duration = 122
+        switch media.extra {
+        case .movie(let movieExtra):
+            duration = movieExtra.runtime
+        case .tvShow(let tVShowExtra):
+            if let runtimes = tVShowExtra.episodeRunTime, !runtimes.isEmpty {
+                let total = runtimes.reduce(0, +)
+                duration = Int(round(Double(total) / Double(runtimes.count)))
+            } else {
+                duration = nil
+            }
+        case .none:
+            break
+        }
         genres = media.genresString
         mediaRating = media.voteAverage
     }

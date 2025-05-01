@@ -12,13 +12,20 @@ class SeasonDetailsViewModel: ObservableObject {
     private var tvShowID: Int
     @Published var season: Season
     
+    enum Section { case episodes }
+    @Published var state = ViewLoadingState<Section>()
+    
     private var cancellables = Set<AnyCancellable>()
 
     func fetchDetails() {
-        TMDBAPIClient.shared.fetchTVShowSeason(tvShowID: tvShowID, seasonNumber: season.seasonNumber).sink { completion in
-            
-        } receiveValue: { season in
+        state.setLoading(.episodes)
+        TMDBAPIClient.shared.fetchTVShowSeason(tvShowID: tvShowID, seasonNumber: season.seasonNumber).sink { [unowned self] completion in
+            if case .failure(let error) = completion {
+                state.setError(.episodes, error)
+            }
+        } receiveValue: { [unowned self] season in
             self.season = season
+            state.setLoaded(.episodes, isEmpty: season.episodes?.isEmpty ?? true)
         }.store(in: &cancellables)
     }
     
@@ -44,27 +51,28 @@ struct EpisodeDetailsView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("\(episode.episodeNumber). \(episode.name)")
                     .multilineTextAlignment(.leading)
-                    .lineLimit(titleLineLimit)
                     .textStyle(.mediumTitle)
                 if let formattedAirDate = episode.formattedAirDate {
                     Text(formattedAirDate)
                         .multilineTextAlignment(.leading)
-                        .textStyle(.mediumSubtitle)
+                        .foregroundStyle(.secondary)
+                        .textStyle(.smallText)
                         .fontWeight(.semibold)
                 }
                 FoldableTextView(text: episode.overview, lineLimit: nil) {
                     isExpanded = true
                 }
-                .textStyle(.mediumText)
+                .hideWhen(episode.overview.isEmpty)
+                .textStyle(.smallText)
                 .lineSpacing(-3)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             if let stillURL = episode.stillURL {
                 ZStack(alignment: .bottomTrailing) {
-                    AsyncImageView(url: stillURL, width: 110, height: 97, cornerRadius: 8)
+                    AsyncImageView(url: stillURL, width: 110, height: 93, cornerRadius: 8, placeholder: .imageMoviePlaceholder)
                         .saveSize(in: $posterSize)
                     if let rating = episode.voteAverage, rating > 0 {
                         MediaRatingView(rating: rating)
@@ -79,30 +87,55 @@ struct EpisodeDetailsView: View {
 
 struct SeasonDetailsView: View {
     @StateObject var viewModel: SeasonDetailsViewModel
-    
+
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Text(viewModel.season.overview).textStyle(.mediumText)
-                Divider()
-                ForEach(viewModel.season.episodes ?? [], id: \.id) { episode in
-                    EpisodeDetailsView(episode: episode)
+        List {
+            Section {
+                if !viewModel.season.overview.isEmpty {
+                    VStack(alignment: .leading, spacing: 16) {
+                        FoldableTextView(text: viewModel.season.overview, lineLimit: 10)
+                            .textStyle(.mediumText)
+                    }
+                    .listSeparatorTrailingAligned()
+                    .listRowSeparator(.hidden, edges: .top)
                 }
-            }
-            .padding()
+                
+                Group {
+                    if viewModel.state.isLoading(.episodes) {
+                        ForEach(0..<10, id: \.self) { _ in
+                            EpisodeDetailsView(episode: .placeholder)
+                                .redacted(reason: .placeholder)
+                                .shimmering()
+                        }
+                    }
+                    ForEach(viewModel.season.episodes ?? [], id: \.id) { episode in
+                        EpisodeDetailsView(episode: episode)
+                    }
+                }.listSeparatorTrailingAligned()
+            }.listSectionSeparator(.hidden)
         }
+        .listStyle(.plain)
         .navigationTitle(viewModel.season.name)
         .onFirstAppear {
             viewModel.fetchDetails()
         }
     }
-    
+
     init(tvShowID: Int, season: Season) {
-        _viewModel = .init(wrappedValue: .init(
-            tvShowID: tvShowID,
-            season: season)
+        _viewModel = StateObject(
+            wrappedValue: SeasonDetailsViewModel(tvShowID: tvShowID, season: season)
         )
     }
+}
+
+private extension Episode {
+    static let placeholder = Episode(
+        id: -1,
+        episodeNumber: -1,
+        name: .placeholder(.short),
+        overview: .placeholder(.custom(100)),
+        seasonNumber: 1,
+        stillPath: "")
 }
 
 private extension Season {

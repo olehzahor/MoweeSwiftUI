@@ -61,19 +61,19 @@ struct SpokenLanguage: Codable {
 
 // Episode (full details)
 struct Episode: Codable, Identifiable {
-    let id: Int
-    let airDate: String?
-    let episodeNumber: Int
-    let episodeType: String?
-    let name: String
-    let overview: String
-    let productionCode: String?
-    let runtime: Int?
-    let seasonNumber: Int
-    let showID: Int?
-    let stillPath: String?
-    let voteAverage: Double?
-    let voteCount: Int?
+    var id: Int
+    var airDate: String?
+    var episodeNumber: Int
+    var episodeType: String?
+    var name: String
+    var overview: String
+    var productionCode: String?
+    var runtime: Int?
+    var seasonNumber: Int
+    var showID: Int?
+    var stillPath: String?
+    var voteAverage: Double?
+    var voteCount: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
