@@ -60,6 +60,14 @@ final class TMDBAPIClient {
         return getPublisher(for: "tv/\(tvShowID)/similar", parameters: ["page": page])
     }
 
+    func fetchMovieRecommendations(movieID: Int, page: Int = 1) -> AnyPublisher<PaginatedResponse<Movie>, Error> {
+        return getPublisher(for: "movie/\(movieID)/recommendations", parameters: ["page": page])
+    }
+
+    func fetchTVShowRecommendations(tvShowID: Int, page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
+        return getPublisher(for: "tv/\(tvShowID)/recommendations", parameters: ["page": page])
+    }
+
     func fetchMovieCredits(movieID: Int) -> AnyPublisher<CreditsResponse, Error> {
         return getPublisher(for: "movie/\(movieID)/credits")
     }
@@ -87,6 +95,12 @@ final class TMDBAPIClient {
     func fetchTVShowSeason(tvShowID: Int, seasonNumber: Int) -> AnyPublisher<Season, Error> {
         return getPublisher(for: "tv/\(tvShowID)/season/\(seasonNumber)")
     }
+    
+    func searchMulti(query: String, page: Int = 1, includeAdult: Bool = false) -> AnyPublisher<PaginatedResponse<SearchResult>, Error> {
+        return getPublisher(for: "search/multi", parameters: ["query": query, "page": page, "include_adult": includeAdult])
+    }
+    
+    private init() { }
 }
 
 // MARK: - Private methods

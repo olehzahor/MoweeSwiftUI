@@ -17,7 +17,7 @@ struct MediasListView: View {
                 let mediaCopy = media
                 MediaDetailsView(media: mediaCopy)
             } label: {
-                MediaRowView(media: media)
+                MediaRowView(data: .init(media: media))
                     .onAppear {
                         if media.id == viewModel.medias.last?.id {
                             viewModel.fetchMedias()

@@ -92,12 +92,10 @@ struct SeasonDetailsView: View {
         List {
             Section {
                 if !viewModel.season.overview.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
-                        FoldableTextView(text: viewModel.season.overview, lineLimit: 10)
-                            .textStyle(.mediumText)
-                    }
-                    .listSeparatorTrailingAligned()
-                    .listRowSeparator(.hidden, edges: .top)
+                    FoldableTextView(text: viewModel.season.overview, lineLimit: 10)
+                        .textStyle(.mediumText)
+                        .listSeparatorTrailingAligned()
+                        .listRowSeparator(.hidden, edges: .top)
                 }
                 
                 Group {
@@ -176,7 +174,7 @@ private extension Season {
         ],
         episodeCount: 9,
         name: "Season 1",
-        overview: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope.",
+        overview: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope. After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope. After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope. After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope. After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope. After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope. After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be humanity's last hope.",
         posterPath: "/pMfG5XIlmvCL9bQQiJKdTvmF2FW.jpg",
         seasonNumber: 1,
         voteAverage: 7.8

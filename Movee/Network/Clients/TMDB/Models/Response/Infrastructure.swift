@@ -231,6 +231,7 @@ struct Person: Codable, Identifiable {
     let imdbID: String?
     let homepage: String?
     let alsoKnownAs: [String]?
+    let knownFor: [Media]?
     
     enum CodingKeys: String, CodingKey {
         case id, name, birthday, deathday, biography, popularity, adult, homepage
@@ -239,9 +240,10 @@ struct Person: Codable, Identifiable {
         case profilePath = "profile_path"
         case alsoKnownAs = "also_known_as"
         case imdbID = "imdb_id"
+        case knownFor = "known_for"
     }
     
-    init(id: Int, name: String, birthday: String? = nil, department: String? = nil, deathday: String? = nil, biography: String? = nil, popularity: Double? = nil, placeOfBirth: String? = nil, profilePath: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil) {
+    init(id: Int, name: String, birthday: String? = nil, department: String? = nil, deathday: String? = nil, biography: String? = nil, popularity: Double? = nil, placeOfBirth: String? = nil, profilePath: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil, knownFor: [Media]? = nil) {
         self.id = id
         self.name = name
         self.birthday = birthday
@@ -255,5 +257,6 @@ struct Person: Codable, Identifiable {
         self.imdbID = imdbID
         self.homepage = homepage
         self.alsoKnownAs = alsoKnownAs
+        self.knownFor = knownFor
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension MediaPosterView {
     struct DataModel: Identifiable {
@@ -19,6 +20,7 @@ extension MediaPosterView {
         var title: String?
         var subtitle: String?
         var posterURL: URL?
+        var posterPlaceholder: UIImage?
         var rating: Double?
         var object: Object?
     }

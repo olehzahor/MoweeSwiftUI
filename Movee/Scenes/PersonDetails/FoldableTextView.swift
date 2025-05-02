@@ -55,6 +55,7 @@ struct FoldableTextView: View {
                         )
                     }
                 }.saveSize(in: $collapsedSize)
+                .transition(.identity)
         }
     }
 }

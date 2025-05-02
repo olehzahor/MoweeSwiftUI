@@ -43,7 +43,7 @@ struct MoveeApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ExploreView()
+            MainView()
                 .accentColor(Color(MoveeApp.tintColor))
 
         }

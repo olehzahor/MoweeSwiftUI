@@ -32,6 +32,7 @@ struct MediaPerson: Identifiable {
     let imdbID: String?
     let homepage: String?
     let alsoKnownAs: [String]?
+    let knownFor: [Media]?
     
     init(castMember: CastMember) {
         self.id = castMember.id
@@ -53,6 +54,7 @@ struct MediaPerson: Identifiable {
         self.imdbID = nil
         self.homepage = nil
         self.alsoKnownAs = nil
+        self.knownFor = nil
     }
     
     init(crewMember: CrewMember) {
@@ -75,6 +77,7 @@ struct MediaPerson: Identifiable {
         self.imdbID = nil
         self.homepage = nil
         self.alsoKnownAs = nil
+        self.knownFor = nil
     }
     
     init(person: Person) {
@@ -97,9 +100,10 @@ struct MediaPerson: Identifiable {
         self.imdbID = person.imdbID
         self.homepage = person.homepage
         self.alsoKnownAs = person.alsoKnownAs
+        self.knownFor = person.knownFor
     }
     
-    init(id: Int, type: PersonType, name: String, profilePath: String? = nil, role: String? = nil, department: String? = nil, popularity: Double? = nil, creditID: String? = nil, gender: Int? = nil, castID: Int? = nil, order: Int? = nil, birthday: String? = nil, deathday: String? = nil, biography: String? = nil, placeOfBirth: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil) {
+    init(id: Int, type: PersonType, name: String, profilePath: String? = nil, role: String? = nil, department: String? = nil, popularity: Double? = nil, creditID: String? = nil, gender: Int? = nil, castID: Int? = nil, order: Int? = nil, birthday: String? = nil, deathday: String? = nil, biography: String? = nil, placeOfBirth: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil, knownFor: [Media]? = nil) {
         self.id = id
         self.type = type
         self.name = name
@@ -119,6 +123,7 @@ struct MediaPerson: Identifiable {
         self.imdbID = imdbID
         self.homepage = homepage
         self.alsoKnownAs = alsoKnownAs
+        self.knownFor = knownFor
     }
 }
 
