@@ -46,11 +46,11 @@ final class MediaDetailsViewModel: ObservableObject {
         MediasSection(title: "Related", fullTitle: "\(media?.title ?? ""): related") { [unowned self] page in
             switch mediaIdentifier.type {
             case .movie:
-                TMDBAPIClient.shared.fetchMovieRelated(movieID: mediaIdentifier.id, page: page)
+                TMDBAPIClient.shared.fetchMovieRecommendations(movieID: mediaIdentifier.id, page: page)
                     .map { $0.map { Media(movie: $0) } }
                     .eraseToAnyPublisher()
             case .tvShow:
-                TMDBAPIClient.shared.fetchTVShowRelated(tvShowID: mediaIdentifier.id, page: page)
+                TMDBAPIClient.shared.fetchTVShowRecommendations(tvShowID: mediaIdentifier.id, page: page)
                     .map { $0.map { Media(tvShow: $0) } }
                     .eraseToAnyPublisher()
             }

@@ -19,7 +19,7 @@ struct MediaPosterView: View {
                     width: 100,
                     height: 150,
                     cornerRadius: 8,
-                    placeholder: .init(resource: .imageMoviePlaceholder)
+                    placeholder: model.posterPlaceholder
                 )
                 if let rating = model.rating, rating > 0 {
                     MediaRatingView(rating: rating)
