@@ -32,7 +32,7 @@ extension MediaPosterView.DataModel {
     init(media: Media) {
         self.id = media.id
         self.title = media.title
-        self.subtitle = nil
+        self.subtitle = media.subtitle
         self.posterURL = media.posterURL
         self.rating = media.voteAverage
         self.object = .media(media)

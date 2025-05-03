@@ -23,7 +23,7 @@ class PersonDetailsViewModel: ObservableObject {
                     }
                 }
                 // Sort by popularity and wrap
-                return .wrap(unique.sorted(by: { $0.popularity >= $1.popularity }))
+                return .wrap(unique.sorted(by: { $0.voteCount >= $1.voteCount }))
             }
             .eraseToAnyPublisher()
     }

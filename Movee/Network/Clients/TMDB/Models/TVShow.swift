@@ -37,6 +37,8 @@ struct TVShow: Codable, Identifiable {
     let type: String?
     let voteAverage: Double
     let voteCount: Int
+    let character: String?
+    let job: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -63,5 +65,7 @@ struct TVShow: Codable, Identifiable {
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
         case genreIDs = "genre_ids"
+        case character
+        case job
     }
 }
