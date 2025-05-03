@@ -25,6 +25,7 @@ struct Media: Codable, Identifiable {
     // Normalized common properties.
     let title: String                // Display title (movie.title or tvshow.name)
     let originalTitle: String        // movie.originalTitle or tvshow.originalName
+    let subtitle: String?
     let tagline: String?
     let overview: String
     let posterPath: String?
@@ -44,6 +45,7 @@ struct Media: Codable, Identifiable {
         mediaType: MediaType,
         title: String,
         originalTitle: String,
+        subtitle: String?,
         tagline: String?,
         overview: String,
         posterPath: String?,
@@ -54,12 +56,13 @@ struct Media: Codable, Identifiable {
         releaseDate: String?,
         genreIDs: [Int],
         genres: [Genre]?,
-        extra: ExtraInfo?
+        extra: ExtraInfo?,
     ) {
         self.id = id
         self.mediaType = mediaType
         self.title = title
         self.originalTitle = originalTitle
+        self.subtitle = subtitle
         self.tagline = tagline
         self.overview = overview
         self.posterPath = posterPath

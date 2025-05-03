@@ -24,5 +24,6 @@ extension Media {
         self.genres = movie.genres
 
         self.extra = .movie(MovieExtra(from: movie))
+        self.subtitle = movie.character ?? movie.job
     }
 }

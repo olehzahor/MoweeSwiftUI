@@ -34,6 +34,8 @@ struct Movie: Codable, Identifiable {
     let video: Bool
     let voteAverage: Double
     let voteCount: Int
+    let character: String?
+    let job: String?
 
     enum CodingKeys: String, CodingKey {
         case id, adult
@@ -55,6 +57,8 @@ struct Movie: Codable, Identifiable {
         case title, video
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
+        case character
+        case job
     }
 }
 
@@ -108,7 +112,9 @@ extension Movie {
             title: "The Minecraft Movie",
             video: false,
             voteAverage: 6.138,
-            voteCount: 360
+            voteCount: 360,
+            character: nil,
+            job: nil
         )
     }
 }

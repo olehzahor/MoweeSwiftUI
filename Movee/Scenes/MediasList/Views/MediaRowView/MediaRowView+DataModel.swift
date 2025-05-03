@@ -18,7 +18,11 @@ extension MediaRowView {
         
         init(media: Media) {
             self.title = media.title
-            self.subtitle = "\(media.releaseYear) · \(media.genresString)"
+            if let subtitle = media.subtitle, !subtitle.isEmpty {
+                self.subtitle = media.subtitle
+            } else {
+                self.subtitle = "\(media.releaseYear) · \(media.genresString)"
+            }
             self.posterURL = media.posterURL
             self.overview = media.overview
             self.placeholder = .imageMoviePlaceholder

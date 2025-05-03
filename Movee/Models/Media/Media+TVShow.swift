@@ -29,5 +29,6 @@ extension Media {
         
         // Populate the extra info enum with all TV show details.
         self.extra = .tvShow(TVShowExtra(from: tvShow))
+        self.subtitle = tvShow.character ?? tvShow.job
     }
 }
