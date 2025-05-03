@@ -13,7 +13,7 @@ struct ExploreView: View {
     @StateObject private var viewModel = ExploreViewModel(sections: .homePageSections)
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 ScrollView {
                     VStack(alignment: .leading) {

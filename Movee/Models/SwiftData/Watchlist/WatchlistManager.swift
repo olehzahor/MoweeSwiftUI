@@ -10,12 +10,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-
 protocol WatchlistManagerInterface {
-    //var itemsPublisher: AnyPublisher<[WatchlistItem], Never> { get }
-    
-    
-    
     func addToWatchlist(_ media: Media) async
     func removeFromWatchlist(_ media: Media) async
     func isInWatchlist(_ media: Media) async -> Bool

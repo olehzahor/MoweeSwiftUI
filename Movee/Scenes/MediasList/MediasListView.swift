@@ -12,24 +12,26 @@ struct MediasListView: View {
     @StateObject var viewModel: MediasListViewModel
 
     var body: some View {
-        List(viewModel.medias) { media in
-            NavigationLink {
-                let mediaCopy = media
-                MediaDetailsView(media: mediaCopy)
-            } label: {
-                MediaRowView(data: .init(media: media))
-                    .onAppear {
-                        if media.id == viewModel.medias.last?.id {
-                            viewModel.fetchMedias()
+        NavigationStack {
+            List(viewModel.medias) { media in
+                NavigationLink {
+                    let mediaCopy = media
+                    MediaDetailsView(media: mediaCopy)
+                } label: {
+                    MediaRowView(data: .init(media: media))
+                        .onAppear {
+                            if media.id == viewModel.medias.last?.id {
+                                viewModel.fetchMedias()
+                            }
                         }
-                    }
-            }.listRowSeparator(.hidden)
+                }.listRowSeparator(.hidden)
+            }
+            .listStyle(.plain)
+            .onAppear {
+                viewModel.fetchMedias()
+            }
+            .navigationTitle(viewModel.section.fullTitle ?? viewModel.section.title)
         }
-        .listStyle(.plain)
-        .onAppear {
-            viewModel.fetchMedias()
-        }
-        .navigationTitle(viewModel.section.fullTitle ?? viewModel.section.title)
     }
     
     init(section: MediasSection) {

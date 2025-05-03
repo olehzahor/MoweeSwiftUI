@@ -17,9 +17,9 @@ class PersonDetailsViewModel: ObservableObject {
             .map { response in
                 // Combine cast and crew, then filter unique by id
                 let combined = response.cast + response.crew
-                let unique = combined.reduce(into: [Media]()) { result, media in
-                    if !result.contains(where: { $0.id == media.id }) {
-                        result.append(media)
+                let unique = combined.reduce(into: [Media]()) { result, item in
+                    if !result.contains(where: { $0.id == item.media.id }) {
+                        result.append(item.media)
                     }
                 }
                 // Sort by popularity and wrap
