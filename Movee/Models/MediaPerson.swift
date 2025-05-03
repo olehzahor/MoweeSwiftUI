@@ -32,7 +32,7 @@ struct MediaPerson: Identifiable {
     let imdbID: String?
     let homepage: String?
     let alsoKnownAs: [String]?
-    let knownFor: [Media]?
+    let knownFor: [PersonCredit]?
     
     init(castMember: CastMember) {
         self.id = castMember.id
@@ -103,7 +103,7 @@ struct MediaPerson: Identifiable {
         self.knownFor = person.knownFor
     }
     
-    init(id: Int, type: PersonType, name: String, profilePath: String? = nil, role: String? = nil, department: String? = nil, popularity: Double? = nil, creditID: String? = nil, gender: Int? = nil, castID: Int? = nil, order: Int? = nil, birthday: String? = nil, deathday: String? = nil, biography: String? = nil, placeOfBirth: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil, knownFor: [Media]? = nil) {
+    init(id: Int, type: PersonType, name: String, profilePath: String? = nil, role: String? = nil, department: String? = nil, popularity: Double? = nil, creditID: String? = nil, gender: Int? = nil, castID: Int? = nil, order: Int? = nil, birthday: String? = nil, deathday: String? = nil, biography: String? = nil, placeOfBirth: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil, knownFor: [PersonCredit]? = nil) {
         self.id = id
         self.type = type
         self.name = name

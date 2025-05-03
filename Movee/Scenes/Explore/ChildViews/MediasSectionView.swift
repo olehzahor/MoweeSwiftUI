@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MediasSectionView: View {
     let section: MediasSection
-    let medias: [MediaPosterView.DataModel]?
+    let medias: [MediaUIModel]?
     let errorMessage: String?
     var retry: (() -> Void)?
     var horizontalPadding: CGFloat
@@ -69,12 +69,8 @@ struct MediasSectionView: View {
                                     switch media.object {
                                     case .media(let media):
                                         MediaDetailsView(media: media)
-                                    case .season(let season, let tvShowID):
-                                        if let tvShowID {
-                                            SeasonDetailsView(tvShowID: tvShowID, season: season)
-                                        } else {
-                                            EmptyView()
-                                        }
+                                    case .season(let season, let media):
+                                        SeasonDetailsView(tvShowID: media.id, season: season)
                                     default:
                                         EmptyView()
                                     }
@@ -98,7 +94,7 @@ struct MediasSectionView: View {
         self.horizontalPadding = horizontalPadding
     }
     
-    init(section: MediasSection, items: [MediaPosterView.DataModel]?, errorMessage: String? = nil, retry: (() -> Void)? = nil, horizontalPadding: CGFloat = 20) {
+    init(section: MediasSection, items: [MediaUIModel]?, errorMessage: String? = nil, retry: (() -> Void)? = nil, horizontalPadding: CGFloat = 20) {
         self.section = section
         self.medias = items
         self.errorMessage = errorMessage

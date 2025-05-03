@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MediaRowView: View {
-    let data: DataModel
+    let data: MediaUIModel
     
     @State var isExpanded: Bool = false
     @State private var posterSize: CGSize = .zero
@@ -23,29 +23,33 @@ struct MediaRowView: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            MediaPosterView(.init(posterURL: data.posterURL, posterPlaceholder: data.placeholder))
+            MediaPosterView(.init(posterURL: data.posterURL, placeholder: data.placeholder))
                 .saveSize(in: $posterSize)
             VStack(alignment: .leading, spacing: 4) {
-                Text(data.title)
-                    .multilineTextAlignment(.leading)
-                    .textStyle(.mediumTitle)
-                if let subtitle = data.subtitle {
-                    Text(subtitle)
+                if let title = data.title {
+                    Text(title)
+                        .multilineTextAlignment(.leading)
+                        .textStyle(.mediumTitle)
+                }
+                if let details = data.details {
+                    Text(details)
                         .multilineTextAlignment(.leading)
                         .textStyle(.mediumSubtitle)
                         .fontWeight(.semibold)
                         .lineLimit(subtitleLineLimit)
                 }
-                FoldableTextView(text: data.overview, lineLimit: nil) {
-                    isExpanded = true
+                if let overview = data.overview {
+                    FoldableTextView(text: overview, lineLimit: nil) {
+                        isExpanded = true
+                    }
+                    .textStyle(.mediumText)
                 }
-                .textStyle(.mediumText)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }.frame(maxHeight: maxHeight)
     }
     
-    init(data: DataModel) {
+    init(data: MediaUIModel) {
         self.data = data
     }
 }
