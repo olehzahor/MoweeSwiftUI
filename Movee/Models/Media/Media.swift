@@ -18,27 +18,31 @@ enum MediaType: String, Codable {
 }
 
 // MARK: - Top-Level Media Model
-struct Media: Codable, Identifiable {
+struct Media: Codable, Equatable, Identifiable {
     var id: Int
-    let mediaType: MediaType
+    var mediaType: MediaType
 
     // Normalized common properties.
-    let title: String                // Display title (movie.title or tvshow.name)
-    let originalTitle: String        // movie.originalTitle or tvshow.originalName
-    let subtitle: String?
-    let tagline: String?
-    let overview: String
-    let posterPath: String?
-    let backdropPath: String?
-    let popularity: Double
-    let voteAverage: Double
-    let voteCount: Int
-    let releaseDate: String?
-    let genreIDs: [Int]
-    let genres: [Genre]?
+    var title: String                // Display title (movie.title or tvshow.name)
+    var originalTitle: String        // movie.originalTitle or tvshow.originalName
+    var subtitle: String?
+    var tagline: String?
+    var overview: String
+    var posterPath: String?
+    var backdropPath: String?
+    var popularity: Double
+    var voteAverage: Double
+    var voteCount: Int
+    var releaseDate: String?
+    var genreIDs: [Int]
+    var genres: [Genre]?
     
     // Type-specific extra info stored in an enum.
     var extra: ExtraInfo?
+    
+    static func == (lhs: Media, rhs: Media) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 // MARK: - Extra Info Enum
@@ -75,5 +79,9 @@ extension Media {
     var releaseYear: Int {
         guard let date = parsedReleaseDate else { return 1888 }
         return Calendar.current.component(.year, from: date)
+    }
+    
+    static var placeholder: Self {
+        .init(id: -9000, mediaType: .movie, title: .placeholder(.short), originalTitle: .placeholder(.short), overview: .placeholder(.custom(200)), popularity: 0, voteAverage: 10.0, voteCount: 1, genreIDs: [28, 18])
     }
 }

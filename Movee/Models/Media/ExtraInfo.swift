@@ -15,7 +15,7 @@ enum ExtraInfo: Codable {
 // MARK: - Movie Extra Details
 struct MovieExtra: Codable {
     let adult: Bool
-    //let belongsToCollection: BelongsToCollection?
+    let belongsToCollection: Collection?
     let budget: Int?
     let homepage: String?
     let imdbID: String?
@@ -29,7 +29,7 @@ struct MovieExtra: Codable {
     
     init(from movie: Movie) {
         self.adult = movie.adult
-        //self.belongsToCollection = movie.belongsToCollection
+        self.belongsToCollection = movie.belongsToCollection
         self.budget = movie.budget
         self.homepage = movie.homepage
         self.imdbID = movie.imdbID

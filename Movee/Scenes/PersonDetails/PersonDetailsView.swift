@@ -39,7 +39,7 @@ class PersonDetailsViewModel: ObservableObject {
         knownFor.publisherBuilder?(1).sink { completion in
             
         } receiveValue: { response in
-            self.knownForMedias = response.results
+            self.knownForMedias = Array(response.results.prefix(20))
         }.store(in: &cancellables)
     }
     
@@ -55,7 +55,7 @@ struct PersonDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                if let profilePicture = viewModel.person.profilePictureURL {
+                if let profilePicture = viewModel.person.largeProfilePictureURL {
                     AsyncImageView(url: profilePicture, width: 250, height: 375, cornerRadius: 8)                    .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.vertical)
                 }

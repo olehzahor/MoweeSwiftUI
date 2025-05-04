@@ -34,11 +34,16 @@ class MediasListViewModel: ObservableObject {
                     print("Error fetching medias: \(error)")
                 }
             } receiveValue: { [unowned self] response in
+                if response.page == 1 { medias = [] }
                 medias.append(contentsOf: response.results)
                 totalPages = response.total_pages
                 currentPage += 1
             }
             .store(in: &cancellables)
+    }
+    
+    func isLastLoaded(media: Media) -> Bool {
+        media.id == medias.last?.id
     }
     
     init(section: MediasSection) {

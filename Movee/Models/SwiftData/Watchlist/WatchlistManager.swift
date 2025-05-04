@@ -41,7 +41,7 @@ class WatchlistManager: WatchlistManagerInterface {
     
     func addToWatchlist(_ media: Media) async {
         do {
-            let item = WatchlistItem(media: media)
+            let item = WatchlistItem(media: .init(media))
             try await dataService.create(item)
             Logger.shared.log("Successfully added \(media.title) (\(media.id)) to watchlist", level: .info)
             await fetchAndSendItems()

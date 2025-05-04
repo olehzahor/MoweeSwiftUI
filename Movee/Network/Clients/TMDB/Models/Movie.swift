@@ -11,7 +11,7 @@ struct Movie: Codable, Identifiable {
     let id: Int
     let adult: Bool
     let backdropPath: String?
-    let belongsToCollection: BelongsToCollection?
+    let belongsToCollection: Collection?
     let budget: Int?
     let genreIDs: [Int]?
     let genres: [Genre]?
@@ -68,7 +68,7 @@ extension Movie {
             id: 950387,
             adult: false,
             backdropPath: "/2Nti3gYAX513wvhp8IiLL6ZDyOm.jpg",
-            belongsToCollection: BelongsToCollection(
+            belongsToCollection: Collection(
                 id: 1461530,
                 name: "The Minecraft Movie Collection",
                 posterPath: nil,
