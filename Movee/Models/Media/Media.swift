@@ -71,13 +71,22 @@ extension Media {
         genreStrings.joined(separator: " · ")
     }
     
+    var detailsString: String {
+        [
+          releaseYear.map(String.init),
+          genresString.isEmpty ? nil : genresString
+        ]
+        .compactMap { $0 }
+        .joined(separator: " · ")
+    }
+    
     var parsedReleaseDate: Date? {
         guard let releaseDate else { return nil }
         return MediaFormatterService.shared.parse(dateString: releaseDate)
     }
     
-    var releaseYear: Int {
-        guard let date = parsedReleaseDate else { return 1888 }
+    var releaseYear: Int? {
+        guard let date = parsedReleaseDate else { return nil }
         return Calendar.current.component(.year, from: date)
     }
     

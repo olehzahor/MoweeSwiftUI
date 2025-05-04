@@ -55,7 +55,7 @@ struct AsyncImageView: View {
                         case .success(let image):
                             image
                                 .resizable()
-                                .aspectRatio(contentMode: .fill)
+                                .scaledToFill()
                                 .onAppear {
                                     isLoaded = true
                                 }

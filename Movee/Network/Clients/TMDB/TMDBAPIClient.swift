@@ -100,9 +100,16 @@ final class TMDBAPIClient {
         return getPublisher(for: "search/multi", parameters: ["query": query, "page": page, "include_adult": includeAdult])
     }
 
-    /// Fetches a movie collection and its parts (movies) by collection ID.
     func fetchCollection(collectionID: Int) -> AnyPublisher<CollectionResponse, Error> {
         return getPublisher(for: "collection/\(collectionID)")
+    }
+    
+    func fetchMovieVideos(movieID: Int) -> AnyPublisher<VideoResponse, Error> {
+        return getPublisher(for: "movie/\(movieID)/videos")
+    }
+
+    func fetchTVShowVideos(tvShowID: Int) -> AnyPublisher<VideoResponse, Error> {
+        return getPublisher(for: "tv/\(tvShowID)/videos")
     }
     
     private init() { }

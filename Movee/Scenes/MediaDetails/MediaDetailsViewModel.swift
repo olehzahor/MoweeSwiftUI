@@ -12,7 +12,7 @@ import Combine
 
 extension MediaDetailsViewModel {
     enum Section {
-        case initial, details, seasons, watchlist, credits, related, reviews
+        case initial, details, seasons, watchlist, credits, related, reviews, videos
     }
 }
 
@@ -27,6 +27,7 @@ final class MediaDetailsViewModel: ObservableObject {
     @Published var related: [Media]?
     @Published var reviews: [Review]?
     @Published var seasons: [Season]?
+    @Published var videos: [Video]?
     
     var seasonModels: [MediaUIModel]? {
         guard let media, let seasons else { return nil }
@@ -159,12 +160,37 @@ final class MediaDetailsViewModel: ObservableObject {
             self.state.setLoaded(.reviews, isEmpty: response.results.isEmpty)
         }.store(in: &cancellables)
     }
+    
+    func fetchVideos() {
+        state.setLoading(.videos)
+        
+        // Choose the right endpoint based on movie vs. TV show
+        let publisher: AnyPublisher<VideoResponse, Error> = switch mediaIdentifier.type {
+        case .movie:
+            TMDBAPIClient.shared.fetchMovieVideos(movieID: mediaIdentifier.id)
+        case .tvShow:
+            TMDBAPIClient.shared.fetchTVShowVideos(tvShowID: mediaIdentifier.id)
+        }
+        
+        publisher
+            .sink { [weak self] completion in
+                if case let .failure(error) = completion {
+                    self?.state.setError(.videos, error)
+                }
+            } receiveValue: { [weak self] response in
+                let trailers = response.results.filter { $0.type == .trailer && ($0.official ?? false) }
+                self?.videos = trailers
+                self?.state.setLoaded(.videos, isEmpty: trailers.isEmpty)
+            }
+            .store(in: &cancellables)
+    }
         
     func fetchInitialData() {
         fetchDetails()
         fetchCredits()
         fetchRelated()
         fetchReviews()
+        fetchVideos()
     }
         
     init(media: Media) {

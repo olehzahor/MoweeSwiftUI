@@ -21,6 +21,12 @@ struct Collection: Codable {
     }
 }
 
+extension Collection {
+    var backdropURL: URL? {
+        TMDBImageURLProvider.shared.url(path: backdropPath, size: .w780)
+    }
+}
+
 // ProductionCompany
 struct ProductionCompany: Codable, Identifiable {
     let id: Int
