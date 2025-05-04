@@ -8,17 +8,78 @@
 import SwiftUI
 import Combine
 
-struct MediaCollectionView: View {
-    var collection: Collection
+import SwiftUI
+
+struct MediaVideosCarouselView: View {
+    let videos: [Video]
+    private let horizontalPadding: CGFloat = 20
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Trailers")
+                .textStyle(.sectionTitle)
+                .padding(.bottom, 0)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(videos, id: \.id) { video in
+                        MediaVideoView(title: video.name, backdropURL: video.thumbnailURL)
+                            .containerRelativeFrame(.horizontal)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollDisabled(videos.count <= 1)
+            .scrollTargetBehavior(.viewAligned)
+            .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
+            .padding(.horizontal, -horizontalPadding)
+        }
+    }
+}
+
+struct MediaVideoView: View {
+    var title: String
+    var backdropURL: URL?
+    
+    @State private var size: CGSize = .zero
+    
+    var body: some View {
+        VStack {
+            ZStack(alignment: .center) {
+                AsyncImageView(url: backdropURL, height: size.width * 9/16)
+                    .saveSize(in: $size)
+                Color.secondary.opacity(0.1)
+                Image(systemName: "play.circle")
+                    .font(.system(size: 50))
+                    .foregroundColor(.white)
+                
+            }.clipShape(.rect(cornerRadius: 8))
+            Text(title)
+                .foregroundStyle(.secondary)
+                .textStyle(.smallTitle)
+                .lineLimit(1)
+        }
+    }
+}
+
+
+struct MediaBackdropView: View {
+    var title: String
+    var backdropURL: URL?
+    
+    @State private var size: CGSize = .zero
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            AsyncImageView(url: TMDBImageURLProvider.shared.url(path: collection.backdropPath, size: .w500))
+            Color.secondary
+            AsyncImageView(url: backdropURL, height: size.width * 9/16)
+                .saveSize(in: $size)
+                .opacity(0.9)
             LinearGradient(
                 colors: [.clear, .black.opacity(0.5)],
                 startPoint: .center,
                 endPoint: .bottom)
-            Text(collection.name)
+            Text(title)
                 .foregroundStyle(.white)
                 .textStyle(.smallTitle)
                 .padding()
@@ -48,7 +109,10 @@ struct MediaCollectionsCarouselView: View {
                         NavigationLink {
                             MediasListView(section: getMediasSection(for: collection))
                         } label: {
-                            MediaCollectionView(collection: collection)
+                            MediaBackdropView(
+                                title: collection.name,
+                                backdropURL: collection.backdropURL
+                            )
                         }
                         .containerRelativeFrame(.horizontal)
                         .aspectRatio(16/9, contentMode: .fill)
@@ -90,6 +154,8 @@ struct MediaDetailsView: View {
                             Text(media.overview)
                                 .textStyle(.mediumText)
                         }
+                        
+                        MediaVideosCarouselView(videos: viewModel.videos ?? [])
                         
                         MediasSectionView(
                             section: .init(title: "Seasons"),

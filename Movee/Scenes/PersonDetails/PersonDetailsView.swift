@@ -8,45 +8,7 @@
 import SwiftUI
 import Combine
 
-class PersonDetailsViewModel: ObservableObject {
-    @Published var person: MediaPerson
-    @Published var knownForMedias: [Media]?
-    
-    lazy var knownFor = MediasSection(title: "Known for") { _ in
-        TMDBAPIClient.shared.fetchPersonCredits(personID: self.person.id)
-            .map { response in
-                // Combine cast and crew, then filter unique by id
-                let combined = response.cast + response.crew
-                let unique = combined.reduce(into: [Media]()) { result, item in
-                    if !result.contains(where: { $0.id == item.media.id }) {
-                        result.append(item.media)
-                    }
-                }
-                // Sort by popularity and wrap
-                return .wrap(unique.sorted(by: { $0.voteCount >= $1.voteCount }))
-            }
-            .eraseToAnyPublisher()
-    }
-    private var cancellables = Set<AnyCancellable>()
 
-    func fetchDetails() {
-        TMDBAPIClient.shared.fetchPersonDetails(personID: person.id).sink { completion in
-            
-        } receiveValue: { person in
-            self.person = MediaPerson(person: person)
-        }.store(in: &cancellables)
-        
-        knownFor.publisherBuilder?(1).sink { completion in
-            
-        } receiveValue: { response in
-            self.knownForMedias = Array(response.results.prefix(20))
-        }.store(in: &cancellables)
-    }
-    
-    init(person: MediaPerson) {
-        self.person = person
-    }
-}
 
 struct PersonDetailsView: View {
     @StateObject var viewModel: PersonDetailsViewModel

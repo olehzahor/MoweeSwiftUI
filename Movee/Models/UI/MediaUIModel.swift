@@ -32,7 +32,7 @@ extension MediaUIModel {
         self.id = media.id
         self.title = media.title
         self.subtitle = media.subtitle
-        self.details = media.subtitle ?? "\(media.releaseYear) · \(media.genresString)"
+        self.details = media.subtitle ?? media.detailsString
         self.overview = media.overview
         self.posterURL = media.posterURL
         self.placeholder = .imageMoviePlaceholder

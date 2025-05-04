@@ -15,18 +15,26 @@ struct MediaDetailedInfoView: View {
     var genres: String
     var mediaRating: Double?
     
-    private var releaseDateString: String {
-        MediaFormatterService.shared.format(date: releaseDate)
+    private var releaseDateString: String? {
+        guard let releaseDate else { return nil }
+        return MediaFormatterService.shared.format(date: releaseDate)
     }
 
     private var durationString: String? {
-        guard let duration else { return nil }
+        guard let duration, duration > 0 else { return nil }
         return MediaFormatterService.shared.format(duration: duration)
     }
     
     private var subtitle: String {
         let strings = [releaseDateString, durationString].compactMap { $0 }
-        return strings.joined(separator: " · ") + "\n\(genres)"
+        var string = strings.joined(separator: " · ")
+        if !string.isEmpty {
+            string += "\n"
+        }
+        if !genres.isEmpty {
+            string += "\(genres)"
+        }
+        return string
     }
     
     var body: some View {
