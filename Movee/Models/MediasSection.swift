@@ -25,7 +25,7 @@ extension Array where Element == MediasSection {
     static var homePageSections: [MediasSection] = [
         MediasSection(title: "Watchlist", publisherBuilder: { _ in
             WatchlistManager.shared.itemsPublisher
-                .map { PaginatedResponse(page: 1, results: $0.map({ $0.media }), total_pages: 1, total_results: $0.count) }
+                .map { PaginatedResponse(page: 1, results: $0.map({ .init($0.media) }), total_pages: 1, total_results: $0.count) }
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }),

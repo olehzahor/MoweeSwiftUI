@@ -7,8 +7,8 @@
 
 import Foundation
 
-// BelongsToCollection
-struct BelongsToCollection: Codable {
+// Collection
+struct Collection: Codable {
     let id: Int
     let name: String
     let posterPath: String?

@@ -144,8 +144,13 @@ extension MediaPerson {
     }
     
     var profilePictureURL: URL? {
-        guard let profilePath = self.profilePath else { return nil }
-        return URL(string: "https://image.tmdb.org/t/p/w154" + profilePath)
+        guard let profilePath else { return nil }
+        return TMDBImageURLProvider.shared.url(path: profilePath, size: .w154)
+    }
+    
+    var largeProfilePictureURL: URL? {
+        guard let profilePath else { return nil }
+        return TMDBImageURLProvider.shared.url(path: profilePath, size: .w780)
     }
     
     var placeholderImage: UIImage? {

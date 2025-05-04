@@ -11,22 +11,45 @@ import Combine
 struct MediasListView: View {
     @StateObject var viewModel: MediasListViewModel
 
+    private var medias: [Media] {
+        if !viewModel.medias.isEmpty {
+            return viewModel.medias
+        } else {
+            return Array(repeating: .placeholder, count: 10)
+        }
+    }
+    
+    private func setupRowView(_ media: Media) -> AnyView {
+        var view: any View = MediaRowView(data: .init(media: media)).onAppear {
+            if viewModel.isLastLoaded(media: media) {
+                viewModel.fetchMedias()
+            }
+        }
+        
+        if media == .placeholder {
+            view = view.redacted(reason: .placeholder).shimmering()
+            return AnyView(view)
+        } else {
+            return AnyView(
+                NavigationLink {
+                    MediaDetailsView(media: media)
+                } label: {
+                    AnyView(view)
+                }
+            )
+        }
+    }
+    
     var body: some View {
         NavigationStack {
-            List(viewModel.medias) { media in
-                NavigationLink {
-                    let mediaCopy = media
-                    MediaDetailsView(media: mediaCopy)
-                } label: {
-                    MediaRowView(data: .init(media: media))
-                        .onAppear {
-                            if media.id == viewModel.medias.last?.id {
-                                viewModel.fetchMedias()
-                            }
-                        }
-                }.listRowSeparator(.hidden)
+            List(Array(medias.enumerated()), id: \.0) { _, media in
+                ZStack {
+                    setupRowView(media)
+                }
+                .listRowSeparator(.hidden)
             }
             .listStyle(.plain)
+            .scrollIndicators(.hidden)
             .onAppear {
                 viewModel.fetchMedias()
             }

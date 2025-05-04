@@ -8,6 +8,62 @@
 import SwiftUI
 import Combine
 
+struct MediaCollectionView: View {
+    var collection: Collection
+    
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            AsyncImageView(url: TMDBImageURLProvider.shared.url(path: collection.backdropPath, size: .w500))
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.5)],
+                startPoint: .center,
+                endPoint: .bottom)
+            Text(collection.name)
+                .foregroundStyle(.white)
+                .textStyle(.smallTitle)
+                .padding()
+        }.clipShape(.rect(cornerRadius: 8))
+    }
+}
+
+struct MediaCollectionsCarouselView: View {
+    var collections: [Collection]
+    private let horizontalPadding: CGFloat = 20
+    
+    private func getMediasSection(for collection: Collection) -> MediasSection {
+        .init(title: collection.name) { _ in
+            TMDBAPIClient.shared.fetchCollection(collectionID: collection.id)
+                .map { .wrap($0.parts.map({ .init(movie: $0) })) }
+                .eraseToAnyPublisher()
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Collections")
+                .textStyle(.sectionTitle).padding(.bottom, 0)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(collections, id: \.id) { collection in
+                        NavigationLink {
+                            MediasListView(section: getMediasSection(for: collection))
+                        } label: {
+                            MediaCollectionView(collection: collection)
+                        }
+                        .containerRelativeFrame(.horizontal)
+                        .aspectRatio(16/9, contentMode: .fill)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollDisabled(collections.count <= 1)
+            .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
+            .scrollTargetBehavior(.viewAligned)
+            .padding(.horizontal, -horizontalPadding)
+        }
+    }
+}
+
 struct MediaDetailsView: View {
     @StateObject var viewModel: MediaDetailsViewModel
     
@@ -55,6 +111,11 @@ struct MediaDetailsView: View {
                             retry: { viewModel.fetchRelated() }
                         )
                         .hideWhen(viewModel.state.isEmpty(.related))
+                        
+                        if case .movie(let extra) = viewModel.media?.extra {
+                            MediaCollectionsCarouselView(collections: [extra.belongsToCollection].compactMap({ $0 }))
+                        }
+                        
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
