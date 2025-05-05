@@ -23,8 +23,11 @@ struct MediaVideosCarouselView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     ForEach(videos, id: \.id) { video in
-                        MediaVideoView(title: video.name, backdropURL: video.thumbnailURL)
-                            .containerRelativeFrame(.horizontal)
+                        MediaVideoView(
+                            title: video.name,
+                            backdropURL: video.thumbnailURL,
+                            videoKey: video.key
+                        ).containerRelativeFrame(.horizontal)
                     }
                 }
                 .scrollTargetLayout()
@@ -40,25 +43,45 @@ struct MediaVideosCarouselView: View {
 struct MediaVideoView: View {
     var title: String
     var backdropURL: URL?
-    
+    var videoKey: String?
+
     @State private var size: CGSize = .zero
+    @State private var isPlayerVisible: Bool = false
+    @State private var isPlayerLoading: Bool = false
+
+    private var youtubeURL: URL? {
+        guard let videoKey else { return nil }
+        return URL(string: "https://www.youtube.com/embed/\(videoKey)?playsinline=1&autoplay=1")
+    }
     
     var body: some View {
-        VStack {
+        ZStack {
             ZStack(alignment: .center) {
                 AsyncImageView(url: backdropURL, height: size.width * 9/16)
                     .saveSize(in: $size)
                 Color.secondary.opacity(0.1)
-                Image(systemName: "play.circle")
-                    .font(.system(size: 50))
-                    .foregroundColor(.white)
-                
-            }.clipShape(.rect(cornerRadius: 8))
-            Text(title)
-                .foregroundStyle(.secondary)
-                .textStyle(.smallTitle)
-                .lineLimit(1)
+                if isPlayerLoading {
+                    ProgressView()
+                } else {
+                    Image(systemName: "play.circle")
+                        .font(.system(size: 50))
+                        .foregroundColor(.white)
+                }
+            }
+            .onTapGesture {
+                isPlayerVisible = true
+                isPlayerLoading = true
+            }
+            
+            if isPlayerVisible, let youtubeURL {
+                WebView(.url(youtubeURL)).onLoadingStateChanged { _, isLoading in
+                    isPlayerLoading = isLoading
+                }
+                .opacity(isPlayerLoading ? 0 : 1)
+                .animation(.easeOut, value: isPlayerLoading)
+            }
         }
+        .clipShape(.rect(cornerRadius: 8))
     }
 }
 
