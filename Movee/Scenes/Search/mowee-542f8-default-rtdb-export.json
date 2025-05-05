@@ -1,0 +1,514 @@
+{
+  "discoverLists": [
+    {
+      "localizedNames": {
+        "es": "Películas de éxito de todos los tiempos",
+        "ru": "Лучшие фильмы всех времён",
+        "uk": "Найкращі фільми усіх часів"
+      },
+      "name": "Top Movies of All Time",
+      "path": "discover/movie",
+      "query": "vote_count.gte=7000&sort_by=vote_average.desc"
+    },
+    {
+      "localizedNames": {
+        "es": "Programas de TV mejor calificados",
+        "ru": "Лучшие сериалы",
+        "uk": "Найкращі сераіли"
+      },
+      "mediaType": "tv",
+      "name": "Top Rated TV Shows",
+      "path": "discover/tv",
+      "query": "vote_count.gte=1000&sort_by=vote_count.desc"
+    },
+    {
+      "localizedNames": {
+        "es": "Películas principales por género",
+        "ru": "Лучшие фильмы по жанрам",
+        "uk": "Найкращі фільми за жанрами"
+      },
+      "name": "Top Movies by Genre",
+      "nestedLists": [
+        {
+          "localizedNames": {
+            "es": "Bélica",
+            "ru": "Военный",
+            "uk": "Воєнний"
+          },
+          "mediaType": "movie",
+          "name": "War",
+          "path": "discover/movie",
+          "query": "with_genres=10752&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Crimen",
+            "ru": "Криминал",
+            "uk": "Кримінал"
+          },
+          "mediaType": "movie",
+          "name": "Crime",
+          "path": "discover/movie",
+          "query": "with_genres=80&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Música",
+            "ru": "Музыка",
+            "uk": "Музика"
+          },
+          "mediaType": "movie",
+          "name": "Music",
+          "path": "discover/movie",
+          "query": "with_genres=10402&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Comedia",
+            "ru": "Комедия",
+            "uk": "Комедія"
+          },
+          "mediaType": "movie",
+          "name": "Comedy",
+          "path": "discover/movie",
+          "query": "with_genres=35&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Historia",
+            "ru": "История",
+            "uk": "Історичний"
+          },
+          "mediaType": "movie",
+          "name": "History",
+          "path": "discover/movie",
+          "query": "with_genres=36&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Western",
+            "ru": "Вестерн",
+            "uk": "Вестерн"
+          },
+          "mediaType": "movie",
+          "name": "Western",
+          "path": "discover/movie",
+          "query": "with_genres=37&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Suspense",
+            "ru": "Триллер",
+            "uk": "Трилер"
+          },
+          "mediaType": "movie",
+          "name": "Thriller",
+          "path": "discover/movie",
+          "query": "with_genres=53&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Misterio",
+            "ru": "Детектив",
+            "uk": "Детектив"
+          },
+          "mediaType": "movie",
+          "name": "Mystery",
+          "path": "discover/movie",
+          "query": "with_genres=9648&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Aventura",
+            "ru": "Приключения",
+            "uk": "Пригоди"
+          },
+          "mediaType": "movie",
+          "name": "Adventure",
+          "path": "discover/movie",
+          "query": "with_genres=12&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Película de TV",
+            "ru": "Телевизионный фильм",
+            "uk": "Телефільм"
+          },
+          "mediaType": "movie",
+          "name": "TV Movie",
+          "path": "discover/movie",
+          "query": "with_genres=10770&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Fantasía",
+            "ru": "Фэнтези",
+            "uk": "Фентезі"
+          },
+          "mediaType": "movie",
+          "name": "Fantasy",
+          "path": "discover/movie",
+          "query": "with_genres=14&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Animación",
+            "ru": "Мультфильм",
+            "uk": "Мультфільм"
+          },
+          "mediaType": "movie",
+          "name": "Animation",
+          "path": "discover/movie",
+          "query": "with_genres=16&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Drama",
+            "ru": "Драма",
+            "uk": "Драма"
+          },
+          "mediaType": "movie",
+          "name": "Drama",
+          "path": "discover/movie",
+          "query": "with_genres=18&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Documental",
+            "ru": "Документальный",
+            "uk": "Документальний"
+          },
+          "mediaType": "movie",
+          "name": "Documentary",
+          "path": "discover/movie",
+          "query": "with_genres=99&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Ciencia ficción",
+            "ru": "Фантастика",
+            "uk": "Фантастика"
+          },
+          "mediaType": "movie",
+          "name": "Science Fiction",
+          "path": "discover/movie",
+          "query": "with_genres=878&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Terror",
+            "ru": "Ужасы",
+            "uk": "Жахи"
+          },
+          "mediaType": "movie",
+          "name": "Horror",
+          "path": "discover/movie",
+          "query": "with_genres=27&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Acción",
+            "ru": "Боевик",
+            "uk": "Бойовик"
+          },
+          "mediaType": "movie",
+          "name": "Action",
+          "path": "discover/movie",
+          "query": "with_genres=28&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Romance",
+            "ru": "Мелодрама",
+            "uk": "Мелодрама"
+          },
+          "mediaType": "movie",
+          "name": "Romance",
+          "path": "discover/movie",
+          "query": "with_genres=10749&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Familia",
+            "ru": "Семейный",
+            "uk": "Сімейний"
+          },
+          "mediaType": "movie",
+          "name": "Family",
+          "path": "discover/movie",
+          "query": "with_genres=10751&sort_by=vote_count.desc"
+        }
+      ]
+    },
+    {
+      "localizedNames": {
+        "es": "Principales programas de TV por género",
+        "ru": "Лучшие сериалы по жанрам",
+        "uk": "Найкращі серіали за жанрами"
+      },
+      "name": "Top TV Shows by Genre",
+      "nestedLists": [
+        {
+          "localizedNames": {
+            "es": "Crimen",
+            "ru": "Криминал",
+            "uk": "Кримінал"
+          },
+          "mediaType": "tv",
+          "name": "Crime",
+          "path": "discover/tv",
+          "query": "with_genres=80&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Comedia",
+            "ru": "Комедия",
+            "uk": "Комедія"
+          },
+          "mediaType": "tv",
+          "name": "Comedy",
+          "path": "discover/tv",
+          "query": "with_genres=35&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Western",
+            "ru": "Вестерн",
+            "uk": "Вестерн"
+          },
+          "mediaType": "tv",
+          "name": "Western",
+          "path": "discover/tv",
+          "query": "with_genres=37&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Action & Adventure",
+            "ru": "Боевик и приключения",
+            "uk": "Екшн і Пригоди"
+          },
+          "mediaType": "tv",
+          "name": "Action & Adventure",
+          "path": "discover/tv",
+          "query": "with_genres=10759&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Misterio",
+            "ru": "Детектив",
+            "uk": "Детектив"
+          },
+          "mediaType": "tv",
+          "name": "Mystery",
+          "path": "discover/tv",
+          "query": "with_genres=9648&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Kids",
+            "ru": "Детский",
+            "uk": "Дитячий"
+          },
+          "mediaType": "tv",
+          "name": "Kids",
+          "path": "discover/tv",
+          "query": "with_genres=10762&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "News",
+            "ru": "Новости",
+            "uk": "Новини"
+          },
+          "mediaType": "tv",
+          "name": "News",
+          "path": "discover/tv",
+          "query": "with_genres=10763&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Reality",
+            "ru": "Реалити-шоу",
+            "uk": "Реаліті-шоу"
+          },
+          "mediaType": "tv",
+          "name": "Reality",
+          "path": "discover/tv",
+          "query": "with_genres=10764&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Sci-Fi & Fantasy",
+            "ru": "Фантастика и фэнтези",
+            "uk": "Науково фантастичний"
+          },
+          "mediaType": "tv",
+          "name": "Sci-Fi & Fantasy",
+          "path": "discover/tv",
+          "query": "with_genres=10765&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Soap",
+            "ru": "Мыльная опера",
+            "uk": "Мильна опера"
+          },
+          "mediaType": "tv",
+          "name": "Soap",
+          "path": "discover/tv",
+          "query": "with_genres=10766&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Talk",
+            "ru": "Ток-шоу",
+            "uk": "Ток-шоу"
+          },
+          "mediaType": "tv",
+          "name": "Talk",
+          "path": "discover/tv",
+          "query": "with_genres=10767&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Animación",
+            "ru": "Мультфильм",
+            "uk": "Мультфільм"
+          },
+          "mediaType": "tv",
+          "name": "Animation",
+          "path": "discover/tv",
+          "query": "with_genres=16&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Drama",
+            "ru": "Драма",
+            "uk": "Драма"
+          },
+          "mediaType": "tv",
+          "name": "Drama",
+          "path": "discover/tv",
+          "query": "with_genres=18&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Documental",
+            "ru": "Документальный",
+            "uk": "Документальний"
+          },
+          "mediaType": "tv",
+          "name": "Documentary",
+          "path": "discover/tv",
+          "query": "with_genres=99&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "War & Politics",
+            "ru": "Война и политика",
+            "uk": "Політика та війна"
+          },
+          "mediaType": "tv",
+          "name": "War & Politics",
+          "path": "discover/tv",
+          "query": "with_genres=10768&sort_by=vote_count.desc"
+        },
+        {
+          "localizedNames": {
+            "es": "Familia",
+            "ru": "Семейный",
+            "uk": "Сімейний"
+          },
+          "mediaType": "tv",
+          "name": "Family",
+          "path": "discover/tv",
+          "query": "with_genres=10751&sort_by=vote_count.desc"
+        }
+      ]
+    },
+    {
+      "localizedNames": {
+        "es": "Nominados al Oscar a la Mejor Película 2021",
+        "ru": "Номинанты \"Оскар-2021\"",
+        "uk": "Номінанти \"Оскар-2021\""
+      },
+      "mediaType": "themedList",
+      "name": "2021 Best Picture Oscar Nominees",
+      "path": "list/7082281",
+      "query": ""
+    },
+    {
+      "localizedNames": {
+        "es": "Ganadoras del Oscar a la mejor película",
+        "ru": "\"Оскар\" за лучший фильм",
+        "uk": "\"Оскар\" за найкращий фильм"
+      },
+      "mediaType": "themedList",
+      "name": "Best Picture Oscar Winners",
+      "path": "list/28",
+      "query": ""
+    },
+    {
+      "localizedNames": {
+        "es": "Las mejores películas de 2021",
+        "ru": "Лучшие фильмы 2021-го года",
+        "uk": "Найкращі фільми 2021-го року"
+      },
+      "name": "Best Movies of 2021",
+      "path": "discover/movie",
+      "query": "primary_release_date.lte=2021-12-31&vote_average.gte=6&primary_release_date.gte=2021-01-01&sort_by=vote_count.desc"
+    },
+    {
+      "localizedNames": {
+        "es": "Las mejores películas de 2020",
+        "ru": "Лучшие фильмы 2020-го года",
+        "uk": "Найкращі фільми 2020-го року"
+      },
+      "name": "Best Movies of 2020",
+      "path": "discover/movie",
+      "query": "primary_release_date.lte=2020-12-31&vote_average.gte=6&primary_release_date.gte=2020-01-01&sort_by=vote_count.desc"
+    },
+    {
+      "localizedNames": {
+        "es": "Las mejores películas del siglo XXI",
+        "ru": "Лучшие фильмы XXI века",
+        "uk": "Найкращі фільми XXI століття"
+      },
+      "name": "Greatest Movies of the 21st Century",
+      "path": "discover/movie",
+      "query": "sort_by=vote_average.desc&primary_release_date.lte=2099-12-31&primary_release_date.gte=2000-01-01&vote_count.gte=3000"
+    }
+  ],
+  "homeLists": [
+    {
+      "mediaType": "movie",
+      "name": "Popular Movies",
+      "path": "movie/popular",
+      "query": ""
+    },
+    {
+      "mediaType": "movie",
+      "name": "Trending Movies",
+      "path": "trending/movie/day",
+      "query": ""
+    },
+    {
+      "mediaType": "tv",
+      "name": "Popular TV Shows",
+      "path": "tv/popular",
+      "query": ""
+    },
+    {
+      "mediaType": "movie",
+      "name": "Now Playing Movies",
+      "path": "movie/now_playing",
+      "query": ""
+    },
+    {
+      "mediaType": "tv",
+      "name": "Currently Airing TV Shows",
+      "path": "tv/on_the_air",
+      "query": ""
+    }
+  ]
+}

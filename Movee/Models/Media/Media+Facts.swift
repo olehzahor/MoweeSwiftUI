@@ -24,11 +24,12 @@ extension Media {
         let formatter = MediaFormatterService.shared
         
         var titleString = title
-        if !originalTitle.isEmpty, originalTitle != title {
-            titleString += " (\(originalTitle))"
-        }
         
-        items.append(.init(key: "Title", value: titleString))
+        items.append(.init(key: "Title", value: title))
+        
+        if !originalTitle.isEmpty, originalTitle != title {
+            items.append(.init(key: "Original title", value: originalTitle))
+        }
 
         // 1. Release Date using the already parsed date.
         items.append(.init(key: "Release Date", value: formatter.format(date: parsedReleaseDate, style: .full)))
@@ -78,6 +79,8 @@ extension Media {
         var items = [KeyValueItem<String>]()
         let formatter = MediaFormatterService.shared
         
+        items.append(.init(key: "Title", value: title))
+
         if !originalTitle.isEmpty, originalTitle != title {
             items.append(.init(key: "Original title", value: originalTitle))
         }
@@ -106,10 +109,13 @@ extension Media {
         }
         
         // 5. Next Episode – provide a simplified example.
-//        if let nextEp = tvShowExtra.nextEpisodeToAir {
-//            let nextEpDetail = "Episode \(nextEp.episodeNumber) (Season \(nextEp.seasonNumber))"
-//            items.append(.init(key: "Next Episode", value: nextEpDetail))
-//        }
+        if let nextEp = tvShowExtra.nextEpisodeToAir {
+            var nextEpDetail = "Episode \(nextEp.episodeNumber) (Season \(nextEp.seasonNumber))"
+            if let airDate = nextEp.formattedAirDate, !airDate.isEmpty {
+                nextEpDetail += "\n" + airDate
+            }
+            items.append(.init(key: "Next Episode", value: nextEpDetail))
+        }
         
         // 6. Country: using originCountry.
         if let originCountries = tvShowExtra.originCountry, !originCountries.isEmpty {
