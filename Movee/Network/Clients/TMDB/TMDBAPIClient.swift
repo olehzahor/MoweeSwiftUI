@@ -111,6 +111,28 @@ final class TMDBAPIClient {
     func fetchTVShowVideos(tvShowID: Int) -> AnyPublisher<VideoResponse, Error> {
         return getPublisher(for: "tv/\(tvShowID)/videos")
     }
+
+    /// Fetches a custom paginated list from the specified endpoint with raw query string parameters.
+    /// - Parameters:
+    ///   - endpoint: the TMDB path (e.g., "discover/tv").
+    ///   - query: the raw query string, without leading "?" (e.g., "vote_count.gte=1000&sort_by=vote_count.desc").
+    ///   - page: the page number (default is 1).
+    func fetchCustomList<T: Decodable>(
+        endpoint: String,
+        query: String,
+        page: Int = 1
+    ) -> AnyPublisher<PaginatedResponse<T>, Error> {
+        // Parse raw query string into parameters dictionary
+        var parameters = [String: Any]()
+        for component in query.split(separator: "&") {
+            let parts = component.split(separator: "=", maxSplits: 1).map(String.init)
+            if parts.count == 2 {
+                parameters[parts[0]] = parts[1]
+            }
+        }
+        parameters["page"] = page
+        return getPublisher(for: endpoint, parameters: parameters)
+    }
     
     private init() { }
 }

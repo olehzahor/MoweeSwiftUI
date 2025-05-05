@@ -1,20 +1,20 @@
 //
-//  WatchlistItem.swift
+//  FavoriteMedia.swift
 //  Movee
 //
-//  Created by user on 4/3/25.
+//  Created by user on 5/5/25.
 //
 
 import Foundation
 import SwiftData
 
 @Model
-final class WatchlistItem: Sendable {
-    var media: StoredMedia
+final class FavoriteMedia: Sendable {
     var added: Date
+    var media: StoredMedia
     
     init(media: StoredMedia) {
-        self.media = media
         self.added = Date()
+        self.media = media
     }
 }

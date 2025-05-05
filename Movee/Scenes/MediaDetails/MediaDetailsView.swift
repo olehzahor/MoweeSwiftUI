@@ -22,13 +22,19 @@ struct MediaVideosCarouselView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(videos, id: \.id) { video in
-                        MediaVideoView(
-                            title: video.name,
-                            backdropURL: video.thumbnailURL,
-                            videoKey: video.key
-                        ).containerRelativeFrame(.horizontal)
-                    }
+                    Group {
+                        if videos.isEmpty {
+                            ForEach(0..<3, id: \.self) { _ in
+                                MediaVideoView(data: .placeholder)
+                                .shimmering()
+                                .disabled(true)
+                            }
+                        } else {
+                            ForEach(videos, id: \.id) { video in
+                                MediaVideoView(data: .init(video: video))
+                            }
+                        }
+                    }.containerRelativeFrame(.horizontal)
                 }
                 .scrollTargetLayout()
             }
@@ -41,23 +47,41 @@ struct MediaVideosCarouselView: View {
 }
 
 struct MediaVideoView: View {
-    var title: String
-    var backdropURL: URL?
-    var videoKey: String?
+    struct DataModel {
+        var title: String
+        var backdropURL: URL?
+        var videoKey: String?
+        
+        var youtubeURL: URL? {
+            guard let videoKey else { return nil }
+            return URL(string: "https://www.youtube.com/embed/\(videoKey)?playsinline=1&autoplay=1&rel=0")
+        }
+        
+        static var placeholder = Self(title: .placeholder(.short))
+        
+        init(title: String, backdropURL: URL? = nil, videoKey: String? = nil) {
+            self.title = title
+            self.backdropURL = backdropURL
+            self.videoKey = videoKey
+        }
+        
+        init(video: Video) {
+            self.title = video.name
+            self.backdropURL = video.thumbnailURL
+            self.videoKey = video.key
+        }
+    }
 
+    var data: DataModel
+    
     @State private var size: CGSize = .zero
     @State private var isPlayerVisible: Bool = false
     @State private var isPlayerLoading: Bool = false
 
-    private var youtubeURL: URL? {
-        guard let videoKey else { return nil }
-        return URL(string: "https://www.youtube.com/embed/\(videoKey)?playsinline=1&autoplay=1")
-    }
-    
     var body: some View {
         ZStack {
             ZStack(alignment: .center) {
-                AsyncImageView(url: backdropURL, height: size.width * 9/16)
+                AsyncImageView(url: data.backdropURL, height: size.width * 9/16)
                     .saveSize(in: $size)
                 Color.secondary.opacity(0.1)
                 if isPlayerLoading {
@@ -73,7 +97,7 @@ struct MediaVideoView: View {
                 isPlayerLoading = true
             }
             
-            if isPlayerVisible, let youtubeURL {
+            if isPlayerVisible, let youtubeURL = data.youtubeURL {
                 WebView(.url(youtubeURL)).onLoadingStateChanged { _, isLoading in
                     isPlayerLoading = isLoading
                 }
@@ -179,6 +203,7 @@ struct MediaDetailsView: View {
                         }
                         
                         MediaVideosCarouselView(videos: viewModel.videos ?? [])
+                            .hideWhen(viewModel.state.isEmpty(.videos))
                         
                         MediasSectionView(
                             section: .init(title: "Seasons"),
@@ -203,8 +228,8 @@ struct MediaDetailsView: View {
                         
                         if case .movie(let extra) = viewModel.media?.extra {
                             MediaCollectionsCarouselView(collections: [extra.belongsToCollection].compactMap({ $0 }))
+                                .hideWhen(extra.belongsToCollection == nil)
                         }
-                        
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
@@ -236,6 +261,20 @@ struct MediaDetailsView: View {
                         } label: {
                             Image(systemName: isInWatchlist ? "bookmark.slash" : "bookmark")
                         }
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "heart")
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "ellipsis")
                     }
                 }
             }

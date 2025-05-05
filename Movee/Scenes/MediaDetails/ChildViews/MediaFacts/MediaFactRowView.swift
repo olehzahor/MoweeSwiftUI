@@ -16,12 +16,12 @@ struct MediaFactRowView: View {
             HStack(alignment: .top) {
                 Text(fact.key)
                     .font(.headline)
+                    .foregroundStyle(.secondary)
                     .fontWeight(.regular)
                 Spacer()
                 Text(fact.value)
                     .font(.headline)
                     .fontWeight(.regular)
-                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }.padding(.vertical, 4)
             Divider()
