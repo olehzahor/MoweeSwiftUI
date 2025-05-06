@@ -96,8 +96,35 @@ final class TMDBAPIClient {
         return getPublisher(for: "tv/\(tvShowID)/season/\(seasonNumber)")
     }
     
+    /// Search movies, TV shows, and people in a single query.
     func searchMulti(query: String, page: Int = 1, includeAdult: Bool = false) -> AnyPublisher<PaginatedResponse<SearchResult>, Error> {
         return getPublisher(for: "search/multi", parameters: ["query": query, "page": page, "include_adult": includeAdult])
+    }
+
+    /// Search movies by query.
+    func searchMovies(query: String, page: Int = 1, includeAdult: Bool = false) -> AnyPublisher<PaginatedResponse<Movie>, Error> {
+        return getPublisher(for: "search/movie", parameters: [
+            "query": query,
+            "page": page,
+            "include_adult": includeAdult
+        ])
+    }
+
+    /// Search TV shows by query.
+    func searchTVShows(query: String, page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
+        return getPublisher(for: "search/tv", parameters: [
+            "query": query,
+            "page": page
+        ])
+    }
+
+    /// Search people by query.
+    func searchPeople(query: String, page: Int = 1, includeAdult: Bool = false) -> AnyPublisher<PaginatedResponse<Person>, Error> {
+        return getPublisher(for: "search/person", parameters: [
+            "query": query,
+            "page": page,
+            "include_adult": includeAdult
+        ])
     }
 
     func fetchCollection(collectionID: Int) -> AnyPublisher<CollectionResponse, Error> {
