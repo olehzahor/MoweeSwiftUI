@@ -54,7 +54,7 @@ struct MediaVideoView: View {
         
         var youtubeURL: URL? {
             guard let videoKey else { return nil }
-            return URL(string: "https://www.youtube.com/embed/\(videoKey)?playsinline=1&autoplay=1&rel=0")
+            return YouTubeURLProvider.shared.embedURL(for: videoKey)
         }
         
         static var placeholder = Self(title: .placeholder(.short))
@@ -226,14 +226,24 @@ struct MediaDetailsView: View {
                         )
                         .hideWhen(viewModel.state.isEmpty(.related))
                         
-                        if case .movie(let extra) = viewModel.media?.extra {
-                            MediaCollectionsCarouselView(collections: [extra.belongsToCollection].compactMap({ $0 }))
-                                .hideWhen(extra.belongsToCollection == nil)
-                        }
+//                        if case .movie(let extra) = viewModel.media?.extra {
+//                            MediaCollectionsCarouselView(collections: [extra.belongsToCollection].compactMap({ $0 }))
+//                                .hideWhen(extra.belongsToCollection == nil)
+//                        }
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
+                        
+                        if let collectionSection = viewModel.collectionSection {
+                            MediasSectionView(
+                                section: collectionSection,
+                                medias: viewModel.collection,
+                                errorMessage: nil,
+                                retry: { viewModel.fetchCollection() }
+                            )
+                            .hideWhen(viewModel.state.isEmpty(.collection))
+                        }
 
                         Group {
                             Text("Reviews")
@@ -241,8 +251,6 @@ struct MediaDetailsView: View {
                             MediaReviewsCarouselView(reviews: viewModel.reviews ?? [])
                         }
                         .hideWhen(viewModel.state.isLoading(.reviews) || viewModel.state.isEmpty(.reviews))
-                        
-                        //MediaTrailerView()
                     }
                     .padding(.horizontal, 20)
                 }

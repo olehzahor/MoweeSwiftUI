@@ -20,7 +20,7 @@ struct MainView: View {
                 }
             SearchView()
                 .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                    Label("Discover", systemImage: "magnifyingglass")
                 }
         }
     }

@@ -9,8 +9,8 @@
 import Foundation
 
 /// Provides URLs for YouTube video thumbnails given a YouTube `videoID`.
-final class YouTubeThumbnailProvider {
-    static let shared = YouTubeThumbnailProvider()
+final class YouTubeURLProvider {
+    static let shared = YouTubeURLProvider()
     private init() {}
     
     /// Available thumbnail sizes (see https://developers.google.com/youtube/v3/docs/thumbnails).
@@ -44,6 +44,6 @@ final class YouTubeThumbnailProvider {
     
     /// Returns the embeddable URL for use in webviews or iframes.
     func embedURL(for videoID: String) -> URL? {
-        URL(string: "https://www.youtube.com/embed/\(videoID)")
+        URL(string: "https://www.youtube.com/embed/\(videoID)?playsinline=1&autoplay=1&rel=0")
     }
 }
