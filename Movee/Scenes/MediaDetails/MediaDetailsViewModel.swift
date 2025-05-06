@@ -12,7 +12,7 @@ import Combine
 
 extension MediaDetailsViewModel {
     enum Section {
-        case initial, details, seasons, watchlist, credits, related, reviews, videos
+        case initial, details, seasons, watchlist, credits, related, reviews, videos, collection
     }
 }
 
@@ -28,6 +28,7 @@ final class MediaDetailsViewModel: ObservableObject {
     @Published var reviews: [Review]?
     @Published var seasons: [Season]?
     @Published var videos: [Video]?
+    @Published var collection: [Media]?
     
     var seasonModels: [MediaUIModel]? {
         guard let media, let seasons else { return nil }
@@ -57,6 +58,19 @@ final class MediaDetailsViewModel: ObservableObject {
             }
         }
     }()
+    
+    var collectionSection: MediasSection? {
+        guard let media, case .movie(let extra) = media.extra,
+              let collection = extra.belongsToCollection
+        else { return nil }
+        return .init(title: collection.name) { [unowned self] _ in
+            self.$collection
+                .compactMap { $0 }
+                .map { .wrap($0) }
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+    }
 
     private func updateWatchlistStatus() {
         guard let media else { return }
@@ -144,6 +158,8 @@ final class MediaDetailsViewModel: ObservableObject {
     ]
     
     func fetchReviews() {
+        state.setLoading(.reviews)
+
         let publisher = switch mediaIdentifier.type {
         case .movie:
             TMDBAPIClient.shared.fetchMovieReviews(movieID: mediaIdentifier.id)
@@ -184,6 +200,31 @@ final class MediaDetailsViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    func genericFetch() {
+        
+    }
+    
+    func fetchCollection() {
+        guard let media, case .movie(let extra) = media.extra,
+              let collection = extra.belongsToCollection
+        else { return }
+        
+        state.setLoading(.collection)
+        
+        let publisher = TMDBAPIClient.shared.fetchCollection(collectionID: collection.id)
+
+        publisher.sink { completion in
+            if case let .failure(error) = completion {
+                self.state.setError(.reviews, error)
+            }
+        } receiveValue: { [unowned self] response in
+            self.collection = response.parts
+                .map { .init(movie: $0) }
+                .sorted { $0.releaseYear ?? 0 <= $1.releaseYear ?? 0 }
+            self.state.setLoaded(.collection, isEmpty: response.parts.isEmpty)
+        }.store(in: &cancellables)
+    }
         
     func fetchInitialData() {
         fetchDetails()
@@ -223,6 +264,8 @@ final class MediaDetailsViewModel: ObservableObject {
                 self?.state.setLoaded(.initial, isEmpty: false)
                 self?.state.setLoaded(.details, isEmpty: false)
                 self?.state.setLoaded(.seasons, isEmpty: self?.seasons?.isEmpty ?? true)
+                
+                self?.fetchCollection()
             }
             .store(in: &cancellables)
     }

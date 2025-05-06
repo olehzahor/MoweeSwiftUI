@@ -61,16 +61,18 @@ struct SearchView: View {
                                 destinationView(for: result)
                             } label: {
                                 MediaRowView(data: .init(searchResult: result))
-                            }.transaction { $0.animation = nil }
+                            }
+                            .onAppear {
+                                viewModel.loadMoreResultsIfNeeded(for: result)
+                            }
+                            .transaction { $0.animation = nil }
                         }
                     }.listStyle(.plain)
                 }
-            }
-            
+            }.navigationTitle("Discover")
         }
         .animation(.default, value: viewModel.results)
         .searchable(text: $viewModel.query, prompt: "Search movies, TV shows, people")
-        .navigationTitle("Search")
     }
 }
 
@@ -100,6 +102,9 @@ private class SearchViewModel: ObservableObject {
             Logger.shared.log("Received search results: \(results.map({ $0.id }))")
         }
     }
+    @Published private(set) var currentPage: Int = 1
+    @Published private(set) var totalPages: Int = 1
+    private var isLoadingPage = false
     
     private var cancellables = Set<AnyCancellable>()
     private let apiClient = TMDBAPIClient.shared
@@ -128,22 +133,44 @@ private class SearchViewModel: ObservableObject {
         }
     }
     
-    func search() {
+    func search(page: Int = 1) {
         guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
             results = []
             return
         }
-        apiClient.searchMulti(query: query)
-            .map { $0.results }
+        // Reset on new search
+        if page == 1 {
+            currentPage = 1
+            totalPages = 1
+            results = []
+        }
+        // Prevent overlapping page loads
+        guard !isLoadingPage else { return }
+        isLoadingPage = true
+
+        apiClient.searchMulti(query: query, page: page)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
                     print("Search error:", error)
                 }
-            }, receiveValue: { [weak self] searchResults in
-                self?.results = searchResults
+            }, receiveValue: { [weak self] response in
+                guard let self else { return }
+
+                self.currentPage = response.page
+                self.totalPages = response.total_pages
+                
+                if page == 1 { self.results = [] }
+                self.results += response.results
+                self.isLoadingPage = false
             })
             .store(in: &cancellables)
+    }
+    
+    func loadMoreResultsIfNeeded(for result: SearchResult) {
+        guard let last = results.last, last.id == result.id,
+              currentPage < totalPages else { return }
+        search(page: currentPage + 1)
     }
     
     private func loadCollections() {
