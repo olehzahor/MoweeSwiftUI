@@ -47,6 +47,18 @@ struct SearchResult: Decodable, Identifiable, Equatable {
             result = .person(person)
         }
     }
+    
+    init(_ result: Result) {
+        self.result = result
+        switch result {
+        case .movie:
+            mediaType = .movie
+        case .tv:
+            mediaType = .tv
+        case .person:
+            mediaType = .person
+        }
+    }
 
     private enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"

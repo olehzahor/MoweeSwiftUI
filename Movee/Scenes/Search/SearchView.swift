@@ -8,6 +8,12 @@
 import SwiftUI
 import Combine
 
+protocol ViewModel {
+    associatedtype Section
+    func fetch(_ section: Section)
+    func fetchMoreIfNeeded<T>(_ item: T, from section: Section)
+}
+
 // MARK: - JSON Config for Collections
 private struct ListConfig: Decodable {
     let mediaType: String?
@@ -22,7 +28,8 @@ private struct ListsRoot: Decodable {
 
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
-    
+    @State private var isSearchActive: Bool = false
+        
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
         count: 2
@@ -41,7 +48,7 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if viewModel.results.isEmpty {
+                if !isSearchActive {
                     ScrollView {
                         LazyVGrid(columns: columns) {
                             ForEach(viewModel.collections, id: \.title) { collection in
@@ -55,24 +62,40 @@ struct SearchView: View {
                         }.padding(.horizontal)
                     }
                 } else {
-                    List {
-                        ForEach(viewModel.results) { result in
-                            NavigationLink {
-                                destinationView(for: result)
-                            } label: {
-                                MediaRowView(data: .init(searchResult: result))
+                    VStack(spacing: 0) {
+                        Picker("", selection: $viewModel.selectedScope) {
+                            ForEach(viewModel.searchScopes) { scope in
+                                Text(scope.title).tag(scope)
                             }
-                            .onAppear {
-                                viewModel.loadMoreResultsIfNeeded(for: result)
-                            }
-                            .transaction { $0.animation = nil }
                         }
-                    }.listStyle(.plain)
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                        .background(.ultraThinMaterial)
+                        
+                        Divider()
+                        
+                        List {
+                            ForEach(viewModel.results) { result in
+                                NavigationLink {
+                                    destinationView(for: result)
+                                } label: {
+                                    MediaRowView(data: .init(searchResult: result))
+                                }
+                                .onAppear {
+                                    viewModel.loadMoreResultsIfNeeded(for: result)
+                                }
+                                .transaction { $0.animation = nil }
+                            }
+                        }
+                        .listStyle(.plain)
+                        .animation(.default, value: viewModel.results)
+                        
+                    }
                 }
             }.navigationTitle("Discover")
         }
-        .animation(.default, value: viewModel.results)
-        .searchable(text: $viewModel.query, prompt: "Search movies, TV shows, people")
+        .searchable(text: $viewModel.query, isPresented: $isSearchActive, prompt: "Search movies, TV shows, people")
     }
 }
 
@@ -91,12 +114,41 @@ struct CustomMediaCollection {
 }
 
 private class SearchViewModel: ObservableObject {
+    enum SearchScope: String, CaseIterable, Identifiable {
+        case all = "All Results"
+        case movies = "Movies"
+        case tvShows = "TV Shows"
+        case people = "People"
+        
+        var id: String { rawValue }
+        var title: String { rawValue }
+    }
+    
+    @Published var selectedScope: SearchScope = .all {
+        didSet {
+            currentPage = 1
+            totalPages = 1
+            isLoadingPage = false
+            search()
+        }
+    }
+    
+    var searchScopes: [SearchScope] = SearchScope.allCases
+
     enum NavigationDestination {
         case media(Media)
         case person(MediaPerson)
     }
     
-    @Published var query: String = ""
+    @Published var query: String = "" {
+        didSet {
+            if query != oldValue {
+                currentPage = 1
+                totalPages = 1
+            }
+        }
+    }
+    
     @Published var results: [SearchResult] = [] {
         didSet {
             Logger.shared.log("Received search results: \(results.map({ $0.id }))")
@@ -138,17 +190,29 @@ private class SearchViewModel: ObservableObject {
             results = []
             return
         }
-        // Reset on new search
-        if page == 1 {
-            currentPage = 1
-            totalPages = 1
-            results = []
-        }
+        
         // Prevent overlapping page loads
         guard !isLoadingPage else { return }
         isLoadingPage = true
+        
+        let publisher: AnyPublisher<PaginatedResponse<SearchResult>, any Error> = switch selectedScope {
+        case .all:
+            apiClient.searchMulti(query: query, page: page)
+        case .movies:
+            apiClient.searchMovies(query: query, page: page)
+                .map { $0.map { SearchResult(.movie($0)) } }
+                .eraseToAnyPublisher()
+        case .tvShows:
+            apiClient.searchTVShows(query: query, page: page)
+                .map { $0.map { SearchResult(.tv($0)) } }
+                .eraseToAnyPublisher()
+        case .people:
+            apiClient.searchPeople(query: query, page: page)
+                .map { $0.map { SearchResult(.person($0)) } }
+                .eraseToAnyPublisher()
+        }
 
-        apiClient.searchMulti(query: query, page: page)
+        publisher
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
@@ -160,8 +224,11 @@ private class SearchViewModel: ObservableObject {
                 self.currentPage = response.page
                 self.totalPages = response.total_pages
                 
-                if page == 1 { self.results = [] }
-                self.results += response.results
+                if page == 1 {
+                    self.results = response.results
+                } else {
+                    self.results += response.results
+                }
                 self.isLoadingPage = false
             })
             .store(in: &cancellables)
