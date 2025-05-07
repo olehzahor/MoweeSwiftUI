@@ -29,9 +29,33 @@
 		CEE665B82D9E891900C04D9A /* MoveeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoveeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CE9761452DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Movee" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Infrastructure/Extensions/Array/Array+ToggleElement.swift",
+			);
+			target = CEE6659E2D9E891700C04D9A /* Movee */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		CE9761462DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Copy Bundle Resources" phase from "Movee" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = CEE6659D2D9E891700C04D9A /* Resources */;
+			membershipExceptions = (
+				"Infrastructure/Extensions/Array/Array+ToggleElement.swift",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CEE665A12D9E891800C04D9A /* Movee */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CE9761452DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Movee" target */,
+				CE9761462DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Copy Bundle Resources" phase from "Movee" target */,
+			);
 			path = Movee;
 			sourceTree = "<group>";
 		};
