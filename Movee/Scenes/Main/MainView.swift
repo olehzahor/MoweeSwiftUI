@@ -18,7 +18,7 @@ struct MainView: View {
                 .tabItem {
                     Label("Watchlist", systemImage: "list.and.film")
                 }
-            SearchView()
+            AdvancedSearchView(viewModel: .init())
                 .tabItem {
                     Label("Discover", systemImage: "magnifyingglass")
                 }

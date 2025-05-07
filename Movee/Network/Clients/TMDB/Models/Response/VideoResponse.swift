@@ -61,6 +61,6 @@ enum VideoType: String, Codable {
 extension Video {
     var thumbnailURL: URL? {
         guard site.lowercased() == "youtube" else { return nil }
-        return YouTubeURLProvider.shared.thumbnailURL(for: key, size: .hqDefault)
+        return YouTubeURLProvider.shared.thumbnailURL(for: key, size: .maxRes)
     }
 }

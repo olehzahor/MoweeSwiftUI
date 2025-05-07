@@ -41,7 +41,7 @@ extension Media {
 
         // 2. Country: Assume productionCountries contains a name property.
         if let countries = movieExtra.productionCountries, !countries.isEmpty {
-            let countryNames = countries.compactMap { $0.name }.joined(separator: "\n")
+            let countryNames = countries.compactMap { $0.name }.joined(separator: ", ")
             if !countryNames.isEmpty {
                 items.append(.init(key: "Country", value: countryNames))
             }
@@ -69,7 +69,9 @@ extension Media {
         // 6. Revenue
         if let revenue = movieExtra.revenue, revenue > 0,
            let formattedRevenue = formatter.format(currency: revenue) {
-            items.append(.init(key: "Revenue", value: formattedRevenue))
+            let isRevenueGreaterThanBudget = revenue > (movieExtra.budget ?? 0)
+            let symbolString = isRevenueGreaterThanBudget ? "↑" : "↓"
+            items.append(.init(key: "Revenue", value: symbolString + formattedRevenue))
         }
         
         return items
