@@ -202,8 +202,7 @@ extension MediaPerson {
         }
 
         // Birthday (with age if alive)
-        if let birthDate = birthdayDate {
-            let birthText = formatter.format(date: birthDate, style: .full)
+        if let birthDate = birthdayDate, let birthText = formatter.format(date: birthDate, style: .full) {
             if deathDate == nil {
                 let age = Calendar.current
                     .dateComponents([.year], from: birthDate, to: Date())
@@ -215,8 +214,8 @@ extension MediaPerson {
         }
 
         // Deathday (only if deceased, with age at death)
-        if let deathDate = deathDate, let birthDate = birthdayDate {
-            let deathText = formatter.format(date: deathDate, style: .full)
+        if let deathDate = deathDate, let birthDate = birthdayDate,
+           let deathText = formatter.format(date: deathDate, style: .full) {
             let ageAtDeath = Calendar.current
                 .dateComponents([.year], from: birthDate, to: deathDate)
                 .year ?? 0

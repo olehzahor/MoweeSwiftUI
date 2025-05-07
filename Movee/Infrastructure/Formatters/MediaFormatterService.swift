@@ -69,8 +69,8 @@ struct MediaFormatterService {
         return parseDateFormatter.date(from: dateString)
     }
     
-    func format(date: Date?, style: DateStyle = .short) -> String {
-        guard let date else { return "" }
+    func format(date: Date?, style: DateStyle = .short) -> String? {
+        guard let date else { return nil }
         return switch style {
         case .short:
             shortDisplayDateFormatter.string(from: date)
@@ -81,13 +81,13 @@ struct MediaFormatterService {
         }
     }
     
-    func format(currency amount: Int?) -> String {
-        guard let amount else { return "" }
+    func format(currency amount: Int?) -> String? {
+        guard let amount else { return nil }
         return currencyFormatter.string(from: NSNumber(value: amount)) ?? "$\(amount)"
     }
     
-    func format(rating: Double?) -> String {
-        guard let rating else { return "" }
+    func format(rating: Double?) -> String? {
+        guard let rating else { return nil }
         return String(format: "%.1f", rating)
     }
     

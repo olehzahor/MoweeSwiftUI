@@ -22,9 +22,7 @@ extension Media {
         
         var items = [KeyValueItem<String>]()
         let formatter = MediaFormatterService.shared
-        
-        var titleString = title
-        
+                
         items.append(.init(key: "Title", value: title))
         
         if !originalTitle.isEmpty, originalTitle != title {
@@ -32,7 +30,9 @@ extension Media {
         }
 
         // 1. Release Date using the already parsed date.
-        items.append(.init(key: "Release Date", value: formatter.format(date: parsedReleaseDate, style: .full)))
+        if let formattedReleaseDate = formatter.format(date: parsedReleaseDate, style: .full) {
+            items.append(.init(key: "Release Date", value: formattedReleaseDate))
+        }
         
         // 2. Status
         if let status = movieExtra.status?.rawValue {
@@ -56,16 +56,20 @@ extension Media {
         }
         
         // 4. Rating
-        items.append(.init(key: "Rating", value: "\(ratingString) (\(voteCount) votes)"))
+        if let ratingString {
+            items.append(.init(key: "Rating", value: "\(ratingString) (\(voteCount) votes)"))
+        }
         
         // 5. Budget
-        if let budget = movieExtra.budget, budget > 0 {
-            items.append(.init(key: "Budget", value: formatter.format(currency: budget)))
+        if let budget = movieExtra.budget, budget > 0,
+           let formattedBudget = formatter.format(currency: budget) {
+            items.append(.init(key: "Budget", value: formattedBudget))
         }
         
         // 6. Revenue
-        if let revenue = movieExtra.revenue, revenue > 0 {
-            items.append(.init(key: "Revenue", value: formatter.format(currency: revenue)))
+        if let revenue = movieExtra.revenue, revenue > 0,
+           let formattedRevenue = formatter.format(currency: revenue) {
+            items.append(.init(key: "Revenue", value: formattedRevenue))
         }
         
         return items
@@ -99,13 +103,16 @@ extension Media {
         }
         
         // 3. Premiered – using the parsed release date.
-        items.append(.init(key: "Premiered", value: formatter.format(date: parsedReleaseDate, style: .full)))
+        if let formattedDate = formatter.format(date: parsedReleaseDate, style: .full) {
+            items.append(.init(key: "Premiered", value: formattedDate))
+        }
         
         // 4. Last Aired
-        if let lastAirDate = tvShowExtra.lastAirDate, !lastAirDate.isEmpty {
+        if let lastAirDate = tvShowExtra.lastAirDate, !lastAirDate.isEmpty,
+           let lastAir = formatter.parse(dateString: lastAirDate),
+           let formattedDate = formatter.format(date: lastAir, style: .full) {
             // Use the formatter service to parse the date string.
-            let lastAir = formatter.parse(dateString: lastAirDate)
-            items.append(.init(key: "Last Aired", value: formatter.format(date: lastAir, style: .full)))
+            items.append(.init(key: "Last Aired", value: formattedDate))
         }
         
         // 5. Next Episode – provide a simplified example.
@@ -131,7 +138,9 @@ extension Media {
         }
 
         // 8. Rating
-        items.append(.init(key: "Rating", value: "\(ratingString) (\(voteCount) votes)"))
+        if let ratingString {
+            items.append(.init(key: "Rating", value: "\(ratingString) (\(voteCount) votes)"))
+        }
         
         return items
     }

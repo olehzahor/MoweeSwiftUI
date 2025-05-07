@@ -56,7 +56,7 @@ extension Media {
         TMDBImageURLProvider.shared.url(path: backdropPath, size: .w780)
     }
     
-    var ratingString: String {
+    var ratingString: String? {
         MediaFormatterService.shared.format(rating: voteAverage)
     }
     

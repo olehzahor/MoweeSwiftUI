@@ -23,7 +23,7 @@ struct MediaReviewView: View {
                 HStack {
                     Text(review.ratingString)
                     Spacer()
-                    Text("Reviewed by \(review.authorString) \(review.createdAtRelativeString)")
+                    Text(review.detailsString)
                 }.foregroundStyle(.secondary)
                 .textStyle(.smallText)
             }.padding()

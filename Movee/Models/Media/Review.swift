@@ -37,9 +37,11 @@ extension Review {
     }
     
     var ratingString: String {
-        guard let rating = authorDetails.rating else { return "" }
+        guard let rating = authorDetails.rating,
+              let formatted = MediaFormatterService.shared.format(rating: rating)
+        else { return "" }
         // Format the numeric rating
-        let formatted = MediaFormatterService.shared.format(rating: rating)
+        
         // Choose an emoji based on rating thresholds
         let emoji: String
         switch rating {
@@ -54,13 +56,21 @@ extension Review {
         }
         return "\(emoji)\(formatted)"
     }
+    
+    var detailsString: String {
+        var string = "Reviewed by \(authorString)"
+        if let createdAtRelativeString {
+            string += " \(createdAtRelativeString)"
+        }
+        return string
+    }
         
-    var createdAtRelativeString: String {
-       return MediaFormatterService.shared.format(date: createdAt, style: .relative)
+    var createdAtRelativeString: String? {
+       MediaFormatterService.shared.format(date: createdAt, style: .relative)
     }
     
-    var createdAtAbsoluteString: String {
-       return MediaFormatterService.shared.format(date: createdAt, style: .full)
+    var createdAtAbsoluteString: String? {
+       MediaFormatterService.shared.format(date: createdAt, style: .full)
     }
     
     var authorAvatarURL: URL? {
