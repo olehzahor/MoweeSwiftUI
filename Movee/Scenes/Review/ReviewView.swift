@@ -21,8 +21,10 @@ struct ReviewView: View {
                     VStack(alignment: .leading) {
                         Text("\(review.authorString)")
                             .textStyle(.mediumTitle)
-                        Text("\(review.createdAtAbsoluteString)")
-                            .textStyle(.mediumSubtitle)
+                        if let createdAt = review.createdAtAbsoluteString {
+                            Text(createdAt)
+                                .textStyle(.mediumSubtitle)
+                        }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 Text(.init(review.content))
