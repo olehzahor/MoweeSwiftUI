@@ -91,8 +91,8 @@ struct MediaFormatterService {
         return String(format: "%.1f", rating)
     }
     
-    func format(duration minutes: Int?) -> String {
-        guard let minutes else { return "" }
+    func format(duration minutes: Int?) -> String? {
+        guard let minutes else { return nil }
         let seconds = TimeInterval(minutes * 60)
         return durationFormatter.string(from: seconds) ?? "N/A"
     }

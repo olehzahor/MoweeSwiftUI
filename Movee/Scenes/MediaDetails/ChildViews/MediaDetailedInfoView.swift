@@ -10,23 +10,13 @@ import SwiftUI
 struct MediaDetailedInfoView: View {
     var title: String
     var posterURL: URL?
-    var releaseDate: Date?
-    var duration: Int?
+    var releaseDate: String?
+    var duration: String?
     var genres: String
     var mediaRating: Double?
-    
-    private var releaseDateString: String? {
-        guard let releaseDate else { return nil }
-        return MediaFormatterService.shared.format(date: releaseDate)
-    }
-
-    private var durationString: String? {
-        guard let duration, duration > 0 else { return nil }
-        return MediaFormatterService.shared.format(duration: duration)
-    }
-    
+        
     private var subtitle: String {
-        let strings = [releaseDateString, durationString].compactMap { $0 }
+        let strings = [releaseDate, duration].compactMap { $0 }
         var string = strings.joined(separator: " · ")
         if !string.isEmpty {
             string += "\n"
@@ -57,20 +47,8 @@ struct MediaDetailedInfoView: View {
     init(media: Media) {
         title = media.title
         posterURL = media.posterURL
-        releaseDate = media.parsedReleaseDate
-        switch media.extra {
-        case .movie(let movieExtra):
-            duration = movieExtra.runtime
-        case .tvShow(let tVShowExtra):
-            if let runtimes = tVShowExtra.episodeRunTime, !runtimes.isEmpty {
-                let total = runtimes.reduce(0, +)
-                duration = Int(round(Double(total) / Double(runtimes.count)))
-            } else {
-                duration = nil
-            }
-        case .none:
-            break
-        }
+        releaseDate = media.releaseDateString
+        duration = media.durationString
         genres = media.genresString
         mediaRating = media.voteAverage
     }

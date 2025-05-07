@@ -35,7 +35,7 @@ extension Media {
         items.append(.init(key: "Release Date", value: formatter.format(date: parsedReleaseDate, style: .full)))
         
         // 2. Status
-        if let status = movieExtra.status, !status.isEmpty {
+        if let status = movieExtra.status?.rawValue {
             items.append(.init(key: "Status", value: status))
         }
 
@@ -94,7 +94,7 @@ extension Media {
         }
         
         // 2. Status
-        if let status = tvShowExtra.status, !status.isEmpty {
+        if let status = tvShowExtra.status?.rawValue {
             items.append(.init(key: "Status", value: status))
         }
         

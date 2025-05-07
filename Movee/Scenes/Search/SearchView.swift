@@ -71,7 +71,7 @@ struct SearchView: View {
                         .pickerStyle(.segmented)
                         .padding(.horizontal)
                         .padding(.bottom, 8)
-                        .background(.ultraThinMaterial)
+                        //.background(.ultraThinMaterial)
                         
                         Divider()
                         

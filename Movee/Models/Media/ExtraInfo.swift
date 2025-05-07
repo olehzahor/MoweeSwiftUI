@@ -24,7 +24,7 @@ struct MovieExtra: Codable {
     let revenue: Int?
     let runtime: Int?
     let spokenLanguages: [SpokenLanguage]?
-    let status: String?
+    let status: MovieStatus?
     let video: Bool
     
     init(from movie: Movie) {
@@ -60,7 +60,7 @@ struct TVShowExtra: Codable {
     let productionCompanies: [ProductionCompany]?
     let seasons: [Season]?
     let spokenLanguages: [SpokenLanguage]?
-    let status: String?
+    let status: SeriesStatus?
     let type: String?
     
     init(from tvShow: TVShow) {
@@ -81,5 +81,50 @@ struct TVShowExtra: Codable {
         self.spokenLanguages = tvShow.spokenLanguages
         self.status = tvShow.status
         self.type = tvShow.type
+    }
+}
+
+enum SeriesStatus: String, Codable {
+    case returningSeries   = "Returning Series"
+    case planned           = "Planned"
+    case inProduction      = "In Production"
+    case ended             = "Ended"
+    case canceled          = "Canceled"
+    case unknown           = "Unknown"
+
+    /// Meaningful short form (max 10 characters)
+    var short: String {
+        switch self {
+        case .returningSeries: return "Returning"
+        case .planned:         return "Planned"
+        case .inProduction:    return "In Prod"
+        case .ended:           return "Ended"
+        case .canceled:        return "Canceled"
+        case .unknown:         return "Unknown"
+        }
+    }
+}
+
+/// Status values for movies.
+enum MovieStatus: String, Codable {
+    case rumored          = "Rumored"
+    case planned          = "Planned"
+    case inProduction     = "In Production"
+    case postProduction   = "Post Production"
+    case released         = "Released"
+    case canceled         = "Canceled"
+    case unknown          = "Unknown"
+
+    /// Meaningful short form (max 10 characters)
+    var short: String {
+        switch self {
+        case .rumored:        return "Rumored"
+        case .planned:        return "Planned"
+        case .inProduction:   return "In Prod"
+        case .postProduction: return "Post Prod"
+        case .released:       return "Released"
+        case .canceled:       return "Canceled"
+        case .unknown:        return "Unknown"
+        }
     }
 }

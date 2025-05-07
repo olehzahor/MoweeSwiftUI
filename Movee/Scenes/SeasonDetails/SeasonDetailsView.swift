@@ -55,8 +55,8 @@ struct EpisodeDetailsView: View {
                 Text("\(episode.episodeNumber). \(episode.name)")
                     .multilineTextAlignment(.leading)
                     .textStyle(.mediumTitle)
-                if let formattedAirDate = episode.formattedAirDate {
-                    Text(formattedAirDate)
+                if let detailsString = episode.detailsString {
+                    Text(detailsString)
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(.secondary)
                         .textStyle(.smallText)

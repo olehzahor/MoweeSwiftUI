@@ -221,7 +221,7 @@ final class MediaDetailsViewModel: ObservableObject {
         } receiveValue: { [unowned self] response in
             self.collection = response.parts
                 .map { .init(movie: $0) }
-                .sorted { $0.releaseYear ?? 0 <= $1.releaseYear ?? 0 }
+                .sorted { $0.parsedReleaseDate ?? Date() <= $1.parsedReleaseDate ?? Date() }
             self.state.setLoaded(.collection, isEmpty: response.parts.isEmpty)
         }.store(in: &cancellables)
     }
