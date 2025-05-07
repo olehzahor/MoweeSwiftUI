@@ -23,7 +23,8 @@ struct MediaRowView: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            MediaPosterView(.init(posterURL: data.posterURL, placeholder: data.placeholder))
+            // TODO: add styling (hide titles when needed)
+            MediaPosterView(.init(posterURL: data.posterURL, placeholder: data.placeholder, rating: data.rating))
                 .saveSize(in: $posterSize)
             VStack(alignment: .leading, spacing: 4) {
                 if let title = data.title {

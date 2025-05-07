@@ -111,6 +111,14 @@ extension Episode {
     var stillURL: URL? {
         TMDBImageURLProvider.shared.url(path: stillPath, size: .w342)
     }
+    
+    var durationString: String? {
+        MediaFormatterService.shared.format(duration: runtime)
+    }
+    
+    var detailsString: String? {
+        [formattedAirDate, durationString].compactMap({ $0 }).joined(separator: " · ")
+    }
 }
 
 // Season (for TV show seasons)

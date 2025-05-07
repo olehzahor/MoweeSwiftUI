@@ -90,6 +90,66 @@ extension Media {
         return Calendar.current.component(.year, from: date)
     }
     
+    var releaseDateString: String? {
+        switch mediaType {
+        case .movie:
+            guard let date = parsedReleaseDate else { return nil }
+            return MediaFormatterService.shared.format(date: date)
+
+        case .tvShow:
+            // Year of first episode (releaseDate)
+            guard let startDate = parsedReleaseDate else { return nil }
+            let startYear = Calendar.current.component(.year, from: startDate)
+
+            // Prepare status and end year
+            var endYearString = ""
+            var statusShort = ""
+
+            if case let .tvShow(tvInfo) = extra {
+                // Get short form from enum status directly
+                statusShort = (tvInfo.status ?? .unknown).short
+
+                // Determine the last possible air date: prefer next episode, fallback to last episode
+                if let nextAir = tvInfo.nextEpisodeToAir?.airDate,
+                   let nextDate = MediaFormatterService.shared.parse(dateString: nextAir) {
+                    endYearString = String(Calendar.current.component(.year, from: nextDate))
+                } else if let lastAir = tvInfo.lastEpisodeToAir?.airDate,
+                          let lastDate = MediaFormatterService.shared.parse(dateString: lastAir) {
+                    endYearString = String(Calendar.current.component(.year, from: lastDate))
+                }
+            }
+
+            // Build the display string
+            let yearRange = endYearString.isEmpty ? "\(startYear)" : "\(startYear)–\(endYearString)"
+            if !statusShort.isEmpty {
+                return "\(statusShort) (\(yearRange))"
+            }
+            return yearRange
+        }
+    }
+    
+    var duration: Int? {
+        switch extra {
+        case .movie(let movieExtra):
+            return movieExtra.runtime
+        case .tvShow(let tVShowExtra):
+            // 1. Average runtime from episodeRunTime array if available
+            if let runtimes = tVShowExtra.episodeRunTime, !runtimes.isEmpty {
+                let total = runtimes.reduce(0, +)
+                return Int(round(Double(total) / Double(runtimes.count)))
+            } else {
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
+    var durationString: String? {
+        guard let duration, duration > 0 else { return nil }
+        return MediaFormatterService.shared.format(duration: duration)
+    }
+    
     static var placeholder: Self {
         .init(id: -9000, mediaType: .movie, title: .placeholder(.short), originalTitle: .placeholder(.short), overview: .placeholder(.custom(200)), popularity: 0, voteAverage: 10.0, voteCount: 1, genreIDs: [28, 18])
     }

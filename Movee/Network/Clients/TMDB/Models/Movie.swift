@@ -28,7 +28,7 @@ struct Movie: Codable, Identifiable {
     let revenue: Int?
     let runtime: Int?
     let spokenLanguages: [SpokenLanguage]?
-    let status: String?
+    let status: MovieStatus?
     let tagline: String?
     let title: String
     let video: Bool
@@ -107,7 +107,7 @@ extension Movie {
             spokenLanguages: [
                 SpokenLanguage(englishName: "English", iso639_1: "en", name: "English")
             ],
-            status: "Released",
+            status: .released,
             tagline: "Be there and be square.",
             title: "The Minecraft Movie",
             video: false,

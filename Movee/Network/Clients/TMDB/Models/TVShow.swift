@@ -31,7 +31,7 @@ struct TVShow: Codable, Identifiable {
     let popularity: Double
     let productionCompanies: [ProductionCompany]?
     let seasons: [Season]?
-    let status: String?
+    let status: SeriesStatus?
     let spokenLanguages: [SpokenLanguage]?
     let tagline: String?
     let type: String?
