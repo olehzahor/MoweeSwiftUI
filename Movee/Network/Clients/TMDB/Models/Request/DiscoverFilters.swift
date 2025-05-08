@@ -50,7 +50,6 @@ extension DiscoverFilters {
 }
 
 struct DiscoverFilters {
-    var page: Int = 1
     var includeAdult: Bool? = nil
     var includeVideo: Bool? = nil
     var certificationCountry: String? = nil
@@ -87,7 +86,7 @@ struct DiscoverFilters {
     var withWatchMonetizationTypes: ListFilter<String>? = nil
 
     func toParameters() -> [String: Any] {
-        var params: [String: Any] = ["page": page]
+        var params: [String: Any] = [:]
         if let includeAdult = includeAdult { params["include_adult"] = includeAdult }
         if let includeVideo = includeVideo { params["include_video"] = includeVideo }
         if let certCountry = certificationCountry { params["certification_country"] = certCountry }

@@ -26,15 +26,52 @@ private struct ListsRoot: Decodable {
     let discoverLists: [ListConfig]
 }
 
-struct SearchView: View {
-    @StateObject private var viewModel = SearchViewModel()
-    @State private var isSearchActive: Bool = false
-        
+struct SearchCollectionsView: View {
+    @State var collections: [CustomMediaCollection]
+    
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
         count: 2
     )
-    
+
+    var body: some View {
+        ScrollView {
+            VStack {
+                LazyVGrid(columns: columns) {
+                    NavigationLink {
+                        AdvancedSearchView()
+                    } label: {
+                        CustomCollectionView(collection: .init(title: "Advanced search"))
+                    }
+                    
+                    NavigationLink {
+                        AdvancedSearchView()
+                    } label: {
+                        CustomCollectionView(collection: .init(title: "Search history"))
+                    }
+                }
+                
+                Divider()
+                
+                LazyVGrid(columns: columns) {
+                    ForEach(collections, id: \.title) { collection in
+                        NavigationLink {
+                            MediasListView(section: collection.section)
+                        } label: {
+                            CustomCollectionView(collection: collection)
+                        }
+                        
+                    }
+                }
+            }.padding(.horizontal)
+        }
+    }
+}
+
+struct SearchView: View {
+    @StateObject private var viewModel = SearchViewModel()
+    @State private var isSearchActive: Bool = false
+            
     @ViewBuilder
     private func destinationView(for result: SearchResult) -> some View {
         switch viewModel.getNavigationDestination(for: result) {
@@ -49,18 +86,7 @@ struct SearchView: View {
         NavigationStack {
             Group {
                 if !isSearchActive {
-                    ScrollView {
-                        LazyVGrid(columns: columns) {
-                            ForEach(viewModel.collections, id: \.title) { collection in
-                                NavigationLink {
-                                    MediasListView(section: collection.section)
-                                } label: {
-                                    CustomCollectionView(collection: collection)
-                                }
-                                
-                            }
-                        }.padding(.horizontal)
-                    }
+                    SearchCollectionsView(collections: viewModel.collections)
                 } else {
                     VStack(spacing: 0) {
                         Picker("", selection: $viewModel.selectedScope) {
@@ -86,6 +112,7 @@ struct SearchView: View {
                                     viewModel.loadMoreResultsIfNeeded(for: result)
                                 }
                                 .transaction { $0.animation = nil }
+                                .listRowSeparator(.hidden)
                             }
                         }
                         .listStyle(.plain)
@@ -104,8 +131,8 @@ struct SearchView: View {
 struct CustomMediaCollection {
     typealias PublisherBuilder = (Int) -> AnyPublisher<PaginatedResponse<Media>, Error>
     
-    let title: String
-    let image: ImageResource?
+    var title: String
+    var image: ImageResource?
     var publisherBuilder: PublisherBuilder?
     
     var section: MediasSection {

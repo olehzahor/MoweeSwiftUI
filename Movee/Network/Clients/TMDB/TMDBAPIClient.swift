@@ -100,17 +100,18 @@ final class TMDBAPIClient {
         return getPublisher(for: "tv/\(tvShowID)/videos")
     }
 
-    /// Discover movies using filter criteria.
-    func discoverMovies(filters: DiscoverFilters) -> AnyPublisher<PaginatedResponse<Movie>, Error> {
-        return getPublisher(for: "discover/movie", parameters: filters.toParameters())
+    func discoverMovies(filters: DiscoverFilters, page: Int = 1) -> AnyPublisher<PaginatedResponse<Movie>, Error> {
+        var params = filters.toParameters()
+        params["page"] = page
+        return getPublisher(for: "discover/movie", parameters: params)
     }
 
-    /// Discover TV shows using filter criteria.
-    func discoverTVShows(filters: DiscoverFilters) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
-        return getPublisher(for: "discover/tv", parameters: filters.toParameters())
+    func discoverTVShows(filters: DiscoverFilters, page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
+        var params = filters.toParameters()
+        params["page"] = page
+        return getPublisher(for: "discover/tv", parameters: params)
     }
     
-    /// Search movies, TV shows, and people in a single query.
     func searchMulti(query: String, page: Int = 1, includeAdult: Bool = false) -> AnyPublisher<PaginatedResponse<SearchResult>, Error> {
         return getPublisher(for: "search/multi", parameters: ["query": query, "page": page, "include_adult": includeAdult])
     }
@@ -148,8 +149,6 @@ final class TMDBAPIClient {
     func fetchMovieVideos(movieID: Int) -> AnyPublisher<VideoResponse, Error> {
         return getPublisher(for: "movie/\(movieID)/videos")
     }
-
-    
     
     /// Fetches a custom paginated list from the specified endpoint with raw query string parameters.
     /// - Parameters:
