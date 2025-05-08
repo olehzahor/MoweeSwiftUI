@@ -27,15 +27,14 @@ final class AdvancedSearchViewModel: ObservableObject {
     var resultsSection: MediasSection {
         return MediasSection(title: "Search results") { [unowned self] page in
             var filters = getFilters()
-            filters.page = page
             
             return switch selectedMediaType {
             case .movie:
-                TMDBAPIClient.shared.discoverMovies(filters: filters)
+                TMDBAPIClient.shared.discoverMovies(filters: filters, page: page)
                     .map { $0.map { Media(movie: $0) } }
                     .eraseToAnyPublisher()
             case .tvShow:
-                TMDBAPIClient.shared.discoverTVShows(filters: filters)
+                TMDBAPIClient.shared.discoverTVShows(filters: filters, page: page)
                     .map { $0.map { Media(tvShow: $0) } }
                     .eraseToAnyPublisher()
             }
@@ -225,7 +224,7 @@ final class AdvancedSearchViewModel: ObservableObject {
 }
 
 struct AdvancedSearchView: View {
-    @StateObject var viewModel: AdvancedSearchViewModel
+    @StateObject var viewModel = AdvancedSearchViewModel()
     
     private let columns = [
       GridItem(.adaptive(minimum: 80), spacing: 8)
@@ -278,11 +277,13 @@ struct AdvancedSearchView: View {
                     .padding(.bottom)
                 }.padding(.horizontal)
             }
+            .navigationTitle("Advanced search")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
 
 #Preview {
-    AdvancedSearchView(viewModel: .init())
+    AdvancedSearchView()
 }

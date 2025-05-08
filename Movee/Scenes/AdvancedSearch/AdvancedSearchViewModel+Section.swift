@@ -104,13 +104,11 @@ extension AdvancedSearchViewModel {
         }()
         
         static var releaseDate: Section = {
-            // Recent individual years
-            let recentYears: [Item] = [
-                .init(title: "2025", value: .int(2025)),
-                .init(title: "2024", value: .int(2024)),
-                .init(title: "2023", value: .int(2023))
-            ]
-            // Earlier decade ranges
+            let currentYear = Calendar.current.component(.year, from: Date())
+            let recentYears: [Item] = (0..<3).map { offset in
+                let year = currentYear - offset
+                return .init(title: "\(year)", value: .int(year))
+            }
             let otherYears: [Item] = [
                 .init(title: "2020s", value: .range(2020..<2030)),
                 .init(title: "2010s", value: .range(2010..<2020)),
