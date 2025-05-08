@@ -7,108 +7,128 @@
 
 import SwiftUI
 
-extension AdvancedSearchViewModel {
-    struct Item: Hashable {
-        let title: String
-        let value: Int
-    }
-
-    struct Section: Hashable, Identifiable {
-        enum SelectionRule: Hashable {
-            case multiple, cumulative, range([[Item]])
-        }
-        
-        var items: [Item]
-        var title: String
-        var selectionRule: SelectionRule
-        
-        var id: String { title }
-        
-        static var genres = Section(
-            items: GenresMapper.shared.movieGenres
-                .map { .init(title: $0.value, value: $0.key) },
-            title: "Genres",
-            selectionRule: .multiple
-        )
-        
-        static var rating = Section(
-            items: [
-                .init(title: "9+", value: 9),
-                .init(title: "8+", value: 8),
-                .init(title: "7+", value: 7),
-                .init(title: "6+", value: 6),
-                .init(title: "5+", value: 5)
-            ],
-            title: "Rating",
-            selectionRule: .cumulative
-        )
-        
-        static var votes = Section(
-            items: [
-                .init(title: "100+", value: 100),
-                .init(title: "500+", value: 500),
-                .init(title: "2000+", value: 2000),
-                .init(title: "5000+", value: 5000),
-                .init(title: "7000+", value: 7000),
-                .init(title: "10000+", value: 10000)
-            ],
-            title: "Votes count",
-            selectionRule: .cumulative
-        )
-        
-        static var runtime: Section = {
-            let items: [Item] = [
-                .init(title: "Ultra Short (<1hr)", value: 60),
-                .init(title: "Short (1 to 1.5hrs)", value: 90),
-                .init(title: "Medium (1.5 to 2hrs)", value: 120),
-                .init(title: "Long (>2hrs)", value: 150)
-            ]
-            return Section(
-                items: items,
-                title: "Runtime",
-                selectionRule: .range([items])
-            )
-        }()
-        
-        static var releaseDate: Section = {
-            // Recent individual years
-            let recentYears: [Item] = [
-                .init(title: "2025", value: 2025),
-                .init(title: "2024", value: 2024),
-                .init(title: "2023", value: 2023)
-            ]
-            // Earlier decade ranges
-            let otherYears: [Item] = [
-                .init(title: "2020s", value: 2020),
-                .init(title: "2010s", value: 2010),
-                .init(title: "2000s", value: 2000),
-                .init(title: "1990s", value: 1990),
-                .init(title: "1980s", value: 1980),
-                .init(title: "1970s", value: 1970),
-                .init(title: "1960s", value: 1960),
-                .init(title: "1950s", value: 1950),
-                .init(title: "1940s", value: 1940),
-                .init(title: "1930s", value: 1930)
-            ]
-            let allItems = recentYears + otherYears
-            return Section(
-                items: allItems,
-                title: "Release date",
-                selectionRule: .range([recentYears, otherYears])
-            )
-        }()
-    }
-}
-
 final class AdvancedSearchViewModel: ObservableObject {
     @Published private(set) var sections: [Section] = [
-        .genres, .rating, .votes, .runtime, .releaseDate
+        .mediaType, .movieGenres, .rating, .votes, .runtime, .releaseDate, .sorting
     ]
         
     @Published private var selectedItems: [Section: [Item]] = [:]
+    @Published private var excludedItems: [Section: [Item]] = [:]
+    
+    private var selectedMediaType: MediaType {
+        switch getSelectedItems(in: .mediaType).first?.value {
+        case .mediaType(let mediaType):
+            return mediaType
+        default:
+            return .movie
+        }
+    }
+    
+    var resultsSection: MediasSection {
+        return MediasSection(title: "Search results") { [unowned self] page in
+            var filters = getFilters()
+            filters.page = page
+            
+            return switch selectedMediaType {
+            case .movie:
+                TMDBAPIClient.shared.discoverMovies(filters: filters)
+                    .map { $0.map { Media(movie: $0) } }
+                    .eraseToAnyPublisher()
+            case .tvShow:
+                TMDBAPIClient.shared.discoverTVShows(filters: filters)
+                    .map { $0.map { Media(tvShow: $0) } }
+                    .eraseToAnyPublisher()
+            }
+        }
+    }
+
+    private func getFilters() -> DiscoverFilters {
+        var filters = DiscoverFilters()
         
+        // Media type (default movie endpoint, tv handled in resultsSection)
+        let mediaType = selectedMediaType
+        
+        // Genres inclusion/exclusion
+        let genreSection = mediaType == .movie ? Section.movieGenres : Section.tvGenres
+        let includedGenreIDs = selectedItems[genreSection]?.compactMap { $0.value.intValue } ?? []
+        let excludedGenreIDs = excludedItems[genreSection]?.compactMap { $0.value.intValue } ?? []
+        if !includedGenreIDs.isEmpty {
+            filters.withGenres = ListFilter(values: includedGenreIDs, combination: .or)
+        }
+        if !excludedGenreIDs.isEmpty {
+            filters.withoutGenres = ListFilter(values: excludedGenreIDs, combination: .or)
+        }
+
+        // Rating (cumulative)
+        if let ratings = selectedItems[.rating], !ratings.isEmpty,
+           let minRating = ratings.compactMap({ $0.value.intValue }).min() {
+            filters.voteAverageGTE = Double(minRating)
+        }
+
+        // Votes count (cumulative)
+        if let votes = selectedItems[.votes], !votes.isEmpty,
+           let minVotes = votes.compactMap({ $0.value.intValue }).min() {
+            filters.voteCountGTE = minVotes
+        }
+
+        // Runtime ranges
+        if let runtimes = selectedItems[.runtime], !runtimes.isEmpty {
+            let ranges = runtimes.compactMap { $0.value.rangeValue }
+            if let lower = ranges.map(\.lowerBound).min() {
+                filters.withRuntimeGTE = lower
+            }
+            if let upper = ranges.map(\.upperBound).max(), upper != Int.max {
+                filters.withRuntimeLTE = upper
+            }
+        }
+
+        // Release date (support single years and decades)
+        if let dates = selectedItems[.releaseDate], !dates.isEmpty {
+            let singleYearRanges = dates.compactMap {
+                $0.value.intValue.map { year in year..<year+1 }
+            }
+            let decadeRanges = dates.compactMap { $0.value.rangeValue }
+            let allRanges = singleYearRanges + decadeRanges
+            if let start = allRanges.map(\.lowerBound).min() {
+                filters.primaryReleaseDateGTE = "\(start)-01-01"
+            }
+            if let end = allRanges.map({ $0.upperBound - 1 }).max() {
+                filters.primaryReleaseDateLTE = "\(end)-12-31"
+            }
+        }
+
+        if let sortingItem = selectedItems[.sorting]?.first?.value,
+           case .sorting(let sortOption) = sortingItem {
+            filters.sortBy = sortOption
+        }
+        
+        return filters
+    }
+    
+    private func getSelectedItems(in section: Section) -> [Item] {
+        selectedItems[section] ?? []
+    }
+    
+    private func configureListAfterSelected(_ item: Item, in section: Section) {
+        switch selectedMediaType {
+        case .movie:
+            sections[1] = .movieGenres
+        case .tvShow:
+            sections[1] = .tvGenres
+        }
+    }
+    
     func selectItem(_ item: Item, in section: Section) {
         switch section.selectionRule {
+        case .exclusive:
+            // Only one item can be selected at a time; tapping it again clears selection
+            if let current = selectedItems[section], current.first == item {
+                selectedItems[section] = []
+            } else {
+                selectedItems[section] = [item]
+            }
+            // Clear any exclusions as well
+            excludedItems[section] = []
         case .multiple:
             var current = selectedItems[section] ?? []
             if let index = current.firstIndex(of: item) {
@@ -117,9 +137,28 @@ final class AdvancedSearchViewModel: ObservableObject {
                 current.append(item)
             }
             selectedItems[section] = current
+            
+        case .multipleWithExclusion:
+            // 1) Get or initialize
+            var current  = selectedItems[section] ?? []
+            var excluded = excludedItems[section] ?? []
 
+            // 2) First tap → select; second tap → exclude; third tap → remove completely
+            if current.contains(item) {
+                current.removeAll { $0 == item }
+                excluded.append(item)
+            } else if excluded.contains(item) {
+                excluded.removeAll { $0 == item }
+            } else {
+                current.append(item)
+            }
+
+            // 3) Save back
+            selectedItems[section] = current
+            excludedItems[section] = excluded
+            
         case .cumulative:
-            var current = selectedItems[section] ?? []
+            let current = selectedItems[section] ?? []
             // If tapping the first selected item, clear all
             if let firstSelected = current.first, firstSelected == item {
                 selectedItems[section] = []
@@ -138,7 +177,7 @@ final class AdvancedSearchViewModel: ObservableObject {
                 return
             }
             // Only work within that subgroup
-            var current = selectedItems[section]?.filter { rangeGroup.contains($0) } ?? []
+            let current = selectedItems[section]?.filter { rangeGroup.contains($0) } ?? []
 
             if current.contains(item) {
                 // Clear selection within this subgroup
@@ -161,10 +200,27 @@ final class AdvancedSearchViewModel: ObservableObject {
                 }
             }
         }
+        configureListAfterSelected(item, in: section)
     }
     
     func isSelected(_ item: Item, in section: Section) -> Bool {
         selectedItems[section]?.contains(item) ?? false
+    }
+    
+    func isExcluded(_ item: Item, in section: Section) -> Bool {
+        excludedItems[section]?.contains(item) ?? false
+    }
+    
+    private func handleInitialSelections() {
+        for section in sections {
+            for item in section.preselectedItems {
+                selectItem(item, in: section)
+            }
+        }
+    }
+    
+    init() {
+        handleInitialSelections()
     }
 }
 
@@ -178,34 +234,54 @@ struct AdvancedSearchView: View {
     @ViewBuilder
     private func createButtonView(_ item: AdvancedSearchViewModel.Item,
                                   section: AdvancedSearchViewModel.Section) -> some View {
-        let button = Button(item.title) {
+        let isSelected = viewModel.isSelected(item, in: section)
+        let isExcluded = viewModel.isExcluded(item, in: section)
+        
+        var title = isExcluded ? "-\(item.title)" : item.title
+        
+        let button = Button(title) {
             viewModel.selectItem(item, in: section)
         }
-        if viewModel.isSelected(item, in: section) {
+        
+        if isSelected {
             button.buttonStyle(.borderedProminent)
+        }
+        else if isExcluded {
+            button
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
         } else {
             button.buttonStyle(.bordered)
         }
     }
         
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                ForEach(viewModel.sections) { section in
-                    Text(section.title)
-                        .textStyle(.sectionTitle)
-                    OverflowLayout(spacing: 8) {
-                        ForEach(section.items, id: \.self) { item in
-                            createButtonView(item, section: section)
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading) {
+                    ForEach(viewModel.sections) { section in
+                        Text(section.title)
+                            .textStyle(.sectionTitle)
+                        OverflowLayout(spacing: 8) {
+                            ForEach(section.items, id: \.self) { item in
+                                createButtonView(item, section: section)
+                            }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    NavigationLink(destination: MediasListView(section: viewModel.resultsSection)) {
+                        Text("Search")
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .buttonStyle(.borderedProminent)
                     .padding(.bottom)
-                }
-            }.padding(.horizontal)
+                }.padding(.horizontal)
+            }
         }
     }
 }
+
 
 #Preview {
     AdvancedSearchView(viewModel: .init())
