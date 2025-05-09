@@ -14,7 +14,7 @@ struct MainView: View {
                 .tabItem {
                     Label("Explore", systemImage: "house")
                 }
-            MediasListView(section: [MediasSection].homePageSections.first!)
+            MediasListView(section: .watchlistSection)
                 .tabItem {
                     Label("Watchlist", systemImage: "list.and.film")
                 }

@@ -34,6 +34,14 @@ extension Media {
             items.append(.init(key: "Release Date", value: formattedReleaseDate))
         }
         
+        // Production Companies
+        if let companies = movieExtra.productionCompanies, !companies.isEmpty {
+            let companyNames = companies.compactMap { $0.name }.joined(separator: ", ")
+            if !companyNames.isEmpty {
+                items.append(.init(key: "Production", value: companyNames))
+            }
+        }
+        
         // 2. Status
         if let status = movieExtra.status?.rawValue {
             items.append(.init(key: "Status", value: status))
@@ -147,4 +155,3 @@ extension Media {
         return items
     }
 }
-

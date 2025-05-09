@@ -16,10 +16,16 @@ protocol ViewModel {
 
 // MARK: - JSON Config for Collections
 private struct ListConfig: Decodable {
-    let mediaType: String?
+    enum MediaType: String, Decodable {
+        case movie, tv, themedList
+    }
+    
+    let mediaType: MediaType?
     let name: String
     let path: String?
     let query: String?
+    //TODO: @DefaultEmptyArray
+    let nestedLists: [ListConfig]?
 }
 
 private struct ListsRoot: Decodable {
@@ -28,7 +34,9 @@ private struct ListsRoot: Decodable {
 
 struct SearchCollectionsView: View {
     @State var collections: [CustomMediaCollection]
-    
+    var title: String?
+    var isNested: Bool = false
+
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
         count: 2
@@ -37,26 +45,33 @@ struct SearchCollectionsView: View {
     var body: some View {
         ScrollView {
             VStack {
-                LazyVGrid(columns: columns) {
-                    NavigationLink {
-                        AdvancedSearchView()
-                    } label: {
-                        CustomCollectionView(collection: .init(title: "Advanced search"))
+                if !isNested {
+                    LazyVGrid(columns: columns) {
+                        NavigationLink {
+                            AdvancedSearchView()
+                        } label: {
+                            CustomCollectionView(collection: .init(title: "Advanced search"))
+                        }
+                        
+//                        NavigationLink {
+//                            AdvancedSearchView()
+//                        } label: {
+//                            CustomCollectionView(collection: .init(title: "Search history"))
+//                        }
                     }
                     
-                    NavigationLink {
-                        AdvancedSearchView()
-                    } label: {
-                        CustomCollectionView(collection: .init(title: "Search history"))
-                    }
+                    Divider()
                 }
-                
-                Divider()
                 
                 LazyVGrid(columns: columns) {
                     ForEach(collections, id: \.title) { collection in
                         NavigationLink {
-                            MediasListView(section: collection.section)
+                            if let nestedCollections = collection.nested,
+                               !nestedCollections.isEmpty {
+                                SearchCollectionsView(collections: nestedCollections, title: collection.title, isNested: true)
+                            } else {
+                                MediasListView(section: collection.section)
+                            }
                         } label: {
                             CustomCollectionView(collection: collection)
                         }
@@ -65,6 +80,8 @@ struct SearchCollectionsView: View {
                 }
             }.padding(.horizontal)
         }
+        .navigationTitle(title ?? "Discover")
+        .navigationBarTitleDisplayMode(isNested ? .inline : .automatic)
     }
 }
 
@@ -120,7 +137,7 @@ struct SearchView: View {
                         
                     }
                 }
-            }.navigationTitle("Discover")
+            }
         }
         .searchable(text: $viewModel.query, isPresented: $isSearchActive, prompt: "Search movies, TV shows, people")
     }
@@ -134,6 +151,7 @@ struct CustomMediaCollection {
     var title: String
     var image: ImageResource?
     var publisherBuilder: PublisherBuilder?
+    var nested: [CustomMediaCollection]?
     
     var section: MediasSection {
         .init(title: title, publisherBuilder: publisherBuilder)
@@ -161,7 +179,7 @@ private class SearchViewModel: ObservableObject {
     }
     
     var searchScopes: [SearchScope] = SearchScope.allCases
-
+    
     enum NavigationDestination {
         case media(Media)
         case person(MediaPerson)
@@ -238,7 +256,7 @@ private class SearchViewModel: ObservableObject {
                 .map { $0.map { SearchResult(.person($0)) } }
                 .eraseToAnyPublisher()
         }
-
+        
         publisher
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
@@ -247,7 +265,7 @@ private class SearchViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] response in
                 guard let self else { return }
-
+                
                 self.currentPage = response.page
                 self.totalPages = response.total_pages
                 
@@ -278,39 +296,50 @@ private class SearchViewModel: ObservableObject {
             return
         }
         
-        collections = root.discoverLists.map { config in
-            CustomMediaCollection(
-                title: config.name,
-                image: nil,
-                publisherBuilder: { page in
-                    if config.mediaType == "tv" {
-                        TMDBAPIClient.shared
-                            .fetchCustomList(
-                                endpoint: config.path ?? "",
-                                query: config.query ?? "",
-                                page: page
-                            )
-                            .map { response in
-                                return response.map(Media.init(tvShow:))
-                            }
-                            .eraseToAnyPublisher()
-                    } else {
-                        TMDBAPIClient.shared
-                            .fetchCustomList(
-                                endpoint: config.path ?? "",
-                                query: config.query ?? "",
-                                page: page
-                            )
-                            .map { response in
-                                return response.map(Media.init(movie:))
-                            }
-                            .eraseToAnyPublisher()
-                    }
-                }
-            )
-        }
+        collections = root.discoverLists.map(makeCollection)
     }
-}
+    
+    private func makeCollections(from configs: [ListConfig]?) -> [CustomMediaCollection]? {
+        configs?.map(makeCollection)
+    }
+    
+    private func makeCollection(from config: ListConfig) -> CustomMediaCollection {
+        CustomMediaCollection(
+            title: config.name,
+            image: nil,
+            publisherBuilder: { page in
+                switch config.mediaType ?? .movie {
+                case .tv:
+                    return TMDBAPIClient.shared
+                        .fetchCustomList(
+                            endpoint: config.path ?? "",
+                            query: config.query ?? "",
+                            page: page
+                        )
+                        .map { $0.map(Media.init(tvShow:)) }
+                        .eraseToAnyPublisher()
+                case .themedList:
+                    let rawPath = config.path?.replacingOccurrences(of: "list/", with: "")
+                    let listID = Int(rawPath ?? "") ?? -1
+                    return TMDBAPIClient.shared
+                        .fetchList(listID: listID, page: page)
+                        .map { $0.paginatedResponse.compactMap(\.media) }
+                        .eraseToAnyPublisher()
+
+                default: 
+                    return TMDBAPIClient.shared
+                        .fetchCustomList(
+                            endpoint: config.path ?? "",
+                            query: config.query ?? "",
+                            page: page
+                        )
+                        .map { $0.map(Media.init(movie:)) }
+                        .eraseToAnyPublisher()
+                }
+            },
+            nested: makeCollections(from: config.nestedLists)
+        )
+    }}
 
 #Preview {
     SearchView()
@@ -338,7 +367,7 @@ struct CustomCollectionView: View {
                         Color.black.opacity(0.3)
                     }
                 } else {
-                    Color.secondary
+                    Color(UIColor.secondarySystemBackground)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
