@@ -25,6 +25,14 @@ struct SearchResult: Decodable, Identifiable, Equatable {
         case .person(let person): return person.id
         }
     }
+    
+    var media: Media? {
+        switch result {
+        case .movie(let movie): return .init(movie: movie)
+        case .tv(let tvShow): return .init(tvShow: tvShow)
+        case .person(let person): return nil
+        }
+    }
 
     enum Result {
         case movie(Movie)

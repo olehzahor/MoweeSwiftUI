@@ -271,20 +271,20 @@ struct MediaDetailsView: View {
                         }
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: "heart")
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: "ellipsis")
-                    }
-                }
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button {
+//                        
+//                    } label: {
+//                        Image(systemName: "heart")
+//                    }
+//                }
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button {
+//                        
+//                    } label: {
+//                        Image(systemName: "ellipsis")
+//                    }
+//                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(isScrolledDown ? media.title : "")

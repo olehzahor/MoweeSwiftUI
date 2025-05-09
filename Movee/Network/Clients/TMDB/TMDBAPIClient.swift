@@ -35,6 +35,18 @@ final class TMDBAPIClient {
     func fetchPopularTVShows(page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
         return getPublisher(for: "tv/popular", parameters: ["page": page])
     }
+
+    func fetchTopRatedTVShows(page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
+        return getPublisher(for: "tv/top_rated", parameters: ["page": page])
+    }
+
+    func fetchOnTheAirTVShows(page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
+        return getPublisher(for: "tv/on_the_air", parameters: ["page": page])
+    }
+
+    func fetchAiringTodayTVShows(page: Int = 1) -> AnyPublisher<PaginatedResponse<TVShow>, Error> {
+        return getPublisher(for: "tv/airing_today", parameters: ["page": page])
+    }
     
     func fetchMovieGenres() -> AnyPublisher<GenresResponse, Error> {
         return getPublisher(for: "genre/movie/list")
@@ -149,6 +161,12 @@ final class TMDBAPIClient {
     func fetchMovieVideos(movieID: Int) -> AnyPublisher<VideoResponse, Error> {
         return getPublisher(for: "movie/\(movieID)/videos")
     }
+
+    /// Fetches a TMDB user-created list by its identifier.
+    /// - Parameter listID: the TMDB list identifier.
+    func fetchList(listID: Int, page: Int = 1) -> AnyPublisher<ListResponse, Error> {
+        return getPublisher(for: "list/\(listID)", parameters: ["page": page])
+    }
     
     /// Fetches a custom paginated list from the specified endpoint with raw query string parameters.
     /// - Parameters:
@@ -171,6 +189,24 @@ final class TMDBAPIClient {
         parameters["page"] = page
         return getPublisher(for: endpoint, parameters: parameters)
     }
+    
+    func fetchCustomList2<T: Decodable>(
+        endpoint: String,
+        query: String,
+        page: Int = 1
+    ) -> AnyPublisher<T, Error> {
+        // Parse raw query string into parameters dictionary
+        var parameters = [String: Any]()
+        for component in query.split(separator: "&") {
+            let parts = component.split(separator: "=", maxSplits: 1).map(String.init)
+            if parts.count == 2 {
+                parameters[parts[0]] = parts[1]
+            }
+        }
+        parameters["page"] = page
+        return getPublisher(for: endpoint, parameters: parameters)
+    }
+    
     
     private init() { }
 }

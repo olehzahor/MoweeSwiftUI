@@ -11,6 +11,7 @@ import Foundation
 class MediasListViewModel: ObservableObject {
     @Published var medias: [Media] = []
     @Published var section: MediasSection
+    @Published var isLoaded: Bool = false
 
     private var cancellables = Set<AnyCancellable>()
     
@@ -38,6 +39,7 @@ class MediasListViewModel: ObservableObject {
                 medias.append(contentsOf: response.results)
                 totalPages = response.total_pages
                 currentPage += 1
+                isLoaded = true
             }
             .store(in: &cancellables)
     }

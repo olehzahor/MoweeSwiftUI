@@ -32,4 +32,13 @@ extension PaginatedResponse {
             total_results: self.total_results
         )
     }
+    
+    func compactMap<U: Decodable>(_ transform: (T) -> U?) -> PaginatedResponse<U> {
+        return PaginatedResponse<U>(
+            page: self.page,
+            results: self.results.compactMap(transform),
+            total_pages: self.total_pages,
+            total_results: self.total_results
+        )
+    }
 }

@@ -11,6 +11,10 @@ import Combine
 struct MediasListView: View {
     @StateObject var viewModel: MediasListViewModel
 
+    private var title: String {
+        viewModel.section.fullTitle ?? viewModel.section.title
+    }
+    
     private var medias: [Media] {
         if !viewModel.medias.isEmpty {
             return viewModel.medias
@@ -42,18 +46,33 @@ struct MediasListView: View {
     
     var body: some View {
         NavigationStack {
-            List(Array(medias.enumerated()), id: \.0) { _, media in
-                ZStack {
-                    setupRowView(media)
+            Group {
+                if viewModel.isLoaded, viewModel.medias.isEmpty,
+                   let placeholder = viewModel.section.placeholder {
+                    VStack(alignment: .center, spacing: 16) {
+                        Text(placeholder.title)
+                            .textStyle(.mediumTitle)
+                        if let subtitle = placeholder.subtitle {
+                            Text(subtitle)
+                                .textStyle(.mediumSubtitle)
+                        }
+                    }.padding(.horizontal)
+                } else {
+                    List(Array(medias.enumerated()), id: \.0) { _, media in
+                        ZStack {
+                            setupRowView(media)
+                        }
+                        .listRowSeparator(.hidden)
+                    }
+                    .listStyle(.plain)
+                    .scrollIndicators(.hidden)
+                    .onAppear {
+                        viewModel.fetchMedias()
+                    }
                 }
-                .listRowSeparator(.hidden)
             }
-            .listStyle(.plain)
-            .scrollIndicators(.hidden)
-            .onAppear {
-                viewModel.fetchMedias()
-            }
-            .navigationTitle(viewModel.section.fullTitle ?? viewModel.section.title)
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(title == "Watchlist" ? .large : .inline)
         }
     }
     
