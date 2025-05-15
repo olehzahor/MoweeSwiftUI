@@ -21,6 +21,12 @@ class WatchlistManager: WatchlistManagerInterface {
     
     private let dataService = SwiftDataService<WatchlistItem>(modelContainer: AppContainer.shared)
     private let itemsSubject = CurrentValueSubject<[WatchlistItem], Never>([])
+    
+    var itemsPublisher: AnyPublisher<[WatchlistItem], Never> {
+        itemsSubject
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
 
     private func fetchAndSendItems() async {
         do {
@@ -31,12 +37,6 @@ class WatchlistManager: WatchlistManagerInterface {
         } catch {
             Logger.shared.log("Failed to fetch watchlist items: \(error)", level: .error)
         }
-    }
-    
-    var itemsPublisher: AnyPublisher<[WatchlistItem], Never> {
-        itemsSubject
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
     }
     
     func addToWatchlist(_ media: Media) async {

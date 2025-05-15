@@ -11,7 +11,7 @@ import SwiftData
 enum AppContainer {
     static let shared: ModelContainer = {
         do {
-            return try ModelContainer(for: WatchlistItem.self)
+            return try ModelContainer(for: WatchlistItem.self, SearchHistoryItem.self)
         } catch {
             fatalError("Failed to initialize SwiftData container: \(error)")
         }

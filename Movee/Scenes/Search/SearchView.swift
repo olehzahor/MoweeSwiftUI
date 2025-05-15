@@ -41,6 +41,10 @@ struct SearchCollectionsView: View {
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
         count: 2
     )
+    
+    private func isSearchHistoryAvailable() -> Bool {
+        SearchHistoryManager.shared.count() > 0
+    }
 
     var body: some View {
         ScrollView {
@@ -53,11 +57,23 @@ struct SearchCollectionsView: View {
                             CustomCollectionView(collection: .init(title: "Advanced search"))
                         }
                         
-//                        NavigationLink {
-//                            AdvancedSearchView()
-//                        } label: {
-//                            CustomCollectionView(collection: .init(title: "Search history"))
-//                        }
+                        if isSearchHistoryAvailable() {
+                            NavigationLink {
+                                let section = MediasSection(title: "Search history") { _ in
+                                    SearchHistoryManager.shared.itemsPublisher
+                                        .map {
+                                            .wrap($0
+                                                .sorted(by: { $0.added >= $1.added })
+                                                .map { Media($0.media) })
+                                        }
+                                        .setFailureType(to: Error.self)
+                                        .eraseToAnyPublisher()
+                                }
+                                MediasListView(section: section)
+                            } label: {
+                                CustomCollectionView(collection: .init(title: "Search history"))
+                            }
+                        }
                     }
                     
                     Divider()
@@ -93,7 +109,9 @@ struct SearchView: View {
     private func destinationView(for result: SearchResult) -> some View {
         switch viewModel.getNavigationDestination(for: result) {
         case .media(let media):
-            MediaDetailsView(media: media)
+            MediaDetailsView(media: media).onFirstAppear {
+                viewModel.saveToHistory(media)
+            }
         case .person(let person):
             PersonDetailsView(person: person)
         }
@@ -222,6 +240,12 @@ private class SearchViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         loadCollections()
+    }
+    
+    func saveToHistory(_ media: Media) {
+        Task {
+            await SearchHistoryManager.shared.addToHistory(media)
+        }
     }
     
     func getNavigationDestination(for result: SearchResult) -> NavigationDestination {
