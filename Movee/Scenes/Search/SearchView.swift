@@ -81,7 +81,7 @@ struct SearchCollectionsView: View {
             }.padding(.horizontal)
         }
         .navigationTitle(title ?? "Discover")
-        .navigationBarTitleDisplayMode(isNested ? .inline : .automatic)
+        .navigationBarTitleDisplayMode(isNested ? .inline : .large)
     }
 }
 
@@ -139,7 +139,12 @@ struct SearchView: View {
                 }
             }
         }
-        .searchable(text: $viewModel.query, isPresented: $isSearchActive, prompt: "Search movies, TV shows, people")
+        .searchable(
+            text: $viewModel.query,
+            isPresented: $isSearchActive,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: "Search movies, TV shows, people"
+        )
     }
 }
 
@@ -326,7 +331,7 @@ private class SearchViewModel: ObservableObject {
                         .map { $0.paginatedResponse.compactMap(\.media) }
                         .eraseToAnyPublisher()
 
-                default: 
+                default:
                     return TMDBAPIClient.shared
                         .fetchCustomList(
                             endpoint: config.path ?? "",
