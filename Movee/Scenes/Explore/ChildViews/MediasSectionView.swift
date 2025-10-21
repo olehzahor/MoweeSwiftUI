@@ -68,7 +68,7 @@ struct MediasSectionView: View {
                                 NavigationLink {
                                     switch media.object {
                                     case .media(let media):
-                                        MediaDetailsView(media: media)
+                                        NewMediaDetailsView(media: media)
                                     case .season(let season, let media):
                                         SeasonDetailsView(tvShowID: media.id, season: season)
                                     default:

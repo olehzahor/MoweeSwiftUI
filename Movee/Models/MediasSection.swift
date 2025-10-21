@@ -53,36 +53,36 @@ extension Array where Element == MediasSection {
                 .map { $0.map { Media(movie: $0) } }
                 .eraseToAnyPublisher()
         }),
-        MediasSection(title: "Upcoming Movies", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchUpcomingMovies(page: page)
-                .map { $0.map { Media(movie: $0) } }
-                .eraseToAnyPublisher()
-        }),
-        MediasSection(title: "Top Rated Movies", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchTopRatedMovies(page: page)
-                .map { $0.map { Media(movie: $0) } }
-                .eraseToAnyPublisher()
-        }),
-        MediasSection(title: "Popular TV Shows", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchPopularTVShows(page: page)
-                .map { $0.map { Media(tvShow: $0) } }
-                .eraseToAnyPublisher()
-        }),
-        MediasSection(title: "Top Rated TV Shows", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchTopRatedTVShows(page: page)
-                .map { $0.map { Media(tvShow: $0) } }
-                .eraseToAnyPublisher()
-        }),
-        MediasSection(title: "On The Air TV Shows", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchOnTheAirTVShows(page: page)
-                .map { $0.map { Media(tvShow: $0) } }
-                .eraseToAnyPublisher()
-        }),
-        MediasSection(title: "Airing Today TV Shows", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchAiringTodayTVShows(page: page)
-                .map { $0.map { Media(tvShow: $0) } }
-                .eraseToAnyPublisher()
-        })
+//        MediasSection(title: "Upcoming Movies", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchUpcomingMovies(page: page)
+//                .map { $0.map { Media(movie: $0) } }
+//                .eraseToAnyPublisher()
+//        }),
+//        MediasSection(title: "Top Rated Movies", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchTopRatedMovies(page: page)
+//                .map { $0.map { Media(movie: $0) } }
+//                .eraseToAnyPublisher()
+//        }),
+//        MediasSection(title: "Popular TV Shows", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchPopularTVShows(page: page)
+//                .map { $0.map { Media(tvShow: $0) } }
+//                .eraseToAnyPublisher()
+//        }),
+//        MediasSection(title: "Top Rated TV Shows", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchTopRatedTVShows(page: page)
+//                .map { $0.map { Media(tvShow: $0) } }
+//                .eraseToAnyPublisher()
+//        }),
+//        MediasSection(title: "On The Air TV Shows", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchOnTheAirTVShows(page: page)
+//                .map { $0.map { Media(tvShow: $0) } }
+//                .eraseToAnyPublisher()
+//        }),
+//        MediasSection(title: "Airing Today TV Shows", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchAiringTodayTVShows(page: page)
+//                .map { $0.map { Media(tvShow: $0) } }
+//                .eraseToAnyPublisher()
+//        })
     ]
 }
 

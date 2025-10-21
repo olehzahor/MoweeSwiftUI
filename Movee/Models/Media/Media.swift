@@ -153,4 +153,14 @@ extension Media {
     static var placeholder: Self {
         .init(id: -9000, mediaType: .movie, title: .placeholder(.short), originalTitle: .placeholder(.short), overview: .placeholder(.custom(200)), popularity: 0, voteAverage: 0.0, voteCount: 0, genreIDs: [28, 18])
     }
+    
+    var seasons: [Season]? {
+        guard let extra else { return nil }
+        switch extra {
+        case .movie:
+            return nil
+        case .tvShow(let data):
+            return data.seasons
+        }
+    }
 }
