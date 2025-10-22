@@ -43,7 +43,7 @@ extension SectionFetchable {
             return
         }
 
-        guard !sectionsContext[section].isLoading else { return }
+        guard !sectionsContext[section].isLoading, !sectionsContext[section].isLoaded else { return }
         
         sectionsContext[section] = .loading(task: nil)
         do {
