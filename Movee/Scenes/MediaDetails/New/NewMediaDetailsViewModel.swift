@@ -94,6 +94,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
         Task {
             for section in MediaDetailsSection.allCases {
                 await fetchAsync(section)
+                try await Task.sleep(for: .seconds(1))
             }
         }
     }
@@ -323,43 +324,44 @@ struct NewMediaDetailsView: View {
                         }
                         .saveSize(in: $headerSize)
                     VStack(alignment: .leading, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            // TODO: global isLoading?? (LoadableView protocol)
-                            MediaTaglineView(
-                                tagline: viewModel.media?.tagline,
-                                isLoading: context[.details].isLoading
-                            )
-                            Text(media.overview)
-                                .textStyle(.mediumText)
-                        }
-                        
-                        MediaVideosCarouselView(videos: viewModel.videos ?? [])
-                            .hideWhen(context[.videos].isEmpty)
-                        
-                        MediasSectionView(
-                            section: .init(title: "Seasons"),
-                            seasons: viewModel.seasons,
-                            media: viewModel.media,
-                            errorMessage: nil,
-                            retry: { viewModel.fetch(.details) }
-                        ).hideWhen(
-                            context[.seasons].isEmpty
-                        )
-                        
-                        PersonsSectionView(persons: viewModel.credits)
-                            .hideWhen(context[.credits].isEmpty)
-                        
-                        MediasSectionView(
-                            section: MediasSection(title: ""),
-                            medias: viewModel.related,
-                            errorMessage: nil,
-                            retry: { viewModel.fetch(.related) }
-                        )
-                        .hideWhen(context[.related].isEmpty)
+//                        VStack(alignment: .leading, spacing: 4) {
+//                            // TODO: global isLoading?? (LoadableView protocol)
+//                            MediaTaglineView(
+//                                tagline: viewModel.media?.tagline,
+//                                isLoading: context[.details].isLoading
+//                            )
+//                            Text(media.overview)
+//                                .textStyle(.mediumText)
+//                        }
+//                        
+//                        MediaVideosCarouselView(videos: viewModel.videos ?? [])
+//                            .hideWhen(context[.videos].isEmpty)
+//                        
+//                        MediasSectionView(
+//                            section: .init(title: "Seasons"),
+//                            seasons: viewModel.seasons,
+//                            media: viewModel.media,
+//                            errorMessage: nil,
+//                            retry: { viewModel.fetch(.details) }
+//                        ).hideWhen(
+//                            context[.seasons].isEmpty
+//                        )
+//                        
+//                        PersonsSectionView(persons: viewModel.credits)
+//                            .hideWhen(context[.credits].isEmpty)
+//                        
+//                        MediasSectionView(
+//                            section: MediasSection(title: ""),
+//                            medias: viewModel.related,
+//                            errorMessage: nil,
+//                            retry: { viewModel.fetch(.related) }
+//                        )
+//                        .hideWhen(context[.related].isEmpty)
                         
                         NewMediasSectionView(
                             section: viewModel.relatedSection,
                             medias: viewModel.related)
+                        .loading(context[.related].isLoading)
                         .hideWhen(context[.related].isEmpty)
 
                         
