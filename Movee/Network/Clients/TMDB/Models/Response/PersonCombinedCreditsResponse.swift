@@ -7,7 +7,7 @@
 
 
 // MARK: - Person Combined Credits
-enum PersonCredit: Codable {
+enum PersonCredit: Codable, Hashable {
     case movie(Movie)
     case tvShow(TVShow)
 
@@ -47,7 +47,7 @@ enum PersonCredit: Codable {
     }
 }
 
-struct PersonCombinedCreditsResponse: Codable {
+struct PersonCombinedCreditsResponse: Codable, Hashable {
     let cast: [PersonCredit]
     let crew: [PersonCredit]
 }

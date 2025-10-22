@@ -8,7 +8,7 @@
 import Foundation
 
 // Collection
-struct Collection: Codable {
+struct Collection: Codable, Hashable {
     let id: Int
     let name: String
     let posterPath: String?
@@ -28,7 +28,7 @@ extension Collection {
 }
 
 // ProductionCompany
-struct ProductionCompany: Codable, Identifiable {
+struct ProductionCompany: Codable, Hashable, Identifiable {
     let id: Int
     let logoPath: String?
     let name: String
@@ -42,7 +42,7 @@ struct ProductionCompany: Codable, Identifiable {
 }
 
 // ProductionCountry
-struct ProductionCountry: Codable {
+struct ProductionCountry: Codable, Hashable {
     let iso3166_1: String
     let name: String
     
@@ -53,7 +53,7 @@ struct ProductionCountry: Codable {
 }
 
 // SpokenLanguage
-struct SpokenLanguage: Codable {
+struct SpokenLanguage: Codable, Hashable {
     let englishName: String?
     let iso639_1: String
     let name: String?
@@ -66,7 +66,7 @@ struct SpokenLanguage: Codable {
 }
 
 // Episode (full details)
-struct Episode: Codable, Identifiable {
+struct Episode: Codable, Hashable, Identifiable {
     var id: Int
     var airDate: String?
     var episodeNumber: Int
@@ -122,7 +122,7 @@ extension Episode {
 }
 
 // Season (for TV show seasons)
-struct Season: Codable, Identifiable {
+struct Season: Codable, Hashable, Identifiable {
     let id: Int
     let airDate: String?
     let episodes: [Episode]?
@@ -165,7 +165,7 @@ extension Season {
 }
 
 // Network (for TV show networks)
-struct Network: Codable, Identifiable {
+struct Network: Codable, Hashable, Identifiable {
     let id: Int
     let name: String
     let logoPath: String?
@@ -179,14 +179,14 @@ struct Network: Codable, Identifiable {
 }
 
 // CreditsResponse: Represents the full credits response from TMDB.
-struct CreditsResponse: Codable {
+struct CreditsResponse: Codable, Hashable {
     let id: Int
     let cast: [CastMember]
     let crew: [CrewMember]
 }
 
 // CastMember: Represents an individual cast member.
-struct CastMember: Codable, Identifiable {
+struct CastMember: Codable, Hashable, Identifiable {
     let id: Int
     let castID: Int?
     let character: String?
@@ -211,7 +211,7 @@ struct CastMember: Codable, Identifiable {
 }
 
 // CrewMember: Represents an individual crew member.
-struct CrewMember: Codable, Identifiable {
+struct CrewMember: Codable, Hashable, Identifiable {
     let id: Int
     let creditID: String?
     let department: String?
@@ -231,7 +231,7 @@ struct CrewMember: Codable, Identifiable {
 }
 
 // Person (detailed TMDB person)
-struct Person: Codable, Identifiable {
+struct Person: Codable, Hashable, Identifiable {
     let id: Int
     let name: String
     let birthday: String?

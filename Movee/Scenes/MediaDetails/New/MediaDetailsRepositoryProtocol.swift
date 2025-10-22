@@ -13,5 +13,5 @@ protocol MediaDetailsRepositoryProtocol {
     func fetchCredits(_ identifier: MediaIdentifier) async throws -> [MediaPerson]
     func fetchReviews(_ identifier: MediaIdentifier) async throws -> [Review]
     func fetchVideos(_ identifier: MediaIdentifier) async throws -> [Video]
-    func fetchCollection(_ media: Media?) async throws -> [Media]
+    func fetchCollection(_ media: Media?) async throws -> MediasCollection?
 }

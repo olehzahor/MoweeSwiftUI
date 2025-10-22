@@ -142,8 +142,8 @@
             filePath = "Movee/Scenes/MediaDetails/NewMediaDetailsViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -158,8 +158,8 @@
             filePath = "Movee/Scenes/MediaDetails/NewMediaDetailsViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "188"
-            endingLineNumber = "188"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -174,26 +174,26 @@
             filePath = "Movee/Scenes/MediaDetails/NewMediaDetailsViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "fetchConfigs"
-            landmarkType = "24">
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "NewMediaDetailsViewModel"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AFDA2F34-F57E-40C4-9A88-E5A80DE3AD3D"
+            uuid = "713595B5-08A9-4A4F-A423-73D0CEFD243A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Movee/Scenes/MediaDetails/NewMediaDetailsViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "fetchConfigs"
-            landmarkType = "24">
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "fetchInitialData()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

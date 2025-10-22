@@ -86,19 +86,60 @@ struct MediasSectionView: View {
         }
     }
     
-    init(section: MediasSection, medias: [Media]?, errorMessage: String? = nil, retry: (() -> Void)? = nil, horizontalPadding: CGFloat = 20) {
-        self.section = section
-        self.medias = medias?.map { .init(media: $0) }
-        self.errorMessage = errorMessage
-        self.retry = retry
-        self.horizontalPadding = horizontalPadding
-    }
-    
-    init(section: MediasSection, items: [MediaUIModel]?, errorMessage: String? = nil, retry: (() -> Void)? = nil, horizontalPadding: CGFloat = 20) {
+    // MARK: - Designated Initializer
+
+    init(
+        section: MediasSection,
+        items: [MediaUIModel]?,
+        errorMessage: String? = nil,
+        retry: (() -> Void)? = nil,
+        horizontalPadding: CGFloat = 20
+    ) {
         self.section = section
         self.medias = items
         self.errorMessage = errorMessage
         self.retry = retry
         self.horizontalPadding = horizontalPadding
+    }
+}
+
+// MARK: - Convenience Initializers
+extension MediasSectionView {
+    init(
+        section: MediasSection,
+        medias: [Media]?,
+        errorMessage: String? = nil,
+        retry: (() -> Void)? = nil,
+        horizontalPadding: CGFloat = 20
+    ) {
+        self.init(
+            section: section,
+            items: medias?.map { .init(media: $0) },
+            errorMessage: errorMessage,
+            retry: retry,
+            horizontalPadding: horizontalPadding
+        )
+    }
+
+    init(
+        section: MediasSection,
+        seasons: [Season]?,
+        media: Media?,
+        errorMessage: String? = nil,
+        retry: (() -> Void)? = nil,
+        horizontalPadding: CGFloat = 20
+    ) {
+        let items: [MediaUIModel]? = {
+            guard let media = media else { return nil }
+            return seasons?.map { .init(season: $0, media: media) }
+        }()
+
+        self.init(
+            section: section,
+            items: items,
+            errorMessage: errorMessage,
+            retry: retry,
+            horizontalPadding: horizontalPadding
+        )
     }
 }

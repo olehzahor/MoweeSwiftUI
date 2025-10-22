@@ -7,13 +7,13 @@
 
 import Foundation
 
-enum ExtraInfo: Codable {
+enum ExtraInfo: Codable, Hashable {
     case movie(MovieExtra)
     case tvShow(TVShowExtra)
 }
 
 // MARK: - Movie Extra Details
-struct MovieExtra: Codable {
+struct MovieExtra: Codable, Hashable {
     let adult: Bool
     let belongsToCollection: Collection?
     let budget: Int?
@@ -44,7 +44,7 @@ struct MovieExtra: Codable {
 }
 
 // MARK: - TV Show Extra Details
-struct TVShowExtra: Codable {
+struct TVShowExtra: Codable, Hashable {
     let createdBy: [Person]?
     let episodeRunTime: [Int]?
     let homepage: String?

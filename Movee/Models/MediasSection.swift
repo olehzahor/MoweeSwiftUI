@@ -48,11 +48,11 @@ extension Array where Element == MediasSection {
                 .map { $0.map { Media(movie: $0) } }
                 .eraseToAnyPublisher()
         }),
-        MediasSection(title: "Now Playing Movies", publisherBuilder: { page in
-            TMDBAPIClient.shared.fetchNowPlayingMovies(page: page)
-                .map { $0.map { Media(movie: $0) } }
-                .eraseToAnyPublisher()
-        }),
+//        MediasSection(title: "Now Playing Movies", publisherBuilder: { page in
+//            TMDBAPIClient.shared.fetchNowPlayingMovies(page: page)
+//                .map { $0.map { Media(movie: $0) } }
+//                .eraseToAnyPublisher()
+//        }),
 //        MediasSection(title: "Upcoming Movies", publisherBuilder: { page in
 //            TMDBAPIClient.shared.fetchUpcomingMovies(page: page)
 //                .map { $0.map { Media(movie: $0) } }
@@ -63,11 +63,11 @@ extension Array where Element == MediasSection {
 //                .map { $0.map { Media(movie: $0) } }
 //                .eraseToAnyPublisher()
 //        }),
-//        MediasSection(title: "Popular TV Shows", publisherBuilder: { page in
-//            TMDBAPIClient.shared.fetchPopularTVShows(page: page)
-//                .map { $0.map { Media(tvShow: $0) } }
-//                .eraseToAnyPublisher()
-//        }),
+        MediasSection(title: "Popular TV Shows", publisherBuilder: { page in
+            TMDBAPIClient.shared.fetchPopularTVShows(page: page)
+                .map { $0.map { Media(tvShow: $0) } }
+                .eraseToAnyPublisher()
+        }),
 //        MediasSection(title: "Top Rated TV Shows", publisherBuilder: { page in
 //            TMDBAPIClient.shared.fetchTopRatedTVShows(page: page)
 //                .map { $0.map { Media(tvShow: $0) } }

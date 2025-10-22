@@ -5,7 +5,7 @@
 //  Created by user on 4/9/25.
 //
 
-struct TVShow: Codable, Identifiable {
+struct TVShow: Codable, Hashable, Identifiable {
     let id: Int
     let originalName: String
     let name: String
