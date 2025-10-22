@@ -39,7 +39,7 @@ struct Media: Codable, Equatable, Identifiable {
     
     // Type-specific extra info stored in an enum.
     var extra: ExtraInfo?
-    
+//    
     static func == (lhs: Media, rhs: Media) -> Bool {
         lhs.id == rhs.id
     }

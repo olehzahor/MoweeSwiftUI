@@ -8,25 +8,44 @@
 import Foundation
 
 enum MediaDetailsSection: CaseIterable {
-    case /*initial,*/ details, seasons, watchlist, credits, related, reviews, videos, collection
+    case details, seasons, videos, /*watchlist,*/ credits, related, reviews, collection
 }
 
+struct MediasCollection {
+    let name: String
+    let medias: [Media]
+}
 
 @MainActor
 final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
     
+    private var mediaIdentifier: MediaIdentifier
+
+    @Published var media: Media?
+
+    @Published var credits: [MediaPerson]?
+    @Published var related: [Media]?
+    @Published var reviews: [Review]?
+    @Published var seasons: [Season]?
+    @Published var videos: [Video]?
+    @Published var collection: MediasCollection?
+
     var sectionsContext = SectionsLoadingContext<MediaDetailsSection>()
-    
+
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
-        // TODO: add dependent section
         .details: AnyFetchConfig(
             FetchConfig { [repo, mediaIdentifier] in
                 try await repo.fetchMedia(mediaIdentifier)
             } onSuccess: { [weak self] result in
                 self?.media = result
-                self?.seasons = result.seasons
-                self?.fetch(.collection)
+            }
+        ),
+        .seasons: AnyFetchConfig(
+            FetchConfig { [unowned self] in
+                media?.seasons
+            } onSuccess: { [weak self] result in
+                self?.seasons = result
             }
         ),
         .related: AnyFetchConfig(
@@ -62,34 +81,23 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
                 try await repo.fetchCollection(media)
             } onSuccess: { [weak self] result in
                 self?.collection = result
+            } isEmpty: { result in
+                result?.medias.isEmpty ?? true
             }
         )
     ]
-    
-    private var mediaIdentifier: MediaIdentifier
-
-    @Published var media: Media?
-
-    @Published var credits: [MediaPerson]? // done
-    @Published var related: [Media]? // done
-    @Published var reviews: [Review]? // done
-    @Published var seasons: [Season]? // done
-    @Published var videos: [Video]? // done
-    @Published var collection: [Media]? // done
-    
+        
     func fetchInitialData() {
         Task {
             for section in MediaDetailsSection.allCases {
-                try await fetchAsync(section)
+                await fetchAsync(section)
             }
-            try await fetchAsync(.collection)
         }
     }
     
     init(media: Media) {
         self.media = media
         self.mediaIdentifier = .init(id: media.id, type: media.mediaType)
-        //self.sectionsContext[.initial] = .loaded(isEmpty: false)
     }
     
     init(mediaID: Int, mediaType: MediaType) {
@@ -123,6 +131,7 @@ struct NewMediaDetailsView: View {
                         .saveSize(in: $headerSize)
                     VStack(alignment: .leading, spacing: 16) {
                         VStack(alignment: .leading, spacing: 4) {
+                            // TODO: global isLoading?? (LoadableView protocol)
                             MediaTaglineView(
                                 tagline: viewModel.media?.tagline,
                                 isLoading: context[.details].isLoading
@@ -134,15 +143,16 @@ struct NewMediaDetailsView: View {
                         MediaVideosCarouselView(videos: viewModel.videos ?? [])
                             .hideWhen(context[.videos].isEmpty)
                         
-//                        MediasSectionView(
-//                            section: .init(title: "Seasons"),
-//                            items: viewModel.seasonModels,
-//                            errorMessage: nil,
-//                            retry: { viewModel.fetchRelated() }
-//                        ).hideWhen(
-//                            viewModel.media?.mediaType != .tvShow ||
-//                            viewModel.state.isEmpty(.seasons)
-//                        )
+                        MediasSectionView(
+                            section: .init(title: "Seasons"),
+                            seasons: viewModel.seasons,
+                            media: viewModel.media,
+                            errorMessage: nil,
+                            retry: { viewModel.fetch(.details) }
+                        ).hideWhen(
+                            viewModel.media?.mediaType != .tvShow ||
+                            context[.seasons].isEmpty
+                        )
                         
                         PersonsSectionView(persons: viewModel.credits)
                             .hideWhen(context[.credits].isEmpty)
@@ -155,24 +165,18 @@ struct NewMediaDetailsView: View {
                         )
                         .hideWhen(context[.related].isEmpty)
                         
-//                        if case .movie(let extra) = viewModel.media?.extra {
-//                            MediaCollectionsCarouselView(collections: [extra.belongsToCollection].compactMap({ $0 }))
-//                                .hideWhen(extra.belongsToCollection == nil)
-//                        }
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
                         
-                        //if let collectionSection = viewModel.collectionSection {
-                            MediasSectionView(
-                                section: MediasSection(title: ""),
-                                medias: viewModel.collection,
-                                errorMessage: nil,
-                                retry: { viewModel.fetch(.collection) }
-                            )
-                            .hideWhen(context[.collection].isEmpty)
-                        //}
+                        MediasSectionView(
+                            section: MediasSection(title: viewModel.collection?.name ?? ""),
+                            medias: viewModel.collection?.medias,
+                            errorMessage: nil,
+                            retry: { viewModel.fetch(.collection) }
+                        )
+                        .hideWhen(context[.collection].isEmpty)
 
                         Group {
                             Text("Reviews")

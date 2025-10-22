@@ -103,7 +103,7 @@ class GenresMapper {
 }
 
 // Models for decoding the TMDB genres responses.
-struct Genre: Codable {
+struct Genre: Codable, Hashable {
     let id: Int
     let name: String
 }

@@ -77,12 +77,13 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
         return response.results
     }
     
-    func fetchCollection(_ media: Media?) async throws -> [Media] {
+    func fetchCollection(_ media: Media?) async throws -> MediasCollection? {
         guard let media, case .movie(let extra) = media.extra,
               let collection = extra.belongsToCollection
-        else { return [] }
-        return try await networkClient
+        else { return nil }
+        let response = try await networkClient
             .request(TMDB.Collection(id: collection.id))
-            .parts.map { Media(movie: $0) }
+        let medias = response.parts.map { Media(movie: $0) }
+        return MediasCollection(name: response.name, medias: medias)
     }
 }
