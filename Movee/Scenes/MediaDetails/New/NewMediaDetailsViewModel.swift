@@ -30,7 +30,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
     @Published var seasons: [Season]?
     @Published var videos: [Video]?
     @Published var collection: MediasCollection?
-
+    
     var sectionsContext = SectionsLoadingContext<MediaDetailsSection>()
 
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
@@ -170,7 +170,7 @@ extension FailableView {
 }
 
 struct NewMediasSection {
-    typealias PublisherBuilder = (Int) -> AnyPublisher<PaginatedResponse<Media>, Error>
+    typealias DataProvider = (Int) async throws -> PaginatedResponse<Media>
     
     struct Placeholder {
         let title: String
@@ -180,18 +180,18 @@ struct NewMediasSection {
     let title: String
     let fullTitle: String?
     let placeholder: Placeholder?
-    let publisherBuilder: PublisherBuilder?
+    let dataProvider: DataProvider?
     
-    init(title: String, fullTitle: String? = nil, placeholder: Placeholder? = nil, publisherBuilder: PublisherBuilder? = nil) {
+    init(title: String, fullTitle: String? = nil, placeholder: Placeholder? = nil, dataProvider: DataProvider? = nil) {
         self.title = title
         self.fullTitle = fullTitle
         self.placeholder = placeholder
-        self.publisherBuilder = publisherBuilder
+        self.dataProvider = dataProvider
     }
 }
 
 struct NewMediasSectionView: View, LoadableView, FailableView {
-    let section: MediasSection
+    let section: NewMediasSection
     let medias: [MediaUIModel]?
     //let errorMessage: String?
     //var retry: (() -> Void)?
@@ -273,7 +273,7 @@ struct NewMediasSectionView: View, LoadableView, FailableView {
     // MARK: - Designated Initializer
 
     init(
-        section: MediasSection,
+        section: NewMediasSection,
         items: [MediaUIModel]?,
         horizontalPadding: CGFloat = 20
     ) {
@@ -286,7 +286,7 @@ struct NewMediasSectionView: View, LoadableView, FailableView {
 // MARK: - Convenience Initializers
 extension NewMediasSectionView {
     init(
-        section: MediasSection,
+        section: NewMediasSection,
         medias: [Media]?,
         horizontalPadding: CGFloat = 20
     ) {
@@ -298,7 +298,7 @@ extension NewMediasSectionView {
     }
 
     init(
-        section: MediasSection,
+        section: NewMediasSection,
         seasons: [Season]?,
         media: Media?,
         horizontalPadding: CGFloat = 20
@@ -374,6 +374,13 @@ struct NewMediaDetailsView: View {
                         )
                         .hideWhen(context[.related].isEmpty)
                         
+                        NewMediasSectionView(
+                            section: .init(title: "Related") { page in
+                                viewModel.repo.fetchRelated(viewModel.mediaIdentifier)
+                            },
+                            medias: viewModel.related)
+                        .hideWhen(context[.related].isEmpty)
+
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
