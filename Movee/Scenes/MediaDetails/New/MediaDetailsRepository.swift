@@ -7,17 +7,6 @@
 
 import Foundation
 
-protocol MediasSectionDataProvider {
-    associatedtype Output: Decodable
-    func fetch(page: Int) async throws -> PaginatedResponse<Output>
-}
-
-struct RelatedMediasSectionDataProvider: MediasSectionDataProvider {
-    func fetch(page: Int) async throws -> PaginatedResponse<Media> {
-        
-    }
-}
-
 struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
     private let networkClient = NetworkClient2(
         interceptors: [

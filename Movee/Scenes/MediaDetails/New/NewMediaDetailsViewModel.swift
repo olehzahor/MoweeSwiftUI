@@ -31,6 +31,9 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
     @Published var videos: [Video]?
     @Published var collection: MediasCollection?
     
+    lazy var relatedSection: NewMediasSection = .init(title: "Related", dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier))
+    
+    
     var sectionsContext = SectionsLoadingContext<MediaDetailsSection>()
 
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
@@ -169,26 +172,6 @@ extension FailableView {
     }
 }
 
-struct NewMediasSection {
-    typealias DataProvider = (Int) async throws -> PaginatedResponse<Media>
-    
-    struct Placeholder {
-        let title: String
-        let subtitle: String?
-    }
-    
-    let title: String
-    let fullTitle: String?
-    let placeholder: Placeholder?
-    let dataProvider: DataProvider?
-    
-    init(title: String, fullTitle: String? = nil, placeholder: Placeholder? = nil, dataProvider: DataProvider? = nil) {
-        self.title = title
-        self.fullTitle = fullTitle
-        self.placeholder = placeholder
-        self.dataProvider = dataProvider
-    }
-}
 
 struct NewMediasSectionView: View, LoadableView, FailableView {
     let section: NewMediasSection
@@ -244,7 +227,7 @@ struct NewMediasSectionView: View, LoadableView, FailableView {
             SectionHeaderView(
                 title: section.title,
                 isButtonHidden: false) {
-                    AnyView(MediasListView(section: section))
+                    AnyView(NewMediasListView(section: section))
                 }
             //Group {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -375,9 +358,7 @@ struct NewMediaDetailsView: View {
                         .hideWhen(context[.related].isEmpty)
                         
                         NewMediasSectionView(
-                            section: .init(title: "Related") { page in
-                                viewModel.repo.fetchRelated(viewModel.mediaIdentifier)
-                            },
+                            section: viewModel.relatedSection,
                             medias: viewModel.related)
                         .hideWhen(context[.related].isEmpty)
 
