@@ -26,6 +26,8 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
     }
     
     func fetchRelated(_ identifier: MediaIdentifier) async throws -> [Media] {
+        try await Task.sleep(for: .seconds(3))
+
         switch identifier.type {
         case .movie:
             let request = TMDB.MovieRecommendations(movieID: identifier.id, page: 1)
