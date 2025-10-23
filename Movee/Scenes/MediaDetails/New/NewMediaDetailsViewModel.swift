@@ -177,27 +177,7 @@ extension FailableView {
 struct NewMediasSectionView: View, LoadableView, FailableView {
     let section: NewMediasSection
     let medias: [MediaUIModel]?
-    //let errorMessage: String?
-    //var retry: (() -> Void)?
     var horizontalPadding: CGFloat
-
-//    enum ViewState {
-//        case loading, loaded, error
-//    }
-    
-//    var isLoading: Bool {
-//        medias == nil
-//    }
-
-//    var viewState: ViewState {
-//        if isLoading {
-//            return .loading
-//        } else if let errorMessage = errorMessage, !errorMessage.isEmpty {
-//            return .error
-//        } else {
-//            return .loaded
-//        }
-//    }
     
     func loadingView() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
