@@ -254,68 +254,10 @@
             filePath = "Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
             landmarkName = "fetchRelated(_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "21B4DCC2-9F21-47CF-A646-E7060ECAC0AB - 27a92ca794fcab2e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for Movee.MediaDetailsRepository.fetchRelated(Movee.MediaIdentifier) async throws -&gt; Swift.Array&lt;Movee.Media&gt;"
-                  moduleName = "Movee.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/user/Documents/Filmly/Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32"
-                  endingLineNumber = "32">
-               </Location>
-               <Location
-                  uuid = "21B4DCC2-9F21-47CF-A646-E7060ECAC0AB - 39dd30bacb172c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for Movee.MediaDetailsRepository.fetchRelated(Movee.MediaIdentifier) async throws -&gt; Swift.Array&lt;Movee.Media&gt;"
-                  moduleName = "Movee.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/user/Documents/Filmly/Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32"
-                  endingLineNumber = "32">
-               </Location>
-               <Location
-                  uuid = "21B4DCC2-9F21-47CF-A646-E7060ECAC0AB - 51505589818bfd29"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(6) suspend resume partial function for Movee.MediaDetailsRepository.fetchRelated(Movee.MediaIdentifier) async throws -&gt; Swift.Array&lt;Movee.Media&gt;"
-                  moduleName = "Movee.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/user/Documents/Filmly/Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32"
-                  endingLineNumber = "32">
-               </Location>
-               <Location
-                  uuid = "21B4DCC2-9F21-47CF-A646-E7060ECAC0AB - 91d64fc27b0feb44"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Movee.Movie) -&gt; Movee.Media in Movee.MediaDetailsRepository.fetchRelated(Movee.MediaIdentifier) async throws -&gt; Swift.Array&lt;Movee.Media&gt;"
-                  moduleName = "Movee.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/user/Documents/Filmly/Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32"
-                  endingLineNumber = "32">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

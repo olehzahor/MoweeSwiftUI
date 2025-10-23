@@ -34,7 +34,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
     lazy var relatedSection: NewMediasSection = .init(title: "Related", dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier))
     
     
-    var sectionsContext = SectionsLoadingContext<MediaDetailsSection>()
+    @Published var sectionsContext = SectionsLoadingContext<MediaDetailsSection>()
 
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
         .details: AnyFetchConfig(
@@ -91,11 +91,13 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
     ]
         
     func fetchInitialData() {
+//        Task {
+//            for section in MediaDetailsSection.allCases {
+//                await fetchAsync(section)
+//            }
+//        }
         Task {
-            for section in MediaDetailsSection.allCases {
-                await fetchAsync(section)
-                try await Task.sleep(for: .seconds(1))
-            }
+            await fetchAsync(.related)
         }
     }
     
@@ -156,7 +158,7 @@ struct ErrorModifier<ErrorContent: View>: ViewModifier {
     }
 }
 
-extension LoadableView {
+extension View where Self: LoadableView {
     func loading(_ isLoading: Bool) -> some View {
         modifier(LoadingModifier(isLoading: isLoading) {
             self.loadingView()
@@ -164,7 +166,7 @@ extension LoadableView {
     }
 }
 
-extension FailableView {
+extension View where Self: FailableView {
     func error(_ error: Error?, retry: @escaping () -> Void) -> some View
 {
         modifier(ErrorModifier(error: error, retry: retry) { error in
@@ -173,6 +175,29 @@ extension FailableView {
     }
 }
 
+extension View where Self: LoadableView & FailableView {
+    func loading(_ isLoading: Bool, error: Error?, retry: @escaping () -> Void) -> some View {
+        Group {
+            if isLoading {
+                modifier(LoadingModifier(isLoading: isLoading) {
+                    self.loadingView()
+                })
+            } else if let error {
+                modifier(ErrorModifier(error: error, retry: retry) { error in
+                    self.errorView(error: error, retry: retry)
+                })
+            } else {
+                self
+            }
+        }
+    }
+    
+    func loadingContextAware<Section>(_ context: SectionsLoadingContext<Section>, section: Section, retry: @escaping () -> Void) -> some View {
+        self
+            .loading(context[section].isLoading, error: context[section].error, retry: retry)
+            .hideWhen(context[section].isEmpty)
+    }
+}
 
 struct NewMediasSectionView: View, LoadableView, FailableView {
     let section: NewMediasSection
@@ -341,8 +366,7 @@ struct NewMediaDetailsView: View {
                         NewMediasSectionView(
                             section: viewModel.relatedSection,
                             medias: viewModel.related)
-                        .loading(context[.related].isLoading)
-                        .hideWhen(context[.related].isEmpty)
+                        .loadingContextAware(context, section: .related) { viewModel.fetch(.related) }
 
                         
                         Text("Facts")
