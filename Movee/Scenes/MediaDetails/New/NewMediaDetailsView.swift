@@ -49,24 +49,38 @@ struct NewMediaDetailsView: View {
                         PersonsSectionView(persons: viewModel.credits)
                             .hideWhen(context[.credits].isEmpty)
                                                 
+//                        NewMediasSectionView(
+//                            section: viewModel.mediaSections[.related],
+//                            medias: viewModel.related)
+//                        .loadingContext(context, section: .related, reloader: viewModel)
+                        
                         NewMediasSectionView(
-                            section: viewModel.mediaSections[.related],
-                            medias: viewModel.related)
+                            section: viewModel.recommended.section,
+                            medias: viewModel.recommended.medias)
                         .loadingContext(context, section: .related, reloader: viewModel)
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
                         
-                        NewMediasSectionView(section: <#T##NewMediasSection?#>, medias: <#T##[Media]?#>)
+//                        NewMediasSectionView(
+//                            section: viewModel.mediaSections[.collection],
+//                            medias: viewModel.collection?.medias)
+//                        .loadingContext(context, section: .collection, reloader: viewModel)
                         
-                        MediasSectionView(
-                            section: MediasSection(title: viewModel.collection?.name ?? ""),
-                            medias: viewModel.collection?.medias,
-                            errorMessage: nil,
-                            retry: { viewModel.fetch(.collection) }
-                        )
-                        .hideWhen(context[.collection].isEmpty)
+                        NewMediasSectionView(
+                            section: viewModel.collection2.section,
+                            medias: viewModel.collection2.medias)
+                        .loadingContext(context, section: .collection, reloader: viewModel)
+
+                        
+//                        MediasSectionView(
+//                            section: MediasSection(title: viewModel.collection?.name ?? ""),
+//                            medias: viewModel.collection?.medias,
+//                            errorMessage: nil,
+//                            retry: { viewModel.fetch(.collection) }
+//                        )
+//                        .hideWhen(context[.collection].isEmpty)
 
                         Group {
                             Text("Reviews")
