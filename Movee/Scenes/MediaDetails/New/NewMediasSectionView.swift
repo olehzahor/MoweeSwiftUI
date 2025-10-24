@@ -11,8 +11,9 @@ struct NewMediasSectionView: View {
     let section: NewMediasSection?
     let medias: [MediaUIModel]?
     var horizontalPadding: CGFloat
-            
-    var body: some View {
+
+    @ViewBuilder
+    private func sectionContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading) {
             if let section {
                 SectionHeaderView(
@@ -21,30 +22,34 @@ struct NewMediasSectionView: View {
                         AnyView(NewMediasListView(section: section))
                     }
             }
-            //Group {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top) {
-                    ForEach(medias ?? []) { media in
-                        NavigationLink {
-                            switch media.object {
-                            case .media(let media):
-                                NewMediaDetailsView(media: media)
-                            case .season(let season, let media):
-                                SeasonDetailsView(tvShowID: media.id, season: season)
-                            default:
-                                EmptyView()
-                            }
-                        } label: {
-                            MediaPosterView(media)
-                        }
-                    }
+                    content()
                 }
                 .padding(.horizontal, horizontalPadding)
             }.padding(.horizontal, -horizontalPadding)
-            //}.animation(.easeOut, value: viewState)
         }
     }
-    
+
+    var body: some View {
+        sectionContainer {
+            ForEach(medias ?? []) { media in
+                NavigationLink {
+                    switch media.object {
+                    case .media(let media):
+                        NewMediaDetailsView(media: media)
+                    case .season(let season, let media):
+                        SeasonDetailsView(tvShowID: media.id, season: season)
+                    default:
+                        EmptyView()
+                    }
+                } label: {
+                    MediaPosterView(media)
+                }
+            }
+        }
+    }
+
     init(
         section: NewMediasSection?,
         items: [MediaUIModel]?,
@@ -59,16 +64,13 @@ struct NewMediasSectionView: View {
 // MARK: - Loadable conformance
 extension NewMediasSectionView: LoadableView {
     func loadingView() -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top) {
-                ForEach(0..<5, id: \.self) { _ in
-                    MediaPosterView(.placeholder)
-                        .redacted(reason: .placeholder)
-                        .shimmering()
-                }
+        sectionContainer {
+            ForEach(0..<5, id: \.self) { _ in
+                MediaPosterView(.placeholder)
+                    .redacted(reason: .placeholder)
+                    .shimmering()
             }
-            .padding(.horizontal, horizontalPadding)
-        }.padding(.horizontal, -horizontalPadding)
+        }
     }
 }
 

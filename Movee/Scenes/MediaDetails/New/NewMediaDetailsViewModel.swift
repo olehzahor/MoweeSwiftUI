@@ -13,13 +13,32 @@ enum MediaDetailsSection: CaseIterable {
 
 struct MediasCollection {
     let name: String
-    let medias: [Media]
+    var medias: [Media]
 }
 
-struct SectionData<T> {
-    let section: NewMediasSection
-    var data: T
+extension NewMediaDetailsViewModel {
+    struct MediasSection {
+        var name: String
+        var fullName: String?
+        var placeholder: NewMediasSection.Placeholder?
+        var dataProvider: (any MediasListDataProvider)?
+        
+        var medias: [Media]
+        
+        var section: NewMediasSection { .init(
+            title: name,
+            fullTitle: fullName,
+            placeholder: placeholder,
+            dataProvider: dataProvider)
+        }
+        
+        mutating func update(with collection: MediasCollection) {
+            self.name = collection.name
+            self.medias = collection.medias
+        }
+    }
 }
+
 
 @MainActor
 final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable, ObservableObject {
@@ -36,10 +55,15 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     @Published var videos: [Video]?
     @Published var collection: MediasCollection?
     
-    private(set) lazy var mediaSections: [MediaDetailsSection: NewMediasSection] = [
+    @Published var recommended: MediasSection
+    @Published var collection2: MediasSection
+
+        
+    var mediaSections: [MediaDetailsSection: NewMediasSection] {[
         .seasons: .init(title: "Seasons"),
-        .credits: .init(title: "Related", dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier))
-    ]
+        .related: .init(title: "Related", dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier)),
+        .collection: .init(title: collection?.name ?? "")
+    ]}
     
     @Published var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
 
@@ -63,6 +87,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
                 try await repo.fetchRelated(mediaIdentifier)
             } onSuccess: { [weak self] result in
                 self?.related = result
+                self?.recommended.medias = result
             }
         ),
         .credits: AnyFetchConfig(
@@ -91,6 +116,8 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
                 try await repo.fetchCollection(media)
             } onSuccess: { [weak self] result in
                 self?.collection = result
+                guard let result else { return }
+                self?.collection2.update(with: result)
             } isEmpty: { result in
                 result?.medias.isEmpty ?? true
             }
@@ -111,14 +138,23 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
         }
     }
 
-    init(media: Media) {
-        self.media = media
-        self.mediaIdentifier = .init(id: media.id, type: media.mediaType)
-        setupSectionsContext()
-    }
-
     init(mediaID: Int, mediaType: MediaType) {
         self.mediaIdentifier = .init(id: mediaID, type: mediaType)
+        
+        self.recommended = .init(
+            name: "Recommended",
+            dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier),
+            medias: [])
+        
+        self.collection2 = .init(
+            name: "Collection",
+            medias: [])
+
         setupSectionsContext()
+    }
+    
+    convenience init(media: Media) {
+        self.init(mediaID: media.id, mediaType: media.mediaType)
+        self.media = media
     }
 }
