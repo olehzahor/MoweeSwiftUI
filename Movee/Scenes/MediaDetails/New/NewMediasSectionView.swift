@@ -75,14 +75,7 @@ extension NewMediasSectionView: LoadableView {
 // MARK: - Failable conformance
 extension NewMediasSectionView: FailableView {
     func errorView(error: any Error, retry: (() -> Void)?) -> some View {
-        VStack(spacing: 10) {
-            Text("Error: \(error.localizedDescription)")
-                .foregroundColor(.red)
-                .multilineTextAlignment(.center)
-            Button("Retry", action: retry ?? {})
-        }
-        .frame(maxWidth: .infinity, alignment: .center)
-        .padding()
+        ErrorRetryView(error: error, retry: retry)
     }
 }
 

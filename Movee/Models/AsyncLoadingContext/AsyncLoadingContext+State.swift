@@ -25,7 +25,7 @@ extension AsyncLoadingContext.State {
         return false
     }
     
-    var isNotLoaded: Bool {
+    var isAwaitingData: Bool {
         isIdle || isLoading
     }
     

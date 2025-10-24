@@ -22,7 +22,7 @@ struct SectionData<T> {
 }
 
 @MainActor
-final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
+final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable, ObservableObject {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
     
     private var mediaIdentifier: MediaIdentifier

@@ -30,7 +30,7 @@ extension SectionFetchable {
             }
         }
 
-        sectionsContext[section] = .loading(task: task)
+        sectionsContext[section] = .loading
     }
 
     /// Async fetch - waits for the fetch to complete before returning
@@ -45,8 +45,14 @@ extension SectionFetchable {
 
         guard !sectionsContext[section].isLoading, !sectionsContext[section].isLoaded else { return }
         
-        sectionsContext[section] = .loading(task: nil)
+        let shouldFail = Bool.random()
+        
+        sectionsContext[section] = .loading
         do {
+//            if shouldFail {
+//                try await Task.sleep(for: .seconds(1))
+//                throw NetworkError2.serverError
+//            }
             let isEmpty = try await config.fetch()
             guard !Task.isCancelled else { return }
             self.sectionsContext[section] = .loaded(isEmpty: isEmpty)

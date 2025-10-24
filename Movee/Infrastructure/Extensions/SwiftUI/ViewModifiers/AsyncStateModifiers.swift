@@ -18,107 +18,96 @@ protocol FailableView: View {
     @ViewBuilder func errorView(error: Error, retry: (() -> Void)?) -> ErrorContent
 }
 
-// MARK: - View Modifiers
-struct LoadingModifier<LoadingContent: View>: ViewModifier {
+// MARK: - Unified View Modifier
+struct AsyncStateModifier<LoadingContent: View, ErrorContent: View>: ViewModifier {
     let isLoading: Bool
-    let loadingContent: () -> LoadingContent
-
-    func body(content: Content) -> some View {
-        if isLoading {
-            loadingContent()
-        } else {
-            content
-        }
-    }
-}
-
-struct ErrorModifier<ErrorContent: View>: ViewModifier {
     let error: Error?
     let retry: () -> Void
-    let errorContent: (Error) -> ErrorContent
+    let loadingContent: () -> LoadingContent
+    let errorContent: (Error, @escaping () -> Void) -> ErrorContent
+
+    private var state: State {
+        if isLoading { return .loading }
+        if let error { return .error(error.localizedDescription) }
+        return .loaded
+    }
 
     func body(content: Content) -> some View {
-        if let error {
-            errorContent(error)
-        } else {
-            content
+        ZStack {
+            switch state {
+            case .loading:
+                loadingContent()
+            case .error:
+                if let error {
+                    errorContent(error, retry)
+                }
+            case .loaded:
+                content
+            }
         }
+        .animation(.easeInOut(duration: 0.3), value: state)
     }
-}
 
-// MARK: - Loading State
-private enum LoadingState: Equatable {
-    case loading
-    case error(String)
-    case loaded
-
-    static func == (lhs: LoadingState, rhs: LoadingState) -> Bool {
-        switch (lhs, rhs) {
-        case (.loading, .loading), (.loaded, .loaded):
-            return true
-        case (.error(let lhsMsg), .error(let rhsMsg)):
-            return lhsMsg == rhsMsg
-        default:
-            return false
-        }
+    private enum State: Equatable {
+        case loading
+        case error(String)
+        case loaded
     }
 }
 
 // MARK: - View Extensions
 extension View where Self: LoadableView {
     func loading(_ isLoading: Bool) -> some View {
-        modifier(LoadingModifier(isLoading: isLoading) {
-            self.loadingView()
-        })
+        modifier(AsyncStateModifier(
+            isLoading: isLoading,
+            error: nil,
+            retry: {},
+            loadingContent: { self.loadingView() },
+            errorContent: { _, _ in EmptyView() }
+        ))
     }
 }
 
 extension View where Self: FailableView {
-    func error(_ error: Error?, retry: @escaping () -> Void) -> some View
-{
-        modifier(ErrorModifier(error: error, retry: retry) { error in
-            self.errorView(error: error, retry: retry)
-        })
+    func error(_ error: Error?, retry: @escaping () -> Void) -> some View {
+        modifier(AsyncStateModifier(
+            isLoading: false,
+            error: error,
+            retry: retry,
+            loadingContent: { EmptyView() },
+            errorContent: { error, retry in self.errorView(error: error, retry: retry) }
+        ))
     }
 }
 
 extension View where Self: LoadableView & FailableView {
     func loading(_ isLoading: Bool, error: Error?, retry: @escaping () -> Void) -> some View {
-        let state: LoadingState = {
-            if isLoading { return .loading }
-            if let error { return .error(error.localizedDescription) }
-            return .loaded
-        }()
-
-        return ZStack {
-            switch state {
-            case .loading:
-                loadingView()
-            case .error:
-                if let error {
-                    errorView(error: error, retry: retry)
-                }
-            case .loaded:
-                self
-            }
-        }
-        .animation(.easeInOut(duration: 0.3), value: state)
+        modifier(AsyncStateModifier(
+            isLoading: isLoading,
+            error: error,
+            retry: retry,
+            loadingContent: { self.loadingView() },
+            errorContent: { error, retry in self.errorView(error: error, retry: retry) }
+        ))
     }
 
     func loadingContext<Section>(_ context: AsyncLoadingContext<Section>, section: Section, retry: @escaping () -> Void) -> some View {
         self
-            .loading(context[section].isLoading, error: context[section].error, retry: retry)
+            .loading(
+                context[section].isAwaitingData,
+                error: context[section].error,
+                retry: retry)
             .hideWhen(context[section].isEmpty)
     }
 
-    func loadingContext<Section, Fetcher: SectionFetchable>(
+    func loadingContext<Section, Reloader: FailedSectionsReloadable>(
         _ context: AsyncLoadingContext<Section>,
         section: Section,
-        fetcher: Fetcher
-    ) -> some View where Fetcher.SectionType == Section {
+        reloader: Reloader
+    ) -> some View where Reloader.SectionType == Section {
         self
-            .loading(context[section].isLoading, error: context[section].error) {
-                fetcher.fetch(section)
+            .loading(context[section].isAwaitingData, error: context[section].error) {
+                reloader.reloadFailedSections()
             }
             .hideWhen(context[section].isEmpty)
     }
