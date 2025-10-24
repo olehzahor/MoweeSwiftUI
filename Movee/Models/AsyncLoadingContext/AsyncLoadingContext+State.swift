@@ -1,20 +1,20 @@
 //
-//  State.swift
+//  AsyncLoadingContext+State.swift
 //  Movee
 //
 //  Created by Oleh on 18.10.2025.
 //
 
-extension SectionsLoadingContext {
+extension AsyncLoadingContext {
     enum State {
         case idle
-        case loading(task: Task<Void, Never>?)
+        case loading
         case loaded(isEmpty: Bool)
         case error(Error)
     }
 }
 
-extension SectionsLoadingContext.State {
+extension AsyncLoadingContext.State {
     var isIdle: Bool {
         if case .idle = self { return true }
         return false
@@ -43,15 +43,10 @@ extension SectionsLoadingContext.State {
         if case .error(let error) = self { return error }
         return nil
     }
-    
-    var task: Task<Void, Never>? {
-        if case .loading(let task) = self { return task }
-        return nil
-    }
 }
 
-extension SectionsLoadingContext.State: Equatable {
-    static func == (lhs: SectionsLoadingContext.State, rhs: SectionsLoadingContext.State) -> Bool {
+extension AsyncLoadingContext.State: Equatable {
+    static func == (lhs: AsyncLoadingContext.State, rhs: AsyncLoadingContext.State) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
@@ -59,8 +54,8 @@ extension SectionsLoadingContext.State: Equatable {
             return true
         case (.loaded(let a), .loaded(let b)):
             return a == b
-        case (.error, .error):
-            return true  // Could compare error descriptions if needed
+        case (.error(let a), .error(let b)):
+            return a.localizedDescription == b.localizedDescription
         default:
             return false
         }
