@@ -5,7 +5,7 @@
 //  Created by Oleh on 18.10.2025.
 //
 
-struct SectionsLoadingContext<T: Hashable> {
+struct SectionsLoadingContext<T: Hashable>: Equatable {
     private var states: [T: State] = [:]
     
     subscript(section: T) -> State {
