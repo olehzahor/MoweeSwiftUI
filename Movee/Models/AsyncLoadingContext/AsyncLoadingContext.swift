@@ -1,11 +1,11 @@
 //
-//  SectionsLoadingContext.swift
+//  AsyncLoadingContext.swift
 //  Movee
 //
 //  Created by Oleh on 18.10.2025.
 //
 
-struct SectionsLoadingContext<T: Hashable>: Equatable {
+struct AsyncLoadingContext<T: Hashable>: Equatable {
     private var states: [T: State] = [:]
     
     subscript(section: T) -> State {
@@ -13,19 +13,11 @@ struct SectionsLoadingContext<T: Hashable>: Equatable {
             states[section] ?? .idle
         }
         set {
-            if case .loading(let task) = states[section] {
-                task?.cancel()
-            }
             states[section] = newValue
         }
     }
     
     mutating func cancelAll() {
-        for (_, state) in states {
-            if case .loading(let task) = state {
-                task?.cancel()
-            }
-        }
         states.removeAll()
     }
 }

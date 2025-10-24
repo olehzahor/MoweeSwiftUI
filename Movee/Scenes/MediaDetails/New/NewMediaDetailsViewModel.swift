@@ -41,7 +41,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
         .credits: .init(title: "Related", dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier))
     ]
     
-    @Published var sectionsContext = SectionsLoadingContext<MediaDetailsSection>()
+    @Published var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
 
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
         .details: AnyFetchConfig(
