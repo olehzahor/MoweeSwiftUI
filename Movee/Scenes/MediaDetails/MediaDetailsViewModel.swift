@@ -29,7 +29,7 @@ final class MediaDetailsViewModel: ObservableObject {
     @Published var seasons: [Season]?
     @Published var videos: [Video]?
     @Published var collection: [Media]?
-    
+        
     var seasonModels: [MediaUIModel]? {
         guard let media, let seasons else { return nil }
         return seasons.compactMap { .init(season: $0, media: media) }

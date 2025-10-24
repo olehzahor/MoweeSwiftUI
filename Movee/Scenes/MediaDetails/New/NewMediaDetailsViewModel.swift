@@ -98,13 +98,10 @@ final class NewMediaDetailsViewModel: SectionFetchable, ObservableObject {
     ]
         
     func fetchInitialData() {
-//        Task {
-//            for section in MediaDetailsSection.allCases {
-//                await fetchAsync(section)
-//            }
-//        }
         Task {
-            await fetchAsync(.related)
+            for section in MediaDetailsSection.allCases {
+                await fetchAsync(section)
+            }
         }
     }
     

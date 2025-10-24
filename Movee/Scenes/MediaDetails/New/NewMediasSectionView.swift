@@ -21,6 +21,7 @@ struct NewMediasSectionView: View {
                         AnyView(NewMediasListView(section: section))
                     }
             }
+            //Group {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top) {
                     ForEach(medias ?? []) { media in
@@ -40,6 +41,7 @@ struct NewMediasSectionView: View {
                 }
                 .padding(.horizontal, horizontalPadding)
             }.padding(.horizontal, -horizontalPadding)
+            //}.animation(.easeOut, value: viewState)
         }
     }
     

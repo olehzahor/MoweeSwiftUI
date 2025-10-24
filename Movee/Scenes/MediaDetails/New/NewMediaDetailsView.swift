@@ -62,21 +62,44 @@ extension View where Self: FailableView {
     }
 }
 
+private enum LoadingState: Equatable {
+    case loading
+    case error(String)
+    case loaded
+
+    static func == (lhs: LoadingState, rhs: LoadingState) -> Bool {
+        switch (lhs, rhs) {
+        case (.loading, .loading), (.loaded, .loaded):
+            return true
+        case (.error(let lhsMsg), .error(let rhsMsg)):
+            return lhsMsg == rhsMsg
+        default:
+            return false
+        }
+    }
+}
+
 extension View where Self: LoadableView & FailableView {
     func loading(_ isLoading: Bool, error: Error?, retry: @escaping () -> Void) -> some View {
-        Group {
-            if isLoading {
-                modifier(LoadingModifier(isLoading: isLoading) {
-                    self.loadingView()
-                })
-            } else if let error {
-                modifier(ErrorModifier(error: error, retry: retry) { error in
-                    self.errorView(error: error, retry: retry)
-                })
-            } else {
+        let state: LoadingState = {
+            if isLoading { return .loading }
+            if let error { return .error(error.localizedDescription) }
+            return .loaded
+        }()
+
+        return ZStack {
+            switch state {
+            case .loading:
+                loadingView()
+            case .error:
+                if let error {
+                    errorView(error: error, retry: retry)
+                }
+            case .loaded:
                 self
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: state)
     }
     
     func loadingContext<Section>(_ context: SectionsLoadingContext<Section>, section: Section, retry: @escaping () -> Void) -> some View {
@@ -127,7 +150,7 @@ struct NewMediaDetailsView: View {
                             // TODO: global isLoading?? (LoadableView protocol)
                             MediaTaglineView(
                                 tagline: viewModel.media?.tagline,
-                                isLoading: context[.details].isLoading
+                                isLoading: context[.details].isNotLoaded
                             )
                             Text(media.overview)
                                 .textStyle(.mediumText)
@@ -177,6 +200,7 @@ struct NewMediaDetailsView: View {
                     .padding(.horizontal, 20)
                 }
             }
+            .animation(.default, value: context)
             .onFirstAppear {
                 viewModel.fetchInitialData()
             }

@@ -15,9 +15,18 @@ extension SectionsLoadingContext {
 }
 
 extension SectionsLoadingContext.State {
+    var isIdle: Bool {
+        if case .idle = self { return true }
+        return false
+    }
+
     var isLoading: Bool {
         if case .loading = self { return true }
         return false
+    }
+    
+    var isNotLoaded: Bool {
+        isIdle || isLoading
     }
     
     var isLoaded: Bool {
@@ -39,19 +48,21 @@ extension SectionsLoadingContext.State {
         if case .loading(let task) = self { return task }
         return nil
     }
-    
-//    static func == (lhs: State, rhs: State) -> Bool {
-//        switch (lhs, rhs) {
-//        case (.idle, .idle):
-//            return true
-//        case (.loading, .loading):
-//            return true
-//        case (.loaded(let a), .loaded(let b)):
-//            return a == b
-//        case (.error, .error):
-//            return true  // Could compare error descriptions if needed
-//        default:
-//            return false
-//        }
-//    }
+}
+
+extension SectionsLoadingContext.State: Equatable {
+    static func == (lhs: SectionsLoadingContext.State, rhs: SectionsLoadingContext.State) -> Bool {
+        switch (lhs, rhs) {
+        case (.idle, .idle):
+            return true
+        case (.loading, .loading):
+            return true
+        case (.loaded(let a), .loaded(let b)):
+            return a == b
+        case (.error, .error):
+            return true  // Could compare error descriptions if needed
+        default:
+            return false
+        }
+    }
 }
