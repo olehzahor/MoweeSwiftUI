@@ -17,6 +17,7 @@ struct NewMediaDetailsView: View {
         viewModel.sectionsContext
     }
     // TODO: make context configurable extension for .hideWhen and .isLoading; using just: .section(.related, context: context)
+    // TODO: decouple views from concrete DataModels
     var body: some View {
         if let media = viewModel.media {
             ScrollView(showsIndicators: false) {
@@ -25,46 +26,39 @@ struct NewMediaDetailsView: View {
                         .aspectRatio(4/3, contentMode: .fit)
                         .padding(.bottom, 80)
                         .overlay(alignment: .bottom) {
-                            // TODO: decouple views from concrete DataModels
                             MediaDetailedInfoView(media: media)
                         }
                         .saveSize(in: $headerSize)
                     VStack(alignment: .leading, spacing: 16) {
                         VStack(alignment: .leading, spacing: 4) {
-                            // TODO: global isLoading?? (LoadableView protocol)
-                            MediaTaglineView(
-                                tagline: viewModel.media?.tagline,
-                                isLoading: context[.details].isNotLoaded
-                            )
+                            NewMediaTaglineView(tagline: viewModel.media?.tagline)
+                                .loading(context[.details].isAwaitingData)
                             Text(media.overview)
                                 .textStyle(.mediumText)
                         }
+                                                
+                        NewMediaVideosCarouselView(videos: viewModel.videos ?? [])
+                            .loadingContext(context, section: .videos, reloader: viewModel)
                         
-                        MediaVideosCarouselView(videos: viewModel.videos ?? [])
-                            .hideWhen(context[.videos].isEmpty)
-                        
-                        MediasSectionView(
-                            section: .init(title: "Seasons"),
+                        NewMediasSectionView(
+                            section: viewModel.mediaSections[.seasons],
                             seasons: viewModel.seasons,
-                            media: viewModel.media,
-                            errorMessage: nil,
-                            retry: { viewModel.fetch(.details) }
-                        ).hideWhen(
-                            context[.seasons].isEmpty
-                        )
-                        
+                            media: viewModel.media)
+                        .loadingContext(context, section: .seasons, reloader: viewModel)
+                                                
                         PersonsSectionView(persons: viewModel.credits)
                             .hideWhen(context[.credits].isEmpty)
                                                 
                         NewMediasSectionView(
                             section: viewModel.mediaSections[.related],
                             medias: viewModel.related)
-                        .loadingContext(context, section: .related, fetcher: viewModel)
-
+                        .loadingContext(context, section: .related, reloader: viewModel)
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
+                        
+                        NewMediasSectionView(section: <#T##NewMediasSection?#>, medias: <#T##[Media]?#>)
                         
                         MediasSectionView(
                             section: MediasSection(title: viewModel.collection?.name ?? ""),

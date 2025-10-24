@@ -44,6 +44,17 @@ struct MediaDetailedInfoView: View {
         .padding(.horizontal, 20)
     }
     
+    init(title: String, posterURL: URL? = nil, releaseDate: String? = nil, duration: String? = nil, genres: String, mediaRating: Double? = nil) {
+        self.title = title
+        self.posterURL = posterURL
+        self.releaseDate = releaseDate
+        self.duration = duration
+        self.genres = genres
+        self.mediaRating = mediaRating
+    }
+}
+
+extension MediaDetailedInfoView {
     init(media: Media) {
         title = media.title
         posterURL = media.posterURL
