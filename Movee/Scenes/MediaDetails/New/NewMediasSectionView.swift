@@ -18,7 +18,7 @@ struct NewMediasSectionView: View {
             if let section {
                 SectionHeaderView(
                     title: section.title,
-                    isButtonHidden: false) {
+                    isButtonHidden: section.dataProvider == nil) {
                         AnyView(NewMediasListView(section: section))
                     }
             }
