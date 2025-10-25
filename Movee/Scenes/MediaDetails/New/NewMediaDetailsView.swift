@@ -67,6 +67,7 @@ struct NewMediaDetailsView: View {
                             .loadingContext(context, section: .reviews, reloader: viewModel)
                     }
                     .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
             }
             .animation(.default, value: context)
