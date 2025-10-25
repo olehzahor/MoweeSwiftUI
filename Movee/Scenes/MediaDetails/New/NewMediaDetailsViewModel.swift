@@ -24,7 +24,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     var maxConcurrentFetches: Int { 3 }
 
     @Published var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
-
+    // TODO: add mappers to configs
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
         .details: AnyFetchConfig(
             FetchConfig(priority: 0) { [repo, mediaIdentifier] in
