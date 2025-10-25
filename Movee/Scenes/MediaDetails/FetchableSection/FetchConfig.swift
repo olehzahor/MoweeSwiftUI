@@ -10,6 +10,9 @@ import Foundation
 /// Configuration for a fetchable section
 /// - Output: The result type returned from the fetch operation
 struct FetchConfig<Output> {
+    /// Priority for loading order (lower values load first)
+    let priority: Int
+
     /// The async operation that fetches data
     let fetcher: () async throws -> Output
 
@@ -20,10 +23,12 @@ struct FetchConfig<Output> {
     let isEmpty: (Output) -> Bool
 
     init(
+        priority: Int = .max,
         fetcher: @escaping () async throws -> Output,
         onSuccess: @escaping (Output) -> Void,
         isEmpty: ((Output) -> Bool)? = Self.defaultIsEmpty
     ) {
+        self.priority = priority
         self.fetcher = fetcher
         self.onSuccess = onSuccess
         self.isEmpty = isEmpty ?? Self.defaultIsEmpty
