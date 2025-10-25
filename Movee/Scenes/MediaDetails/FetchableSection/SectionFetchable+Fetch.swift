@@ -8,6 +8,29 @@
 import Foundation
 
 extension SectionFetchable {
+    @MainActor
+    func fetchInitialData() {
+        Task {
+            let grouped = Dictionary(grouping: SectionType.allCases) { section in
+                fetchConfigs[section]?.priority ?? .max
+            }
+
+            for priority in grouped.keys.sorted() {
+                let sections = grouped[priority] ?? []
+
+                for chunk in sections.chunked(into: maxConcurrentFetches) {
+                    await withTaskGroup { group in
+                        for section in chunk {
+                            group.addTask {
+                                await self.fetchAsync(section)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /// Fire-and-forget fetch - starts the fetch but doesn't wait for completion
     @MainActor
     func fetch(_ section: SectionType) {

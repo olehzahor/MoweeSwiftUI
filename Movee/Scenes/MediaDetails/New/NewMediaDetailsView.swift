@@ -53,9 +53,8 @@ struct NewMediaDetailsView: View {
                             section: viewModel.related.section,
                             medias: viewModel.related.items)
                         .loadingContext(context, section: .related, reloader: viewModel)
-                        
-                        Text("Facts")
-                            .textStyle(.sectionTitle)
+                        // TODO: Use generic SectionView instead of creating a class...
+                        SectionHeaderView(title: "Facts")
                         MediaFactsView(facts: media.facts)
                                                 
                         NewMediasSectionView(

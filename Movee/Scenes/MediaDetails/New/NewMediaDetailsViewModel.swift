@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable, ObservableObject {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
-    
+
     private var mediaIdentifier: MediaIdentifier
 
     @Published var media: Media?
@@ -20,12 +20,14 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     @Published var reviews: [Review]?
     @Published var videos: [Video]?
     @Published var collection: MediasSection<Media>
-        
+    
+    var maxConcurrentFetches: Int { 3 }
+
     @Published var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
 
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
         .details: AnyFetchConfig(
-            FetchConfig { [repo, mediaIdentifier] in
+            FetchConfig(priority: 0) { [repo, mediaIdentifier] in
                 try await repo.fetchMedia(mediaIdentifier)
             } onSuccess: { [weak self] result in
                 self?.media = result
@@ -77,15 +79,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
             }
         )
     ]
-        
-    func fetchInitialData() {
-        Task {
-            for section in MediaDetailsSection.allCases {
-                await fetchAsync(section)
-            }
-        }
-    }
-    
+
     private func setupSectionsContext() {
         if mediaIdentifier.type != .tvShow {
             sectionsContext[.seasons] = .loaded(isEmpty: true)
