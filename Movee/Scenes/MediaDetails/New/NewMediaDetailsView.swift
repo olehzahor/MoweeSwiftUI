@@ -16,7 +16,7 @@ struct NewMediaDetailsView: View {
     private var context: AsyncLoadingContext<MediaDetailsSection> {
         viewModel.sectionsContext
     }
-    // TODO: make context configurable extension for .hideWhen and .isLoading; using just: .section(.related, context: context)
+
     // TODO: decouple views from concrete DataModels
     var body: some View {
         if let media = viewModel.media {
@@ -41,53 +41,30 @@ struct NewMediaDetailsView: View {
                             .loadingContext(context, section: .videos, reloader: viewModel)
                         
                         NewMediasSectionView(
-                            section: viewModel.mediaSections[.seasons],
-                            seasons: viewModel.seasons,
+                            section: viewModel.seasons.section,
+                            seasons: viewModel.seasons.items,
                             media: viewModel.media)
                         .loadingContext(context, section: .seasons, reloader: viewModel)
                                                 
-                        PersonsSectionView(persons: viewModel.credits)
-                            .hideWhen(context[.credits].isEmpty)
-                                                
-//                        NewMediasSectionView(
-//                            section: viewModel.mediaSections[.related],
-//                            medias: viewModel.related)
-//                        .loadingContext(context, section: .related, reloader: viewModel)
-                        
+                        NewPersonsSectionView(persons: viewModel.credits)
+                            .loadingContext(context, section: .credits, reloader: viewModel)
+                                                                        
                         NewMediasSectionView(
-                            section: viewModel.recommended.section,
-                            medias: viewModel.recommended.medias)
+                            section: viewModel.related.section,
+                            medias: viewModel.related.items)
                         .loadingContext(context, section: .related, reloader: viewModel)
                         
                         Text("Facts")
                             .textStyle(.sectionTitle)
                         MediaFactsView(facts: media.facts)
-                        
-//                        NewMediasSectionView(
-//                            section: viewModel.mediaSections[.collection],
-//                            medias: viewModel.collection?.medias)
-//                        .loadingContext(context, section: .collection, reloader: viewModel)
-                        
+                                                
                         NewMediasSectionView(
-                            section: viewModel.collection2.section,
-                            medias: viewModel.collection2.medias)
+                            section: viewModel.collection.section,
+                            medias: viewModel.collection.items)
                         .loadingContext(context, section: .collection, reloader: viewModel)
 
-                        
-//                        MediasSectionView(
-//                            section: MediasSection(title: viewModel.collection?.name ?? ""),
-//                            medias: viewModel.collection?.medias,
-//                            errorMessage: nil,
-//                            retry: { viewModel.fetch(.collection) }
-//                        )
-//                        .hideWhen(context[.collection].isEmpty)
-
-                        Group {
-                            Text("Reviews")
-                                .textStyle(.sectionTitle)
-                            MediaReviewsCarouselView(reviews: viewModel.reviews ?? [])
-                        }
-                        .hideWhen(context[.reviews].isLoading || context[.reviews].isEmpty)
+                        NewMediaReviewsSectionView(reviews: viewModel.reviews)
+                            .loadingContext(context, section: .reviews, reloader: viewModel)
                     }
                     .padding(.horizontal, 20)
                 }
