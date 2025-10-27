@@ -14,7 +14,7 @@ struct MediaDetailedInfoView: View {
     var duration: String?
     var genres: String
     var mediaRating: Double?
-        
+
     private var subtitle: String {
         let strings = [releaseDate, duration].compactMap { $0 }
         var string = strings.joined(separator: " · ")
@@ -43,6 +43,7 @@ struct MediaDetailedInfoView: View {
         }
         .padding(.horizontal, 20)
     }
+    
     
     init(title: String, posterURL: URL? = nil, releaseDate: String? = nil, duration: String? = nil, genres: String, mediaRating: Double? = nil) {
         self.title = title

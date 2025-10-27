@@ -36,6 +36,25 @@ struct NewMediaReviewsCarouselView: View {
     }
 }
 
+// MARK: - Loadable conformance
+extension NewMediaReviewsCarouselView: LoadableView {
+    func loadingView() -> some View {
+        Self(
+            reviews: [.placeholder, .placeholder],
+            horizontalPadding: horizontalPadding
+        )
+        .redacted(reason: .placeholder)
+        .shimmering()
+    }
+}
+
+// MARK: - Failable conformance
+extension NewMediaReviewsCarouselView: FailableView {
+    func errorView(error: any Error, retry: (() -> Void)?) -> some View {
+        ErrorRetryView(error: error, retry: retry)
+    }
+}
+
 // MARK: - Review placeholder
 extension Review {
     static let placeholder = Review(

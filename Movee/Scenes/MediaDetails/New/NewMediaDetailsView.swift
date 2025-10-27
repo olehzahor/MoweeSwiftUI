@@ -9,28 +9,75 @@ import SwiftUI
 
 struct NewMediaDetailsView: View {
     @StateObject var viewModel: NewMediaDetailsViewModel
-
-    @State private var isScrolledDown: Bool = false
-    @State private var headerSize: CGSize = .zero
-    @State private var appearTime: Date?
+    @State private var isHeaderVisible: Bool = true
 
     private var context: AsyncLoadingContext<MediaDetailsSection> {
         viewModel.sectionsContext
     }
-
-    private var shouldAnimate: Bool {
-        guard let appearTime else { return false }
-        return Date().timeIntervalSince(appearTime) > 0.5
+    
+    @ViewBuilder
+    private func setupDetailsSection() -> some View {
+        if let media = viewModel.media {
+            VStack(alignment: .leading, spacing: 4) {
+                NewMediaTaglineView(tagline: media.tagline ?? "")
+                    .loading(context[.details].isAwaitingData)
+                Text(media.overview)
+                    .textStyle(.mediumText)
+            }
+        }
     }
     
     @ViewBuilder
-    private func setupReviewsSection() -> some View {
-        SectionView {
-            NewMediaReviewsCarouselView(reviews: viewModel.reviews ?? [], horizontalPadding: 20)
-        }.loadingContext(context, section: .reviews, reloader: viewModel)
+    private func setupVideosSection() -> some View {
+        SectionView.trailers(viewModel.videos)
+            .loadingContext(context, section: .videos, reloader: viewModel)
     }
 
-    // TODO: decouple views from concrete DataModels
+    @ViewBuilder
+    private func setupReviewsSection() -> some View {
+        SectionView.reviews(viewModel.reviews)
+            .loadingContext(context, section: .reviews, reloader: viewModel)
+    }
+    
+    @ViewBuilder
+    private func setupSeasonsSection() -> some View {
+        SectionView.seasons(
+            viewModel.seasons.items,
+            media: viewModel.media,
+            section: viewModel.seasons.section
+        ).loadingContext(context, section: .seasons, reloader: viewModel)
+    }
+    
+    @ViewBuilder
+    private func setupCastAndCrewSection() -> some View {
+        SectionView.castAndCrew(viewModel.credits)
+            .loadingContext(context, section: .credits, reloader: viewModel)
+    }
+    
+    @ViewBuilder
+    private func setupRelatedSection() -> some View {
+        SectionView.medias(
+            viewModel.related.items,
+            section: viewModel.related.section)
+        .loadingContext(context, section: .related, reloader: viewModel)
+    }
+    
+    @ViewBuilder
+    private func setupFactsSection() -> some View {
+        if let facts = viewModel.media?.facts {
+            SectionHeaderView(title: "Facts")
+            MediaFactsView(facts: facts)
+        }
+    }
+    
+    @ViewBuilder
+    private func setupCollectionSection() -> some View {
+        SectionView.medias(viewModel.collection.items,
+                           section: viewModel.collection.section
+        ).loadingContext(context, section: .collection, reloader: viewModel)
+    }
+
+    
     var body: some View {
         if let media = viewModel.media {
             ScrollView(showsIndicators: false) {
@@ -40,55 +87,26 @@ struct NewMediaDetailsView: View {
                         .padding(.bottom, 80)
                         .overlay(alignment: .bottom) {
                             MediaDetailedInfoView(media: media)
+                                .onScrollVisibilityChange { isVisible in
+                                isHeaderVisible = isVisible
+                            }
                         }
-                        .saveSize(in: $headerSize)
                     VStack(alignment: .leading, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            NewMediaTaglineView(tagline: viewModel.media?.tagline)
-                                .loading(context[.details].isAwaitingData)
-                            Text(media.overview)
-                                .textStyle(.mediumText)
-                        }
-                                                
-                        NewMediaVideosCarouselView(videos: viewModel.videos ?? [])
-                            .loadingContext(context, section: .videos, reloader: viewModel)
-                        
-                        NewMediasSectionView(
-                            section: viewModel.seasons.section,
-                            seasons: viewModel.seasons.items,
-                            media: viewModel.media)
-                        .loadingContext(context, section: .seasons, reloader: viewModel)
-                                                
-                        NewPersonsSectionView(persons: viewModel.credits)
-                            .loadingContext(context, section: .credits, reloader: viewModel)
-                                                                        
-                        NewMediasSectionView(
-                            section: viewModel.related.section,
-                            medias: viewModel.related.items)
-                        .loadingContext(context, section: .related, reloader: viewModel)
-                        // TODO: Use generic SectionView instead of creating a class...
-                        SectionHeaderView(title: "Facts")
-                        MediaFactsView(facts: media.facts)
-                                                
-                        NewMediasSectionView(
-                            section: viewModel.collection.section,
-                            medias: viewModel.collection.items)
-                        .loadingContext(context, section: .collection, reloader: viewModel)
-
-//                        NewMediaReviewsSectionView(reviews: viewModel.reviews)
-//                            .loadingContext(context, section: .reviews, reloader: viewModel)
+                        setupDetailsSection()
+                        setupVideosSection()
+                        setupSeasonsSection()
+                        setupCastAndCrewSection()
+                        setupRelatedSection()
+                        setupFactsSection()
+                        setupCollectionSection()
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 20)
                 }
             }
-            .animation(shouldAnimate ? .default : nil, value: context)
+            .postponedAnimation(0.5, .default, value: context)
             .onFirstAppear {
-                appearTime = Date()
                 viewModel.fetchInitialData()
-            }
-            .onScrollGeometryChange(for: CGFloat.self, of: \.contentOffset.y) { _, newValue in
-                isScrolledDown = newValue >= 1
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -102,7 +120,16 @@ struct NewMediaDetailsView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(isScrolledDown ? media.title : "")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    VStack {
+                        Text(media.title).font(.headline).opacity(
+                            !isHeaderVisible ? 1 : 0
+                        ).animation(.default, value: isHeaderVisible)
+                    }
+                }
+            }
+            .navigationTitle(media.title)
             .ignoresSafeArea(edges: .top)
         } else {
             VStack {
