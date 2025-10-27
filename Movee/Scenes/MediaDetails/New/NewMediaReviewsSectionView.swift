@@ -7,6 +7,42 @@
 
 import SwiftUI
 
+struct SectionView<Content: View>: View {
+    @ViewBuilder let content: () -> Content
+    
+    @ViewBuilder
+    func sectionContainer(@ViewBuilder content: () -> some View) -> some View {
+        VStack(alignment: .leading) {
+            SectionHeaderView(
+                title: "Reviews",
+                isButtonHidden: true) {
+                    AnyView(EmptyView())
+                }
+            content()
+        }
+    }
+
+    var body: some View {
+        sectionContainer(content: content)
+    }
+}
+
+extension SectionView: LoadableView where Content: LoadableView {
+    func loadingView() -> some View {
+        sectionContainer {
+            content().loadingView()
+        }
+    }
+}
+
+extension SectionView: FailableView where Content: FailableView {
+    func errorView(error: any Error, retry: (() -> Void)?) -> some View {
+        sectionContainer {
+            content().errorView(error: error, retry: retry)
+        }
+    }
+}
+
 struct NewMediaReviewsSectionView: View {
     var reviews: [Review]?
     var horizontalPadding: CGFloat

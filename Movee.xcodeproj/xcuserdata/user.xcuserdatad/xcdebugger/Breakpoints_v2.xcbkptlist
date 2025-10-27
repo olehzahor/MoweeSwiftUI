@@ -264,7 +264,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E4CE7F2F-E10A-46D0-BC4E-38EB6C2E52E6"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Movee/Scenes/MediaDetails/New/NewMediaReviewsCarouselView.swift"
@@ -272,38 +272,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "39"
             endingLineNumber = "39"
-            landmarkName = "Review"
-            landmarkType = "21">
-            <Locations>
-               <Location
-                  uuid = "E4CE7F2F-E10A-46D0-BC4E-38EB6C2E52E6 - cf3b0e83928611c3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "one-time initialization function for placeholder"
-                  moduleName = "Movee.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/user/Documents/Filmly/Movee/Scenes/MediaDetails/New/NewMediaReviewsCarouselView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "41"
-                  endingLineNumber = "41">
-               </Location>
-               <Location
-                  uuid = "E4CE7F2F-E10A-46D0-BC4E-38EB6C2E52E6 - bb3c88be9037dae7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Movee.Review.placeholder.unsafeMutableAddressor : Movee.Review"
-                  moduleName = "Movee.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/user/Documents/Filmly/Movee/Scenes/MediaDetails/New/NewMediaReviewsCarouselView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "41"
-                  endingLineNumber = "41">
-               </Location>
-            </Locations>
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
