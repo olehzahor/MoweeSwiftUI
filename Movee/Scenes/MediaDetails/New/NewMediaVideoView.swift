@@ -8,42 +8,16 @@
 import SwiftUI
 
 struct NewMediaVideoView: View {
-    struct DataModel {
-        var title: String
-        var backdropURL: URL?
-        var videoKey: String?
-
-        var youtubeURL: URL? {
-            guard let videoKey else { return nil }
-            return YouTubeURLProvider.shared.embedURL(for: videoKey)
-        }
-
-        static var placeholder = Self(title: .placeholder(.short))
-
-        init(title: String, backdropURL: URL? = nil, videoKey: String? = nil) {
-            self.title = title
-            self.backdropURL = backdropURL
-            self.videoKey = videoKey
-        }
-
-        init(video: Video) {
-            self.title = video.name
-            self.backdropURL = video.thumbnailURL
-            self.videoKey = video.key
-        }
-    }
-
     var data: DataModel
 
-    @State private var size: CGSize = .zero
     @State private var isPlayerVisible: Bool = false
     @State private var isPlayerLoading: Bool = false
 
     var body: some View {
         ZStack {
             ZStack(alignment: .center) {
-                AsyncImageView(url: data.backdropURL, height: size.width * 9/16)
-                    .saveSize(in: $size)
+                AsyncImageView(url: data.backdropURL)
+                    .aspectRatio(16/9, contentMode: .fit)
                 Color.secondary.opacity(0.1)
                 if isPlayerLoading {
                     ProgressView()

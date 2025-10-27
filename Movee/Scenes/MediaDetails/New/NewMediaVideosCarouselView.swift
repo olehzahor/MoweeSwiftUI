@@ -14,10 +14,6 @@ struct NewMediaVideosCarouselView: View {
     @ViewBuilder
     private func carouselContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading) {
-            Text("Trailers")
-                .textStyle(.sectionTitle)
-                .padding(.bottom, 0)
-
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     content()
