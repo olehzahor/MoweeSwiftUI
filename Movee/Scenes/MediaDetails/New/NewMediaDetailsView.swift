@@ -9,12 +9,25 @@ import SwiftUI
 
 struct NewMediaDetailsView: View {
     @StateObject var viewModel: NewMediaDetailsViewModel
-    
+
     @State private var isScrolledDown: Bool = false
     @State private var headerSize: CGSize = .zero
-    
+    @State private var appearTime: Date?
+
     private var context: AsyncLoadingContext<MediaDetailsSection> {
         viewModel.sectionsContext
+    }
+
+    private var shouldAnimate: Bool {
+        guard let appearTime else { return false }
+        return Date().timeIntervalSince(appearTime) > 0.5
+    }
+    
+    @ViewBuilder
+    private func setupReviewsSection() -> some View {
+        SectionView {
+            NewMediaReviewsCarouselView(reviews: viewModel.reviews ?? [], horizontalPadding: 20)
+        }.loadingContext(context, section: .reviews, reloader: viewModel)
     }
 
     // TODO: decouple views from concrete DataModels
@@ -62,15 +75,16 @@ struct NewMediaDetailsView: View {
                             medias: viewModel.collection.items)
                         .loadingContext(context, section: .collection, reloader: viewModel)
 
-                        NewMediaReviewsSectionView(reviews: viewModel.reviews)
-                            .loadingContext(context, section: .reviews, reloader: viewModel)
+//                        NewMediaReviewsSectionView(reviews: viewModel.reviews)
+//                            .loadingContext(context, section: .reviews, reloader: viewModel)
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 20)
                 }
             }
-            .animation(.default, value: context)
+            .animation(shouldAnimate ? .default : nil, value: context)
             .onFirstAppear {
+                appearTime = Date()
                 viewModel.fetchInitialData()
             }
             .onScrollGeometryChange(for: CGFloat.self, of: \.contentOffset.y) { _, newValue in

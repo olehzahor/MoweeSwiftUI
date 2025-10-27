@@ -12,7 +12,7 @@ struct NewMediaReviewsCarouselView: View {
     var reviews: [Review]
     var horizontalPadding: CGFloat = 20
     @State private var selectedReview: Review? = nil
-
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
