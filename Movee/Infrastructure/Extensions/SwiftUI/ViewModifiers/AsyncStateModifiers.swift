@@ -18,6 +18,12 @@ protocol FailableView: View {
     @ViewBuilder func errorView(error: Error, retry: (() -> Void)?) -> ErrorContent
 }
 
+extension FailableView {
+    @ViewBuilder func errorView(error: Error, retry: (() -> Void)?) -> some View {
+        ErrorRetryView(error: error, retry: retry)
+    }
+}
+
 // MARK: - Unified View Modifier
 struct AsyncStateModifier<LoadingContent: View, ErrorContent: View>: ViewModifier {
     let isLoading: Bool

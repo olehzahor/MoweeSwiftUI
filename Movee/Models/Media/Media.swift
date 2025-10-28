@@ -151,7 +151,7 @@ extension Media {
     }
     
     static var placeholder: Self {
-        .init(id: -9000, mediaType: .movie, title: .placeholder(.short), originalTitle: .placeholder(.short), overview: .placeholder(.custom(200)), popularity: 0, voteAverage: 0.0, voteCount: 0, genreIDs: [28, 18])
+        .init(id: -9000, mediaType: .movie, title: .placeholder(.short), originalTitle: .placeholder(.short), tagline: .placeholder(.short), overview: .placeholder(.custom(200)), popularity: 0, voteAverage: 0.0, voteCount: 0, genreIDs: [28, 18])
     }
     
     var seasons: [Season]? {

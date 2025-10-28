@@ -1,5 +1,5 @@
 //
-//  PlaceholderLength.swift
+//  String+Placeholder.swift
 //  Movee
 //
 //  Created by user on 4/27/25.
@@ -11,7 +11,7 @@ import Combine
 
 extension String {
     enum PlaceholderLength {
-        case short, medium, long
+        case short, medium, long, multiline
         case custom(Int)
         
         var length: Int {
@@ -22,6 +22,8 @@ extension String {
                 25
             case .long:
                 50
+            case .multiline:
+                350
             case .custom(let length):
                 length
             }
