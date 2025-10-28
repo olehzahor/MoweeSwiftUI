@@ -101,6 +101,6 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     
     convenience init(media: Media) {
         self.init(mediaID: media.id, mediaType: media.mediaType)
-        self.media = media
+        //self.media = media
     }
 }

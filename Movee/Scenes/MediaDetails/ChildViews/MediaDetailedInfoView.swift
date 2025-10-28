@@ -55,6 +55,30 @@ struct MediaDetailedInfoView: View {
     }
 }
 
+extension MediaDetailedInfoView: LoadableView {
+    func loadingView() -> some View {
+        Self(media: .placeholder)
+            .shimmering()
+//        HStack(alignment: .bottom) {
+//            MediaPosterView(.init(posterURL: posterURL, rating: mediaRating))
+//                .shimmering()
+//            Spacer()
+//            VStack(spacing: 8) {
+//                Text(String.placeholder(.short))
+//                    .textStyle(.mediaLargeTitle)
+//                    .shimmering()
+//                    .redacted(reason: .placeholder)
+//                Text(String.placeholder(.medium))
+//                    .textStyle(.smallText)
+//                    .shimmering()
+//                    .redacted(reason: .placeholder)
+//            }
+//            Spacer()
+//        }
+//        .padding(.horizontal, 20)
+    }
+}
+
 extension MediaDetailedInfoView {
     init(media: Media) {
         title = media.title

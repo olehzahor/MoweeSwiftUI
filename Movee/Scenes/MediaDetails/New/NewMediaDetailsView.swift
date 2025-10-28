@@ -15,15 +15,31 @@ struct NewMediaDetailsView: View {
         viewModel.sectionsContext
     }
     
+    private var media: Media {
+        viewModel.media ?? .placeholder
+    }
+    
+    @ViewBuilder
+    private func setupStretchyHeader() -> some View {
+        BackdropStrechyHeaderView(backdropURL: viewModel.media?.backdropURL)
+            .aspectRatio(4/3, contentMode: .fit)
+            .padding(.bottom, 80)
+            .overlay(alignment: .bottom) {
+                MediaDetailedInfoView(media: media)
+                    .loading(viewModel.media == nil)
+                    .onScrollVisibilityChange { isVisible in
+                        isHeaderVisible = isVisible
+                    }
+            }
+    }
+
     @ViewBuilder
     private func setupDetailsSection() -> some View {
-        if let media = viewModel.media {
-            VStack(alignment: .leading, spacing: 4) {
-                NewMediaTaglineView(tagline: media.tagline ?? "")
-                    .loading(context[.details].isAwaitingData)
-                Text(media.overview)
-                    .textStyle(.mediumText)
-            }
+        VStack(alignment: .leading, spacing: 4) {
+            NewMediaTaglineView(tagline: viewModel.media?.tagline)
+                .loading(context[.details].isAwaitingData)
+            DescriptionView(text: viewModel.media?.overview)
+                .loading(viewModel.media == nil)
         }
     }
     
@@ -76,21 +92,12 @@ struct NewMediaDetailsView: View {
                            section: viewModel.collection.section
         ).loadingContext(context, section: .collection, reloader: viewModel)
     }
-
     
     var body: some View {
-        if let media = viewModel.media {
+        //if let media = viewModel.media {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
-                    BackdropStrechyHeaderView(backdropURL: media.backdropURL)
-                        .aspectRatio(4/3, contentMode: .fit)
-                        .padding(.bottom, 80)
-                        .overlay(alignment: .bottom) {
-                            MediaDetailedInfoView(media: media)
-                                .onScrollVisibilityChange { isVisible in
-                                isHeaderVisible = isVisible
-                            }
-                        }
+                    setupStretchyHeader()
                     VStack(alignment: .leading, spacing: 16) {
                         setupDetailsSection()
                         setupVideosSection()
@@ -104,7 +111,7 @@ struct NewMediaDetailsView: View {
                     .padding(.bottom, 20)
                 }
             }
-            .postponedAnimation(0.5, .default, value: context)
+            .postponedAnimation(0, .default, value: context)
             .onFirstAppear {
                 viewModel.fetchInitialData()
             }
@@ -131,14 +138,14 @@ struct NewMediaDetailsView: View {
             }
             .navigationTitle(media.title)
             .ignoresSafeArea(edges: .top)
-        } else {
-            VStack {
-                Spacer()
-                ProgressView()
-                    .scaleEffect(1.5)
-                Spacer()
-            }
-        }
+//        } else {
+//            VStack {
+//                Spacer()
+//                ProgressView()
+//                    .scaleEffect(1.5)
+//                Spacer()
+//            }
+//        }
     }
     
     init(media: Media) {
