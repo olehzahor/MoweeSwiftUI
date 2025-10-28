@@ -15,7 +15,9 @@ protocol LoadableView: View {
 
 extension LoadableView {
     @ViewBuilder func loadingView() -> some View {
-        self.shimmering()
+        self
+            .redacted(reason: .placeholder)
+            .shimmering()
     }
 }
 
