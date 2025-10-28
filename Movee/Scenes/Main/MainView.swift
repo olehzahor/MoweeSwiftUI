@@ -10,18 +10,17 @@ import SwiftUI
 struct MainView: View {
     var body: some View {
         TabView {
-            ExploreView()
-                .tabItem {
-                    Label("Explore", systemImage: "house")
-                }
-            MediasListView(section: .watchlistSection)
-                .tabItem {
-                    Label("Watchlist", systemImage: "list.and.film")
-                }
-            SearchView()
-                .tabItem {
-                    Label("Discover", systemImage: "magnifyingglass")
-                }
+            Tab("Explore", systemImage: "house") {
+                ExploreView()
+            }
+            
+            Tab("Watchlist", systemImage: "list.and.film") {
+                MediasListView(section: .watchlistSection)
+            }
+            
+            Tab("Discover", systemImage: "magnifyingglass", role: .search) {
+                SearchView()
+            }
         }
     }
 }
