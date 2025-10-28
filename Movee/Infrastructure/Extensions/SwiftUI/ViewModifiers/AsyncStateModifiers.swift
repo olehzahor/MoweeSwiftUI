@@ -13,6 +13,12 @@ protocol LoadableView: View {
     @ViewBuilder func loadingView() -> LoadingContent
 }
 
+extension LoadableView {
+    @ViewBuilder func loadingView() -> some View {
+        self.shimmering()
+    }
+}
+
 protocol FailableView: View {
     associatedtype ErrorContent: View
     @ViewBuilder func errorView(error: Error, retry: (() -> Void)?) -> ErrorContent
