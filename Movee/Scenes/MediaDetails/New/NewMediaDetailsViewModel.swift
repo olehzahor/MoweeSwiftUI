@@ -7,11 +7,18 @@
 
 import Foundation
 
+@MainActor protocol MediaDetailsWatchlistManager {
+    var isInWatchlist: Bool? { get }
+    func toggleWatchlist()
+}
+
 @MainActor
 final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable, ObservableObject {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
 
     private var mediaIdentifier: MediaIdentifier
+    
+    @Published var isInWatchlist: Bool?
 
     @Published var media: Media?
     @Published var seasons: MediasSection<Season>
@@ -31,6 +38,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
                 try await repo.fetchMedia(mediaIdentifier)
             } onSuccess: { [weak self] result in
                 self?.media = result
+                self?.loadWatchlistStatus()
             }
         ),
         .seasons: AnyFetchConfig(
@@ -85,7 +93,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
             sectionsContext[.seasons] = .loaded(isEmpty: true)
         }
     }
-
+        
     init(mediaID: Int, mediaType: MediaType) {
         self.mediaIdentifier = .init(id: mediaID, type: mediaType)
                 
@@ -101,6 +109,24 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     
     convenience init(media: Media) {
         self.init(mediaID: media.id, mediaType: media.mediaType)
-        //self.media = media
+        self.media = media
+        loadWatchlistStatus()
+    }
+}
+
+extension NewMediaDetailsViewModel: MediaDetailsWatchlistManager {
+    private func loadWatchlistStatus() {
+        guard let media else { return }
+        Task {
+            isInWatchlist = await WatchlistManager.shared.isInWatchlist(media)
+        }
+    }
+
+    func toggleWatchlist() {
+        guard let media else { return }
+        Task {
+            await WatchlistManager.shared.toggleWatchlist(media)
+            loadWatchlistStatus()
+        }
     }
 }
