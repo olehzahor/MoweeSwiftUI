@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AsyncImageView: View {
-    @State private var url: URL?
+    private let url: URL?
     
     @State private var isHidden: Bool = false
     @State private var isLoaded: Bool = false
