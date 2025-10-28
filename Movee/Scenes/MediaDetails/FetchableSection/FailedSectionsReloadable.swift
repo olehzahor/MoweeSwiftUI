@@ -9,7 +9,7 @@ import Foundation
 
 /// Protocol for ViewModels that can reload all failed sections at once
 protocol FailedSectionsReloadable: SectionFetchable where SectionType: CaseIterable {
-    func reloadFailedSections()
+    @MainActor func reloadFailedSections()
 }
 
 extension FailedSectionsReloadable {

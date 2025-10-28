@@ -185,7 +185,7 @@ struct MediaDetailsView: View {
         if let media = viewModel.media {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 16) {
-                    BackdropStrechyHeaderView(backdropURL: media.backdropURL)
+                    BackdropStretchyHeaderView(backdropURL: media.backdropURL)
                         .aspectRatio(4/3, contentMode: .fit)
                         .padding(.bottom, 80)
                         .overlay(alignment: .bottom) {

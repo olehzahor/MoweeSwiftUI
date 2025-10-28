@@ -21,7 +21,7 @@ struct NewMediaDetailsView: View {
     
     @ViewBuilder
     private func setupStretchyHeader() -> some View {
-        BackdropStrechyHeaderView(backdropURL: viewModel.media?.backdropURL)
+        BackdropStretchyHeaderView(backdropURL: viewModel.media?.backdropURL)
             .aspectRatio(4/3, contentMode: .fit)
             .padding(.bottom, 80)
             .overlay(alignment: .bottom) {

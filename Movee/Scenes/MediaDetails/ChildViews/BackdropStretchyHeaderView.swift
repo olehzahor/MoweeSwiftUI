@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BackdropStrechyHeaderView: View {
+struct BackdropStretchyHeaderView: View {
     var backdropURL: URL?
     
     var body: some View {
