@@ -10,9 +10,13 @@ import SwiftUI
 struct SectionView<Content: View>: View {
     let header: SectionHeaderData
     @ViewBuilder let content: () -> Content
+    
+    private var minimalHeader: SectionHeaderData {
+        SectionHeaderData(title: header.title)
+    }
         
     @ViewBuilder
-    func sectionContainer(@ViewBuilder content: () -> some View) -> some View {
+    func sectionContainer(header: SectionHeaderData, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading) {
             SectionHeaderView(data: header)
             content()
@@ -20,13 +24,13 @@ struct SectionView<Content: View>: View {
     }
 
     var body: some View {
-        sectionContainer(content: content)
+        sectionContainer(header: header, content: content)
     }
 }
 
 extension SectionView: LoadableView where Content: LoadableView {
     func loadingView() -> some View {
-        sectionContainer {
+        sectionContainer(header: minimalHeader) {
             content().loadingView()
         }
     }
@@ -34,7 +38,7 @@ extension SectionView: LoadableView where Content: LoadableView {
 
 extension SectionView: FailableView where Content: FailableView {
     func errorView(error: any Error, retry: (() -> Void)?) -> some View {
-        sectionContainer {
+        sectionContainer(header: minimalHeader) {
             content().errorView(error: error, retry: retry)
         }
     }
