@@ -17,6 +17,7 @@ struct NewMediaVideoView: View {
         ZStack {
             ZStack(alignment: .center) {
                 AsyncImageView(url: data.backdropURL)
+                    .scaledToFillAspectRatio(16/9)
                 Color.secondary.opacity(0.1)
                 if isPlayerLoading {
                     ProgressView()
@@ -26,6 +27,7 @@ struct NewMediaVideoView: View {
                     Image(systemName: "play.circle")
                         .font(.system(size: 50))
                         .foregroundColor(.white)
+                        .opacity(0.8)
                 }
             }
             .onTapGesture {
@@ -34,14 +36,15 @@ struct NewMediaVideoView: View {
             }
 
             if isPlayerVisible, let youtubeURL = data.youtubeURL {
-                WebView(.url(youtubeURL)).onLoadingStateChanged { _, isLoading in
-                    isPlayerLoading = isLoading
-                }
-                .opacity(isPlayerLoading ? 0 : 1)
-                .animation(.easeOut, value: isPlayerLoading)
+                WebView(.url(youtubeURL))
+                    .onLoadingStateChanged { _, isLoading in
+                        isPlayerLoading = isLoading
+                    }
+                    .aspectRatio(16/9, contentMode: .fit)
+                    .opacity(isPlayerLoading ? 0 : 1)
+                    .animation(.easeOut, value: isPlayerLoading)
             }
         }
-        .scaledToFillAspectRatio(16/9)
         .clipShape(.rect(cornerRadius: 8))
     }
 }

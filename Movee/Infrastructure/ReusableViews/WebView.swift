@@ -17,12 +17,15 @@ struct WebView: UIViewRepresentable {
     }
 
     let content: Content
+    private let referrer: String?
     private let onLoadingStateChanged: LoadingStateUpdater?
 
     init(_ content: Content,
+         referrer: String? = "https://sites.google.com/view/mowee/",
          onLoadingStateChanged: LoadingStateUpdater? = nil)
     {
         self.content = content
+        self.referrer = referrer
         self.onLoadingStateChanged = onLoadingStateChanged
     }
 
@@ -40,7 +43,11 @@ struct WebView: UIViewRepresentable {
         switch content {
         case .url(let url):
             print("Loading url: \(url)")
-            webView.load(URLRequest(url: url))
+            var request = URLRequest(url: url)
+            if let referrer {
+                request.setValue(referrer, forHTTPHeaderField: "Referer")
+            }
+            webView.load(request)
         case .html(let html):
             webView.loadHTMLString(html, baseURL: nil)
         }
@@ -72,6 +79,6 @@ struct WebView: UIViewRepresentable {
 
     /// Fluent API
     func onLoadingStateChanged(_ handler: @escaping LoadingStateUpdater) -> WebView {
-        WebView(content, onLoadingStateChanged: handler)
+        WebView(content, referrer: referrer, onLoadingStateChanged: handler)
     }
 }
