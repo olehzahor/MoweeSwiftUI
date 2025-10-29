@@ -46,10 +46,10 @@
             filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
-            landmarkName = "Placeholder"
-            landmarkType = "14">
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "fetchMedias()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -62,9 +62,9 @@
             filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
-            landmarkName = "fetch(page:)"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "fetchMedias()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -199,33 +199,81 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CB08DBE8-4341-4696-BC95-8225D1CFEB42"
+            uuid = "C5CDCAC7-D70C-4519-8F44-33B2CD4D60E6"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediaDetails/ChildViews/BackdropStretchyHeaderView.swift"
+            filePath = "Movee/Scenes/MediasList/MediasListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "setupRowView(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E442AA66-F419-4BCE-A456-21FE06E47460"
+            uuid = "46BF1AF6-FA38-4A63-827E-3794F46D2953"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediaDetails/New/NewMediaDetailsViewModel.swift"
+            filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
-            landmarkName = "init(media:)"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "fetchMedias()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "83C4C605-130D-42EC-99AB-12CD85FB6654"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "fetchMedias()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "21B4DCC2-9F21-47CF-A646-E7060ECAC0AB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "fetchRelated(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E4CE7F2F-E10A-46D0-BC4E-38EB6C2E52E6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Movee/Scenes/MediaDetails/New/NewMediaReviewsCarouselView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "Review"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
