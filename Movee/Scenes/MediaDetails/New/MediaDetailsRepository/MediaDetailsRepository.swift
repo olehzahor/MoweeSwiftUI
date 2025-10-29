@@ -17,7 +17,6 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
     )
     
     func fetchMedia(_ identifier: MediaIdentifier) async throws -> Media {
-        //try await Task.sleep(for: .seconds(3))
         return switch identifier.type {
         case .movie:
             Media(movie: try await networkClient.request(TMDB.MovieDetails(movieID: identifier.id)))
@@ -69,6 +68,7 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
     }
     
     func fetchVideos(_ identifier: MediaIdentifier) async throws -> [Video] {
+        try await Task.sleep(for: .seconds(3))
         let response = switch identifier.type {
         case .movie:
             try await networkClient.request(TMDB.MovieVideos(movieID: identifier.id))
