@@ -17,10 +17,11 @@ struct NewMediaVideoView: View {
         ZStack {
             ZStack(alignment: .center) {
                 AsyncImageView(url: data.backdropURL)
-                    .aspectRatio(16/9, contentMode: .fit)
                 Color.secondary.opacity(0.1)
                 if isPlayerLoading {
                     ProgressView()
+                        .tint(.white)
+                        .controlSize(.extraLarge)
                 } else {
                     Image(systemName: "play.circle")
                         .font(.system(size: 50))
@@ -40,6 +41,7 @@ struct NewMediaVideoView: View {
                 .animation(.easeOut, value: isPlayerLoading)
             }
         }
+        .scaledToFillAspectRatio(16/9)
         .clipShape(.rect(cornerRadius: 8))
     }
 }
