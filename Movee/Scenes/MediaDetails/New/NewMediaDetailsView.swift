@@ -32,7 +32,7 @@ struct NewMediaDetailsView: View {
                 .padding(.bottom, 20)
             }
         }
-        .postponedAnimation(0.5, .default, value: context)
+        //.postponedAnimation(0.5, .default, value: context)
         .onFirstAppear {
             viewModel.fetchInitialData()
         }

@@ -44,7 +44,9 @@ extension SectionView {
     }
     
     static func castAndCrew(_ persons: [MediaPerson]?) -> SectionView where Content == PersonsCarouselView {
-        SectionView(header: .init(title: "Cast and crew")) {
+        SectionView(header: .init(title: "Cast and crew") {
+            AnyView(MediaPersonsListView(persons: persons))
+        }) {
             PersonsCarouselView(persons: persons ?? [], horizontalPadding: 20)
         }
     }
