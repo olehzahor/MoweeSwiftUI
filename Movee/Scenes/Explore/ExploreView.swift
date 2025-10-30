@@ -9,6 +9,36 @@ import SwiftUI
 import SwiftData
 import Combine
 
+struct NewExploreView: View {
+    @StateObject private var viewModel = NewExploreViewModel(sections: .homePageSections)
+    
+    @ViewBuilder
+    private func setupSectionsView() -> some View {
+        ForEach(viewModel.fetchableSections) { section in
+            NewMediasSectionView(section: section, medias: viewModel.medias[section])
+                .loadingContext(viewModel.sectionsContext, section: section, retry: {})
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            Group {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        setupSectionsView()
+                            .padding(.horizontal)
+                            .padding(.top, 20)
+                    }
+                }
+            }
+            .onFirstAppear {
+                viewModel.fetchInitialData()
+            }
+            .navigationTitle("Explore")
+        }
+    }
+}
+
 struct ExploreView: View {
     @StateObject private var viewModel = ExploreViewModel(sections: .homePageSections)
     
@@ -46,6 +76,6 @@ struct ExploreView: View {
 
 struct ExploreView_Previews: PreviewProvider {
     static var previews: some View {
-        ExploreView()
+        NewExploreView()
     }
 }

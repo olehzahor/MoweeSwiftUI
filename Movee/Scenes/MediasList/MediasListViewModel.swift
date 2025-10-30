@@ -8,52 +8,6 @@
 import Combine
 import Foundation
 
-protocol MediasListDataProvider {
-    func fetch(page: Int) async throws -> PaginatedResponse<Media>
-}
-
-struct RelatedMediasSectionDataProvider: MediasListDataProvider {
-    private let networkClient = NetworkClient2(
-        interceptors: [
-            TMDBInterceptor(),
-            LoggingInterceptor(logger: Logger.shared)
-        ],
-        decoder: TMDBJSONDecoder()
-    )
-
-    let identifier: MediaIdentifier
-    
-    func fetch(page: Int) async throws -> PaginatedResponse<Media> {
-        switch identifier.type {
-        case .movie:
-            let request = TMDB.MovieRecommendations(movieID: identifier.id, page: page)
-            return try await networkClient.request(request).map { Media(movie: $0) }
-        case .tvShow:
-            let request = TMDB.TVShowRecommendations(tvShowID: identifier.id, page: page)
-            return try await networkClient.request(request).map { Media(tvShow: $0) }
-        }
-    }
-}
-
-struct NewMediasSection {
-    struct Placeholder {
-        let title: String
-        let subtitle: String?
-    }
-    
-    let title: String
-    let fullTitle: String?
-    let placeholder: Placeholder?
-    let dataProvider: MediasListDataProvider?
-    
-    init(title: String, fullTitle: String? = nil, placeholder: Placeholder? = nil, dataProvider: MediasListDataProvider? = nil) {
-        self.title = title
-        self.fullTitle = fullTitle
-        self.placeholder = placeholder
-        self.dataProvider = dataProvider
-    }
-}
-
 @MainActor
 class NewMediasListViewModel: ObservableObject {
     @Published var medias: [Media] = []

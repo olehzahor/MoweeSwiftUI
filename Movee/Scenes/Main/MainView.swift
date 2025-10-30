@@ -11,7 +11,7 @@ struct MainView: View {
     var body: some View {
         TabView {
             Tab("Explore", systemImage: "house") {
-                ExploreView()
+                NewExploreView()
             }
             
             Tab("Watchlist", systemImage: "list.and.film") {

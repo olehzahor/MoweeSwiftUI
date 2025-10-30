@@ -11,8 +11,8 @@ extension SectionFetchable {
     @MainActor
     func fetchInitialData() {
         Task {
-            let grouped = Dictionary(grouping: SectionType.allCases) { section in
-                fetchConfigs[section]?.priority ?? .max
+            let grouped = Dictionary(grouping: fetchableSections) { section in
+                fetchConfig(for: section)?.priority ?? .max
             }
 
             for priority in grouped.keys.sorted() {
@@ -34,7 +34,7 @@ extension SectionFetchable {
     /// Fire-and-forget fetch - starts the fetch but doesn't wait for completion
     @MainActor
     func fetch(_ section: SectionType) {
-        guard let config = fetchConfigs[section] else {
+        guard let config = fetchConfig(for: section) else {
             let error = FetchError.noConfigurationFound(section: String(describing: section))
             sectionsContext[section] = .error(error)
             return
@@ -60,7 +60,7 @@ extension SectionFetchable {
     /// Useful for sequential fetches where one depends on another
     @MainActor
     func fetchAsync(_ section: SectionType) async {
-        guard let config = fetchConfigs[section] else {
+        guard let config = fetchConfig(for: section) else {
             let error = FetchError.noConfigurationFound(section: String(describing: section))
             sectionsContext[section] = .error(error)
             return
