@@ -9,9 +9,11 @@ import Foundation
 
 /// Protocol for ViewModels that support fetchable sections with loading states
 protocol SectionFetchable: AnyObject {
-    associatedtype SectionType: Hashable, CaseIterable
+    associatedtype SectionType: Hashable
+    @MainActor var fetchableSections: [SectionType] { get }
     @MainActor var sectionsContext: AsyncLoadingContext<SectionType> { get set }
-    @MainActor var fetchConfigs: [SectionType: AnyFetchConfig] { get }
+    //@MainActor var fetchConfigs: [SectionType: AnyFetchConfig] { get }
+    @MainActor func fetchConfig(for section: SectionType) -> AnyFetchConfig?
     /// Maximum number of concurrent fetches allowed (1 = sequential, .max = fully parallel)
     @MainActor var maxConcurrentFetches: Int { get }
 }

@@ -8,6 +8,32 @@
 import Combine
 import Foundation
 
+@MainActor
+final class NewExploreViewModel: ObservableObject, SectionFetchable {
+    var fetchableSections: [NewMediasSection]
+
+    @Published var medias: [NewMediasSection: [Media]] = [:]
+    
+    @Published var sectionsContext = AsyncLoadingContext<NewMediasSection>()
+    var maxConcurrentFetches: Int { 1 }
+
+    func fetchConfig(for section: NewMediasSection) -> AnyFetchConfig? {
+        AnyFetchConfig(
+            FetchConfig {
+                try await section.dataProvider?.fetch(page: 1) ?? .wrap([])
+            } onSuccess: { [weak self] response in
+                self?.medias[section] = response.results
+            } isEmpty: { response in
+                response.results.isEmpty
+            }
+        )
+    }
+
+    init(sections: [NewMediasSection]) {
+        fetchableSections = sections
+    }
+}
+
 class ExploreViewModel: ObservableObject {
     @Published var sections: [MediasSection]
     

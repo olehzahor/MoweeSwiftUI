@@ -29,6 +29,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     @Published var collection: MediasSection<Media>
     
     var maxConcurrentFetches: Int { 3 }
+    private(set) lazy var fetchableSections: [MediaDetailsSection] = SectionType.allCases
 
     @Published var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
     // TODO: add mappers to configs
@@ -87,6 +88,10 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
             }
         )
     ]
+    
+    func fetchConfig(for section: MediaDetailsSection) -> AnyFetchConfig? {
+        fetchConfigs[section]
+    }
 
     private func setupSectionsContext() {
         if mediaIdentifier.type != .tvShow {
@@ -100,7 +105,7 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
         self.seasons = .init(name: "Seasons")
         self.related = .init(
             name: "Related",
-            dataProvider: RelatedMediasSectionDataProvider(identifier: mediaIdentifier)
+            dataProvider: TypedMediasListDataProvider.related(mediaIdentifier)
         )
         self.collection = .init(name: "Collection")
 
