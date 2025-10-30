@@ -14,6 +14,10 @@ struct NewMediaDetailsView: View {
     private var context: AsyncLoadingContext<MediaDetailsSection> {
         viewModel.sectionsContext
     }
+    
+    private var navigationTitle: String {
+        isHeaderVisible ? "" : viewModel.media?.title ?? ""
+    }
             
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -42,7 +46,7 @@ struct NewMediaDetailsView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(isHeaderVisible ? "" : viewModel.media?.title ?? "")
+        .navigationTitle(navigationTitle)
         .ignoresSafeArea(edges: .top)
     }
     

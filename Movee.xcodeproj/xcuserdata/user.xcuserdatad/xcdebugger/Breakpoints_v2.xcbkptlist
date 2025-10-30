@@ -14,8 +14,8 @@
             filePath = "Movee/Scenes/Explore/ExploreView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -46,10 +46,10 @@
             filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "fetchMedias()"
-            landmarkType = "7">
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "Placeholder"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -62,9 +62,9 @@
             filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "fetchMedias()"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "fetch(page:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -199,96 +199,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C5CDCAC7-D70C-4519-8F44-33B2CD4D60E6"
+            uuid = "CB08DBE8-4341-4696-BC95-8225D1CFEB42"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediasList/MediasListView.swift"
+            filePath = "Movee/Scenes/MediaDetails/ChildViews/BackdropStretchyHeaderView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "setupRowView(_:)"
-            landmarkType = "7">
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "46BF1AF6-FA38-4A63-827E-3794F46D2953"
+            uuid = "E442AA66-F419-4BCE-A456-21FE06E47460"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
+            filePath = "Movee/Scenes/MediaDetails/New/NewMediaDetailsViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "fetchMedias()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "83C4C605-130D-42EC-99AB-12CD85FB6654"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediasList/MediasListViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "fetchMedias()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "21B4DCC2-9F21-47CF-A646-E7060ECAC0AB"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediaDetails/New/MediaDetailsRepository.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "fetchRelated(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E4CE7F2F-E10A-46D0-BC4E-38EB6C2E52E6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/MediaDetails/New/NewMediaReviewsCarouselView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "Review"
-            landmarkType = "21">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "CF0B71DC-AAB9-4DFF-B31B-15F199428269"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Movee/Scenes/Explore/Data/ExploreViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "fetchConfig(for:)"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "init(media:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
