@@ -10,31 +10,25 @@ import SwiftData
 import Combine
 
 struct NewExploreView: View {
-    @StateObject private var viewModel = NewExploreViewModel(sections: .homePageSections)
-    
-    @ViewBuilder
-    private func setupSectionsView() -> some View {
-        ForEach(viewModel.fetchableSections) { section in
-            NewMediasSectionView(section: section, medias: viewModel.medias[section])
-                .loadingContext(viewModel.sectionsContext, section: section, retry: {})
-        }
-    }
-    
+    private var viewModel = NewExploreViewModel(sections: .homePageSections)
+
     var body: some View {
         NavigationStack {
-            Group {
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        setupSectionsView()
-                            .padding(.horizontal)
-                            .padding(.top, 20)
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 20) {
+                    ForEach(viewModel.fetchableSections) { section in
+                        SectionView.medias(viewModel.medias[section], section: section)
+                            .loadingContext(viewModel.sectionsContext, section: section, retry: {})
                     }
                 }
+                .padding(.horizontal)
+                .padding(.bottom)
             }
+            .scrollIndicators(.hidden)
+            .navigationTitle("Explore")
             .onFirstAppear {
                 viewModel.fetchInitialData()
             }
-            .navigationTitle("Explore")
         }
     }
 }
