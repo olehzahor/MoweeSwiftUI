@@ -8,14 +8,14 @@
 import Combine
 import Foundation
 
-@MainActor
-final class NewExploreViewModel: ObservableObject, SectionFetchable {
+@MainActor @Observable
+final class NewExploreViewModel: SectionFetchable {
     var fetchableSections: [NewMediasSection]
 
-    @Published var medias: [NewMediasSection: [Media]] = [:]
+    var medias: [NewMediasSection: [Media]] = [:]
     
-    @Published var sectionsContext = AsyncLoadingContext<NewMediasSection>()
-    var maxConcurrentFetches: Int { 1 }
+    var sectionsContext = AsyncLoadingContext<NewMediasSection>()
+    var maxConcurrentFetches: Int { 2 }
 
     func fetchConfig(for section: NewMediasSection) -> AnyFetchConfig? {
         AnyFetchConfig(
