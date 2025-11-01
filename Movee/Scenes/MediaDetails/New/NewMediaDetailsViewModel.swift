@@ -12,27 +12,28 @@ import Foundation
     func toggleWatchlist()
 }
 
-@MainActor
+@MainActor @Observable
 final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable, ObservableObject {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
 
     private var mediaIdentifier: MediaIdentifier
     
-    @Published var isInWatchlist: Bool?
+    var isInWatchlist: Bool?
 
-    @Published var media: Media?
-    @Published var seasons: MediasSection<Season>
-    @Published var credits: [MediaPerson]?
-    @Published var related: MediasSection<Media>
-    @Published var reviews: [Review]?
-    @Published var videos: [Video]?
-    @Published var collection: MediasSection<Media>
+    var media: Media?
+    var seasons: MediasSection<Season>
+    var credits: [MediaPerson]?
+    var related: MediasSection<Media>
+    var reviews: [Review]?
+    var videos: [Video]?
+    var collection: MediasSection<Media>
     
     var maxConcurrentFetches: Int { 3 }
-    private(set) lazy var fetchableSections: [MediaDetailsSection] = SectionType.allCases
-
-    @Published var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
-    // TODO: add mappers to configs
+    private(set) var fetchableSections: [MediaDetailsSection] = SectionType.allCases
+    
+    var sectionsContext = AsyncLoadingContext<MediaDetailsSection>()
+    
+    @ObservationIgnored
     private(set) lazy var fetchConfigs: [MediaDetailsSection: AnyFetchConfig] = [
         .details: AnyFetchConfig(
             FetchConfig(priority: 0) { [repo, mediaIdentifier] in
@@ -100,7 +101,8 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     }
         
     init(mediaID: Int, mediaType: MediaType) {
-        self.mediaIdentifier = .init(id: mediaID, type: mediaType)
+        let mediaIdentifier = MediaIdentifier(id: mediaID, type: mediaType)
+        self.mediaIdentifier = mediaIdentifier
                 
         self.seasons = .init(name: "Seasons")
         self.related = .init(
