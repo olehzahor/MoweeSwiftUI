@@ -21,9 +21,9 @@ struct NewMediaDetailsView: View {
             
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 16) {
+            LazyVStack(spacing: 16) {
                 setupStretchyHeader()
-                VStack(alignment: .leading, spacing: 16) {
+                LazyVStack(alignment: .leading, spacing: 16) {
                     setupDetailsSection()
                     setupVideosSection()
                     setupSeasonsSection()
