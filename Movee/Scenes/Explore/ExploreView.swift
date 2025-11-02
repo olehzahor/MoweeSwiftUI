@@ -21,8 +21,7 @@ struct ExploreView: View {
                             .loadingContext(viewModel.sectionsContext, section: section, reloader: viewModel)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom)
+                .padding()
             }
             .scrollIndicators(.hidden)
             .navigationTitle("Explore")
