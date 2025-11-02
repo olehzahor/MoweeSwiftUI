@@ -8,7 +8,7 @@
 import Foundation
 
 /// Protocol for ViewModels that can reload all failed sections at once
-protocol FailedSectionsReloadable: SectionFetchable where SectionType: CaseIterable {
+protocol FailedSectionsReloadable: SectionFetchable {
     @MainActor func reloadFailedSections()
 }
 
@@ -16,7 +16,7 @@ extension FailedSectionsReloadable {
     /// Default implementation that retries all sections that are in error state
     @MainActor
     func reloadFailedSections() {
-        for section in SectionType.allCases {
+        for section in fetchableSections {
             if sectionsContext[section].error != nil {
                 fetch(section)
             }
