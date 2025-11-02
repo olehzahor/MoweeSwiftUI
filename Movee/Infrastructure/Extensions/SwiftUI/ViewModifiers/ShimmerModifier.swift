@@ -1,21 +1,26 @@
+//
+//  ShimmerModifier.swift
+//  Movee
+//
+//  Created by user on 11/02/25.
+//
+
 import SwiftUI
 
 struct ShimmerModifier: ViewModifier {
-    @State private var overlayOpacity: Double = 0.5
-    
     func body(content: Content) -> some View {
-        content
-            .overlay(
-                Color(.systemBackground)
-                    .blendMode(.sourceAtop)
-                    .opacity(overlayOpacity)
-            )
-            .compositingGroup()
-            .onAppear {
-                withAnimation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true)) {
-                    overlayOpacity = 0
-                }
-            }
+        TimelineView(.animation) { timeline in
+            let progress = timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 2)
+            let phase = progress <= 1.0 ? progress : 2.0 - progress
+
+            content
+                .overlay(
+                    Color(.systemBackground)
+                        .blendMode(.sourceAtop)
+                        .opacity(phase * 0.5)
+                )
+                .compositingGroup()
+        }
     }
 }
 
