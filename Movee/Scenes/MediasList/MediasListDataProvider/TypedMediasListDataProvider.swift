@@ -17,11 +17,15 @@ struct TypedMediasListDataProvider: MediasListDataProvider {
     func fetch(page: Int) async throws -> PaginatedResponse<Media> {
         switch mediaIdentifier.type {
         case .movie:
-            let response = try await movieFetcher(networkClient, page)
-            return response.map { Media(movie: $0) }
+            try await MoviesListDataProvider(
+                networkClient: networkClient,
+                fetcher: movieFetcher)
+            .fetch(page: page)
         case .tvShow:
-            let response = try await tvShowFetcher(networkClient, page)
-            return response.map { Media(tvShow: $0) }
+            try await TVShowsListDataProvider(
+                networkClient: networkClient,
+                fetcher: tvShowFetcher)
+            .fetch(page: page)
         }
     }
 }
