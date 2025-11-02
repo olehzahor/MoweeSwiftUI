@@ -13,18 +13,16 @@ struct NewMediaVideosCarouselView: View {
     
     @ViewBuilder
     private func carouselContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    content()
-                        .containerRelativeFrame(.horizontal)
-                }
-                .scrollTargetLayout()
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 12) {
+                content()
+                    .containerRelativeFrame(.horizontal)
             }
-            .scrollTargetBehavior(.viewAligned)
-            .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
-            .padding(.horizontal, -horizontalPadding)
+            .scrollTargetLayout()
         }
+        .scrollTargetBehavior(.viewAligned)
+        .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
+        .padding(.horizontal, -horizontalPadding)
     }
 
     var body: some View {
