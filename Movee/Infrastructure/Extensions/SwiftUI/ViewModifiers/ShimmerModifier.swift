@@ -17,7 +17,7 @@ struct ShimmerModifier: ViewModifier {
                 .overlay(
                     Color(.systemBackground)
                         .blendMode(.sourceAtop)
-                        .opacity(phase * 0.5)
+                        .opacity((1 - phase) * 0.5)
                 )
                 .compositingGroup()
         }

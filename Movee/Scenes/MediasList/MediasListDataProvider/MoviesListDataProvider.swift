@@ -12,8 +12,7 @@ struct MoviesListDataProvider: MediasListDataProvider {
     let fetcher: (NetworkClient2, Int) async throws -> PaginatedResponse<Movie>
     
     func fetch(page: Int) async throws -> PaginatedResponse<Media> {
-        try await Task.sleep(for: .seconds(.random(in: 1...3)))
-        return try await fetcher(networkClient, page).map { Media(movie: $0) }
+        try await fetcher(networkClient, page).map { Media(movie: $0) }
     }
 }
 
