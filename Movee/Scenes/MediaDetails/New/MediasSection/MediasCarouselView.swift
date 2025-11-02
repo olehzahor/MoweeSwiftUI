@@ -13,7 +13,7 @@ struct MediasCarouselView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top) {
+            LazyHStack(alignment: .top) {
                 ForEach(medias) { media in
                     NavigationLink {
                         switch media.object {
