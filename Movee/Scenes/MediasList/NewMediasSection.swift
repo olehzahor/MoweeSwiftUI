@@ -16,6 +16,7 @@ struct Dependencies {
 }
 
 struct NewMediasSection {
+    // TODO: add id
     struct Placeholder {
         let title: String
         let subtitle: String?

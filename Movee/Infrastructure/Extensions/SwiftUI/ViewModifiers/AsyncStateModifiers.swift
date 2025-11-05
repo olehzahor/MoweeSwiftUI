@@ -113,6 +113,15 @@ extension View where Self: LoadableView & FailableView {
                 retry: retry)
             .hideWhen(context[section].isEmpty)
     }
+    
+    func loadingState(_ state: AsyncLoadingState, retry: @escaping () -> Void) -> some View {
+        self
+            .loading(
+                state.isAwaitingData,
+                error: state.error,
+                retry: retry)
+            .hideWhen(state.isEmpty)
+    }
 
     func loadingContext<Section, Reloader: FailedSectionsReloadable>(
         _ context: AsyncLoadingContext<Section>,

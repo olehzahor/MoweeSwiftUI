@@ -8,65 +8,6 @@
 import Combine
 import Foundation
 
-@MainActor
-class NewMediasListViewModel: ObservableObject {
-    @Published var medias: [Media] = []
-    @Published var section: NewMediasSection
-    @Published var isLoaded: Bool = false
-
-    private var cancellables = Set<AnyCancellable>()
-    
-    private var currentPage: Int = 1
-    private var totalPages: Int = 1
-    
-    @Published var isLoadingPage: Bool = false
-    
-    var hasMorePages: Bool {
-        return currentPage <= totalPages
-    }
-
-    func fetchMedias() {
-        guard !isLoadingPage, hasMorePages else { return }
-        isLoadingPage = true
-        
-        Task {
-            guard let response = try await section.dataProvider?.fetch(page: currentPage) else { return }
-            if response.page == 1 { medias = [] }
-            medias.append(contentsOf: response.results)
-            totalPages = response.total_pages
-            currentPage += 1
-            isLoaded = true
-            isLoadingPage = false
-        }
-//        
-//        section.publisherBuilder?(currentPage)
-//            .sink { [unowned self] completion in
-//                isLoadingPage = false
-//                if case .failure(let error) = completion {
-//                    print("Error fetching medias: \(error)")
-//                }
-//            } receiveValue: { [unowned self] response in
-//                if response.page == 1 { medias = [] }
-//                medias.append(contentsOf: response.results)
-//                totalPages = response.total_pages
-//                currentPage += 1
-//                isLoaded = true
-//            }
-//            .store(in: &cancellables)
-    }
-    
-    func isLastLoaded(media: Media) -> Bool {
-        media.id == medias.last?.id
-    }
-    
-    init(section: NewMediasSection) {
-        self.section = section
-    }
-
-    deinit {
-        cancellables.forEach { $0.cancel() }
-    }
-}
 
 
 class MediasListViewModel: ObservableObject {
