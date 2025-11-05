@@ -5,16 +5,14 @@
 //  Created by Oleh on 18.10.2025.
 //
 
-extension AsyncLoadingContext {
-    enum State {
-        case idle
-        case loading
-        case loaded(isEmpty: Bool)
-        case error(Error)
-    }
+enum AsyncLoadingState {
+    case idle
+    case loading
+    case loaded(isEmpty: Bool)
+    case error(Error)
 }
 
-extension AsyncLoadingContext.State {
+extension AsyncLoadingState {
     var isIdle: Bool {
         if case .idle = self { return true }
         return false
@@ -45,8 +43,8 @@ extension AsyncLoadingContext.State {
     }
 }
 
-extension AsyncLoadingContext.State: Equatable {
-    static func == (lhs: AsyncLoadingContext.State, rhs: AsyncLoadingContext.State) -> Bool {
+extension AsyncLoadingState: Equatable {
+    static func == (lhs: AsyncLoadingState, rhs: AsyncLoadingState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true
