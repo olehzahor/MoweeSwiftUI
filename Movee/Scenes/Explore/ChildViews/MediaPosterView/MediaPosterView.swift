@@ -10,7 +10,7 @@ import Combine
 
 struct MediaPosterView: View {
     let model: MediaUIModel
-        
+
     var body: some View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
@@ -30,12 +30,12 @@ struct MediaPosterView: View {
             if let title = model.title {
                 Text(title)
                     .textStyle(.mediaSmallTitle)
-                    .lineLimit(3)
+                    .lineLimit(model.subtitle == nil ? 2...3 : 0...3)
             }
             if let subtitle = model.subtitle {
                 Text(subtitle)
                     .textStyle(.smallSubtitle)
-                    .lineLimit(3)
+                    .lineLimit(2...3)
             }
         }
         .frame(width: 100)

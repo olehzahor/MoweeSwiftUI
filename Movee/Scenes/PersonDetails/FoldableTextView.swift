@@ -10,6 +10,8 @@ import SwiftUI
 import Combine
 
 struct FoldableTextView: View {
+    @Environment(\.isPlaceholder) private var isPlaceholder: Bool
+    
     @State var text: String
     @State var lineLimit: Int? = 5
     
