@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 
-
 struct PersonDetailsView: View {
     @StateObject var viewModel: PersonDetailsViewModel
     @State private var isBioCollapsed = true

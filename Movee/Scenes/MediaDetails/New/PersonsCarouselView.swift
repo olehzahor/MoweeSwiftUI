@@ -20,7 +20,7 @@ struct PersonsCarouselView: View {
             HStack(alignment: .top) {
                 ForEach(carousel, id: \.creditID) { person in
                     NavigationLink {
-                        PersonDetailsView(person: person)
+                        NewPersonDetailsView(person: person)
                     } label: {
                         PersonCompactView(person: person)
                     }

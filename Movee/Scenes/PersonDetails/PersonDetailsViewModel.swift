@@ -8,6 +8,13 @@
 import SwiftUI
 import Combine
 
+
+
+
+
+
+
+
 class PersonDetailsViewModel: ObservableObject {
     @Published var person: MediaPerson
     @Published var knownForMedias: [Media]?

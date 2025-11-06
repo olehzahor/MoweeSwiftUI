@@ -21,12 +21,12 @@ final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable
     var isInWatchlist: Bool?
 
     var media: Media?
-    var seasons: MediasSection<Season>
+    var seasons: SectionData<Season>
     var credits: [MediaPerson]?
-    var related: MediasSection<Media>
+    var related: SectionData<Media>
     var reviews: [Review]?
     var videos: [Video]?
-    var collection: MediasSection<Media>
+    var collection: SectionData<Media>
     
     var maxConcurrentFetches: Int { 3 }
     private(set) var fetchableSections: [MediaDetailsSection] = SectionType.allCases

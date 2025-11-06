@@ -89,9 +89,9 @@ struct NewMediasListView: View {
             
             List(viewModel.items) { item in
                 MediaRowView(data: .init(media: item)).onFirstAppear {
-                    if viewModel.isLastItem(item) {
-                        Task { try await viewModel.fetch() }
-                    }
+                    //if viewModel.isLastItem(item) {
+                    //    Task { try await viewModel.fetch() }
+                    //}
                 }
             }
             .onFirstAppear {
