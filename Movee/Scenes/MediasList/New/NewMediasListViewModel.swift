@@ -52,7 +52,7 @@ protocol PaginatedFetcher: AnyObject {
 }
 
 protocol AutomaticPaginatedFetcher: PaginatedFetcher {
-    associatedtype Item: Decodable
+    associatedtype Item: Decodable&Identifiable
     var items: [Item] { get set }
 }
 

@@ -8,69 +8,110 @@
 import SwiftUI
 import Combine
 
-struct InfiniteList<Item: Identifiable, Content: View>: View {
+struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View {
     let items: [Item]
     @ViewBuilder let content: (Item) -> Content
-    let fetcher: () -> Void
+    @ViewBuilder let placeholder: () -> Placeholder
+    let placeholdersCount: Int
+    let onFetchNextPage: () -> Void
+    let isLoading: Bool
+    let hasMorePages: Bool
+    let threshold: Int
+    let isSeparatorHidden: Bool
     
-//    @ViewBuilder
-//    func loadingView() -> some View where Content: LoadableView {
-//        content(items.first!).loadingView()
-//    }
-    
+    private var separatorVisibility: Visibility {
+        isSeparatorHidden ? .hidden : .visible
+    }
+
+    // MARK: - Body
     var body: some View {
         List {
-            ForEach(items) { item in
-                content(item)
-            }
-            MediaRowView(data: .init(media: .placeholder))
-                .redacted(reason: .placeholder)
-                .shimmering()
-                .listRowSeparator(.hidden)
-                .onAppear {
-                    fetcher()
+            if items.isEmpty {
+                ForEach(Array(0..<placeholdersCount), id: \.self) { _ in
+                    placeholder()
+                        .listRowSeparator(separatorVisibility)
                 }
+            } else {
+                ForEach(items) { item in
+                    content(item)
+                        .listRowSeparator(separatorVisibility)
+                        .onAppear {
+                            handleItemAppear(item)
+                        }
+                }
+                if hasMorePages {
+                    placeholder()
+                        .listRowSeparator(separatorVisibility)
+                }
+            }
         }
+        .listRowSeparator(.hidden)
         .listStyle(.plain)
         .scrollIndicators(.hidden)
-//        .onAppear {
-//            fetcher()
-//        }
     }
-}
 
-extension InfiniteList: LoadableView where Content == MediaRowView {
-    func loadingView() -> some View {
-        if items.isEmpty {
-            List(0..<20, id: \.self) { item in
-                MediaRowView(data: .init(media: .placeholder))
-                    .redacted(reason: .placeholder)
-                    .shimmering()
-                    .listRowSeparator(.hidden)
-            }
-            .listStyle(.plain)
-            .scrollIndicators(.hidden)
-        } else {
-            self
-//            List {
-//                ForEach(items) { item in
-//                    content(item)
-//                }
-//                MediaRowView(data: .placeholder)
-//                    .redacted(reason: .placeholder)
-//                    .shimmering()
-//                    .listRowSeparator(.hidden)
-//                    .onAppear {
-//                        fetcher()
-//                    }
-//            }
-//            .listStyle(.plain)
-//            .scrollIndicators(.hidden)
+    // MARK: - Helpers
+    private func handleItemAppear(_ item: Item) {
+        guard hasMorePages, !isLoading else { return }
+        guard let itemIndex = items.firstIndex(where: { $0.id == item.id }) else { return }
+
+        let thresholdIndex = items.count - threshold
+
+        if itemIndex >= thresholdIndex {
+            onFetchNextPage()
         }
     }
+    
+    // MARK: - Initialization
+    init(
+        items: [Item],
+        isLoading: Bool = false,
+        hasMorePages: Bool = true,
+        threshold: Int = 3,
+        placeholdersCount: Int = 5,
+        isSeparatorHidden: Bool = true,
+        @ViewBuilder content: @escaping (Item) -> Content,
+        @ViewBuilder placeholder: @escaping () -> Placeholder = {
+            ProgressView()
+                .frame(maxWidth: .infinity)
+                .padding()
+        },
+        onFetchNextPage: @escaping () -> Void
+    ) {
+        self.items = items
+        self.content = content
+        self.placeholder = placeholder
+        self.onFetchNextPage = onFetchNextPage
+        self.isLoading = isLoading
+        self.hasMorePages = hasMorePages
+        self.threshold = threshold
+        self.placeholdersCount = placeholdersCount
+        self.isSeparatorHidden = isSeparatorHidden
+    }
 }
 
-extension InfiniteList: FailableView { }
+extension InfiniteList {
+    init<Fetcher: AutomaticPaginatedFetcher>(
+        _ fetcher: Fetcher,
+        threshold: Int = 3,
+        placeholdersCount: Int = 5,
+        isSeparatorHidden: Bool = true,
+        @ViewBuilder content: @escaping (Item) -> Content,
+        @ViewBuilder placeholder: @escaping () -> Placeholder)
+    where Fetcher.Item == Item {
+            self.init(
+                items: fetcher.items,
+                isLoading: fetcher.loadingState.isLoading,
+                hasMorePages: fetcher.paginationContext.hasMorePages,
+                threshold: threshold,
+                placeholdersCount: placeholdersCount,
+                isSeparatorHidden: isSeparatorHidden,
+                content: content,
+                placeholder: placeholder,
+                onFetchNextPage: { fetcher.fetch() }
+            )
+        }
+}
 
 struct NewMediasListView: View {
     var viewModel: NewMediasListViewModel
@@ -78,87 +119,30 @@ struct NewMediasListView: View {
     private var title: String {
         viewModel.section.fullTitle ?? viewModel.section.title
     }
-        
+
     var body: some View {
         NavigationStack {
-            //Group {
-//            InfiniteList(items: viewModel.items, content: { media in
-//                MediaRowView(data: MediaUIModel(media: media))
-//            }, fetcher: { Task { try await viewModel.fetch() } })
-//            .loadingState(viewModel.loadingState, retry: {})
-            
-            List(viewModel.items) { item in
-                MediaRowView(data: .init(media: item)).onFirstAppear {
-                    //if viewModel.isLastItem(item) {
-                    //    Task { try await viewModel.fetch() }
-                    //}
+            InfiniteList(viewModel) { media in
+                NavigationLink {
+                    NewMediaDetailsView(media: media)
+                } label: {
+                    MediaRowView(data: .init(media: media))
                 }
+            } placeholder: {
+                NewMediaRowView()
+                    .loading(true)
             }
+            .listStyle(.plain)
+            .scrollIndicators(.hidden)
             .onFirstAppear {
-                Task { try await viewModel.fetch() }
+                viewModel.fetch()
             }
-            //}
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(title == "Watchlist" ? .large : .inline)
         }
-        .onChange(of: viewModel.loadingState) { oldValue, newValue in
-            print(newValue)
-        }
     }
-    
+
     init(section: NewMediasSection) {
         viewModel = NewMediasListViewModel(section: section)
     }
 }
-//    private var medias: [Media] {
-//        if !viewModel.items.isEmpty {
-//            return viewModel.items
-//        } else {
-//            return Array(repeating: .placeholder, count: 10)
-//        }
-//    }
-//
-//    private func setupRowView(_ media: Media) -> AnyView {
-//        var view: any View = MediaRowView(data: .init(media: media)).onAppear {
-//            if viewModel.isLastItem(media) {
-//                Task { try await viewModel.fetch() }
-//            }
-//        }
-//
-//        if media == .placeholder {
-//            view = view.redacted(reason: .placeholder).shimmering()
-//            return AnyView(view)
-//        } else {
-//            return AnyView(
-//                NavigationLink {
-//                    MediaDetailsView(media: media)
-//                } label: {
-//                    AnyView(view)
-//                }
-//            )
-//        }
-//    }
-
-//                if viewModel.isLoaded, viewModel.medias.isEmpty,
-//                   let placeholder = viewModel.section.placeholder {
-//                    VStack(alignment: .center, spacing: 16) {
-//                        Text(placeholder.title)
-//                            .textStyle(.mediumTitle)
-//                        if let subtitle = placeholder.subtitle {
-//                            Text(subtitle)
-//                                .textStyle(.mediumSubtitle)
-//                        }
-//                    }.padding(.horizontal)
-//                } else {
-//                    List(Array(medias.enumerated()), id: \.0) { _, media in
-//                        ZStack {
-//                            setupRowView(media)
-//                        }
-//                        .listRowSeparator(.hidden)
-//                    }
-//                    .listStyle(.plain)
-//                    .scrollIndicators(.hidden)
-//                    .onAppear {
-//                        viewModel.fetchMedias()
-//                    }
-//                }

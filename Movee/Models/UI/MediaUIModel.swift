@@ -76,5 +76,5 @@ extension MediaUIModel {
         }
     }
         
-    static var placeholder = Self(id: -1, title: .placeholder(.short))
+    static var placeholder = Self(media: .placeholder)
 }
