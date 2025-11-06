@@ -46,7 +46,7 @@ struct AsyncImageView: View {
     var body: some View {
         ZStack {
             if let url, !isHidden {
-                AsyncImage(url: url) { phase in
+                AsyncImage(url: url, transaction: .init(animation: .default)) { phase in
                     Group {
                         switch phase {
                         case .empty:
@@ -65,8 +65,6 @@ struct AsyncImageView: View {
                             EmptyView()
                         }
                     }
-                    .transition(.opacity)
-                    .animation(.easeOut(duration: 0.3), value: phase.image)
                 }
             } else {
                 createPlaceholderView(error: false)
