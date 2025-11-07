@@ -44,6 +44,7 @@ struct MediaDetailedInfoView: View {
         }
         .padding(.horizontal, 20)
         .loadable()
+        .failable()
     }
     
     init(data: Data) {

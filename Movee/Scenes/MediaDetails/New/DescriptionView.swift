@@ -20,6 +20,7 @@ struct DescriptionView: View {
         Text(text)
             .textStyle(.mediumText)
             .loadable()
+            .failable()
     }
     
     init(text: String?) {

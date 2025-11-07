@@ -38,5 +38,6 @@ struct PersonsCarouselView: View {
         }
         .padding(.horizontal, -horizontalPadding)
         .loadable()
+        .failable()
     }
 }
