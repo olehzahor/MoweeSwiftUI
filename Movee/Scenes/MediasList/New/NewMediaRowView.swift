@@ -7,40 +7,40 @@
 
 import SwiftUI
 
-private struct IsPlaceholderEnvironmentKey: EnvironmentKey {
+private struct IsLoadingEnvironmentKey: EnvironmentKey {
     static let defaultValue: Bool = false
 }
 
 extension EnvironmentValues {
-    var isPlaceholder: Bool {
-        get { self[IsPlaceholderEnvironmentKey.self] }
-        set { self[IsPlaceholderEnvironmentKey.self] = newValue }
+    var isLoading: Bool {
+        get { self[IsLoadingEnvironmentKey.self] }
+        set { self[IsLoadingEnvironmentKey.self] = newValue }
     }
 }
 
-struct LoadingModifier: ViewModifier {
-    let isLoading: Bool
-
-    func body(content: Content) -> some View {
-        ZStack {
-            if isLoading {
-                content
-                    .redacted(reason: .placeholder)
-                    .shimmering()
-            } else {
-                content
-            }
-        }
-        .environment(\.isPlaceholder, isLoading)
-        .animation(.easeInOut(duration: 0.3), value: isLoading)
-    }
-}
+//struct LoadingModifier: ViewModifier {
+//    let isLoading: Bool
+//
+//    func body(content: Content) -> some View {
+//        ZStack {
+//            if isLoading {
+//                content
+//                    .redacted(reason: .placeholder)
+//                    .shimmering()
+//            } else {
+//                content
+//            }
+//        }
+//        .environment(\.isPlaceholder, isLoading)
+//        .animation(.easeInOut(duration: 0.3), value: isLoading)
+//    }
+//}
 
 struct LoadableModifier: ViewModifier {
-    @Environment(\.isPlaceholder) private var isPlaceholder: Bool
+    @Environment(\.isLoading) private var isLoading: Bool
     
     func body(content: Content) -> some View {
-        if isPlaceholder {
+        if isLoading {
             content
                 .redacted(reason: .placeholder)
                 .shimmering()
@@ -51,8 +51,8 @@ struct LoadableModifier: ViewModifier {
 }
 
 extension View {
-    func loading(_ isLoading: Bool) -> some View {
-        self.environment(\.isPlaceholder, isLoading)
+    func setLoading(_ isLoading: Bool) -> some View {
+        self.environment(\.isLoading, isLoading)
         //self.modifier(LoadingModifier(isLoading: isLoading))
     }
     
@@ -63,12 +63,12 @@ extension View {
 }
 
 struct NewMediaRowView: View {
-    @Environment(\.isPlaceholder) var isPlaceholder: Bool
+    @Environment(\.isLoading) var isLoading: Bool
     
     private let _data: MediaUIModel
     
     var data: MediaUIModel {
-        isPlaceholder ? .placeholder : _data
+        isLoading ? .placeholder : _data
     }
     
     @State var isExpanded: Bool = false
