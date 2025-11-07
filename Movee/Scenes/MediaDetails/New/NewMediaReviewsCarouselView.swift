@@ -9,9 +9,15 @@ import SwiftUI
 import Combine
 
 struct NewMediaReviewsCarouselView: View {
-    var reviews: [Review]
-    var horizontalPadding: CGFloat = 20
+    @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
+    @Environment(\.placeholder) private var placeholder: Bool
+    
+    private let _reviews: [Review]
     @State private var selectedReview: Review? = nil
+    
+    var reviews: [Review] {
+        placeholder ? [.placeholder, .placeholder] : _reviews
+    }
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -34,24 +40,9 @@ struct NewMediaReviewsCarouselView: View {
             ReviewView(mediaTitle: "Hello there", review: review)
         }
     }
-}
-
-// MARK: - Loadable conformance
-extension NewMediaReviewsCarouselView: LoadableView {
-    func loadingView() -> some View {
-        Self(
-            reviews: [.placeholder, .placeholder],
-            horizontalPadding: horizontalPadding
-        )
-        .redacted(reason: .placeholder)
-        .shimmering()
-    }
-}
-
-// MARK: - Failable conformance
-extension NewMediaReviewsCarouselView: FailableView {
-    func errorView(error: any Error, retry: (() -> Void)?) -> some View {
-        ErrorRetryView(error: error, retry: retry)
+    
+    init(reviews: [Review]) {
+        self._reviews = reviews
     }
 }
 

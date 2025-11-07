@@ -10,8 +10,9 @@ import SwiftUI
 import Combine
 
 struct MediaReviewsCarouselView: View {
+    @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
+    
     var reviews: [Review]
-    var horizontalPadding: CGFloat = 20
     @State private var selectedReview: Review? = nil
     
     var body: some View {

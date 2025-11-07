@@ -130,7 +130,7 @@ struct NewMediasListView: View {
                 }
             } placeholder: {
                 NewMediaRowView()
-                    .setLoading(true)
+                    .loading(true)
             }
             .listStyle(.plain)
             .scrollIndicators(.hidden)

@@ -38,20 +38,3 @@ struct SectionView<Content: View>: View {
         sectionContainer(header: header, content: content)
     }
 }
-
-extension SectionView: LoadableView where Content: LoadableView {
-    func loadingView() -> some View {
-        sectionContainer(header: minimalHeader) {
-            content().loadingView()
-        }
-    }
-}
-
-extension SectionView: FailableView where Content: FailableView {
-    func errorView(error: any Error, retry: (() -> Void)?) -> some View {
-        sectionContainer(header: minimalHeader) {
-            content().errorView(error: error, retry: retry)
-        }
-    }
-}
-

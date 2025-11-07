@@ -7,20 +7,18 @@
 
 import SwiftUI
 
-struct NewMediaTaglineView: View, LoadableView {
+struct NewMediaTaglineView: View {
+    @Environment(\.placeholder) private var placeholder: Bool
+    
     var tagline: String?
 
     var body: some View {
-        if let tagline, !tagline.isEmpty {
+        if placeholder {
+            Text(verbatim: .placeholder(.medium))
+                .textStyle(.tagline)
+        } else if let tagline, !tagline.isEmpty {
             Text(tagline)
                 .textStyle(.tagline)
         }
-    }
-
-    func loadingView() -> some View {
-        Text(verbatim: .placeholder(.medium))
-            .redacted(reason: .placeholder)
-            .shimmering()
-            .textStyle(.tagline)
     }
 }

@@ -220,10 +220,10 @@
             filePath = "Movee/Scenes/MediaDetails/New/NewMediaReviewsCarouselView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "Review"
-            landmarkType = "21">
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -236,9 +236,9 @@
             filePath = "Movee/Scenes/MediasList/New/NewMediaRowView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
-            landmarkName = "setLoading(_:)"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "loading(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
