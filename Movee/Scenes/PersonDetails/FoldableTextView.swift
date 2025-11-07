@@ -24,16 +24,20 @@ struct FoldableTextView: View {
     @State private var buttonSize: CGSize = .zero
     private let buttonPadding: CGFloat = 36
     
+    private var displayText: String {
+        isPlaceholder ? .placeholder(.multiline) : text
+    }
+    
     var body: some View {
         ZStack {
             if fullSize == .zero {
-                Text(text)
+                Text(displayText)
                     .saveSize(in: $fullSize)
                     .foregroundStyle(.red)
                     .fixedSize(horizontal: false, vertical: true)
                     .hidden()
             }
-            Text(text)
+            Text(displayText)
                 .lineLimit(isCollapsed ? lineLimit : nil)
                 .overlay(alignment: .bottomTrailing) {
                     if collapsedSize.height < fullSize.height {

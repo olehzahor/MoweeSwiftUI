@@ -25,9 +25,16 @@ struct NewPersonDetailsView: View {
                 
                 SectionView(header: .init(title: "Biography")) {
                     FoldableTextView(text: viewModel.person.biography ?? "", lineLimit: 8)
-                        //.textStyle(.mediumText)
+                        .textStyle(.mediumText)
                 }
-                .loadingState(viewModel.sectionsContext[.bio], reloader: viewModel)
+                .loading(viewModel.sectionsContext[.bio].isAwaitingData)
+                //.loadingState(viewModel.sectionsContext[.bio], reloader: viewModel)
+                
+//                SectionView(header: .init(title: "Biography")) {
+//                    FoldableTextView(text: "", lineLimit: 8)
+//                        //.textStyle(.mediumText)
+//                }
+//                .loading(true)
 
                 SectionView.medias(viewModel.knownFor.items,
                                    section: viewModel.knownFor.section)
