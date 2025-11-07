@@ -27,6 +27,7 @@ struct NewPersonDetailsView: View {
                     FoldableTextView(text: viewModel.person.biography ?? "", lineLimit: 8)
                         .textStyle(.mediumText)
                 }
+                .loadable()
                 .loading(viewModel.sectionsContext[.bio].isAwaitingData)
                 //.loadingState(viewModel.sectionsContext[.bio], reloader: viewModel)
                 

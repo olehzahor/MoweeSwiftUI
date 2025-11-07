@@ -36,9 +36,29 @@ struct LoadingModifier: ViewModifier {
     }
 }
 
+struct LoadableModifier: ViewModifier {
+    @Environment(\.isPlaceholder) private var isPlaceholder: Bool
+    
+    func body(content: Content) -> some View {
+        if isPlaceholder {
+            content
+                .redacted(reason: .placeholder)
+                .shimmering()
+        } else {
+            content
+        }
+    }
+}
+
 extension View {
     func loading(_ isLoading: Bool) -> some View {
-        self.modifier(LoadingModifier(isLoading: isLoading))
+        self.environment(\.isPlaceholder, isLoading)
+        //self.modifier(LoadingModifier(isLoading: isLoading))
+    }
+    
+    func loadable() -> some View {
+        self.modifier(LoadableModifier())
+        //self.modifier(LoadingModifier(isLoading: isLoading))
     }
 }
 
