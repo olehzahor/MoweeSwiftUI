@@ -8,30 +8,40 @@
 import SwiftUI
 
 struct MediasCarouselView: View {
+    @Environment(\.isLoading) private var isLoading: Bool
+    
     var medias: [MediaUIModel]
     var horizontalPadding: CGFloat = 20
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(alignment: .top) {
-                ForEach(medias) { media in
-                    NavigationLink {
-                        switch media.object {
-                        case .media(let media):
-                            NewMediaDetailsView(media: media)
-                        case .season(let season, let media):
-                            SeasonDetailsView(tvShowID: media.id, season: season)
-                        default:
-                            EmptyView()
+                if isLoading {
+                    ForEach(0..<5, id: \.self) { _ in
+                        MediaPosterView(.placeholder)
+                            .loadable()
+                    }
+                } else {
+                    ForEach(medias) { media in
+                        NavigationLink {
+                            switch media.object {
+                            case .media(let media):
+                                NewMediaDetailsView(media: media)
+                            case .season(let season, let media):
+                                SeasonDetailsView(tvShowID: media.id, season: season)
+                            default:
+                                EmptyView()
+                            }
+                        } label: {
+                            MediaPosterView(media)
                         }
-                    } label: {
-                        MediaPosterView(media)
                     }
                 }
             }
             .padding(.horizontal, horizontalPadding)
         }
         .padding(.horizontal, -horizontalPadding)
+        .failable()
     }
 }
 

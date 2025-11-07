@@ -18,6 +18,22 @@ extension EnvironmentValues {
     }
 }
 
+struct ErrorConfiguration {
+    let error: Error?
+    let retry: (() -> Void)?
+}
+
+private struct ErrorConfigurationEnvironmentKey: EnvironmentKey {
+    static let defaultValue: ErrorConfiguration? = nil
+}
+
+extension EnvironmentValues {
+    var errorConfig: ErrorConfiguration? {
+        get { self[ErrorConfigurationEnvironmentKey.self] }
+        set { self[ErrorConfigurationEnvironmentKey.self] = newValue }
+    }
+}
+
 //struct LoadingModifier: ViewModifier {
 //    let isLoading: Bool
 //
@@ -50,6 +66,25 @@ struct LoadableModifier: ViewModifier {
     }
 }
 
+struct FailableModifier<FailedContent: View>: ViewModifier {
+    @Environment(\.errorConfig) private var config: ErrorConfiguration?
+    let failedView: (Error, (() -> Void)?) -> FailedContent
+    
+    func body(content: Content) -> some View {
+        if let error = config?.error {
+            failedView(error, config?.retry)
+        } else {
+            content
+        }
+    }
+    
+    init(_ failedView: @escaping (Error, (() -> Void)?) -> FailedContent = {
+        ErrorRetryView(error: $0, retry: $1)
+    }) {
+        self.failedView = failedView
+    }
+}
+
 extension View {
     func setLoading(_ isLoading: Bool) -> some View {
         self.environment(\.isLoading, isLoading)
@@ -59,6 +94,14 @@ extension View {
     func loadable() -> some View {
         self.modifier(LoadableModifier())
         //self.modifier(LoadingModifier(isLoading: isLoading))
+    }
+    
+    func failable() -> some View {
+        self.modifier(FailableModifier())
+    }
+    
+    func setError(_ error: Error?, retry: (() -> Void)? = nil) -> some View {
+        self.environment(\.errorConfig, .init(error: error, retry: retry))
     }
 }
 

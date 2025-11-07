@@ -18,7 +18,11 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     ForEach(viewModel.fetchableSections) { section in
                         SectionView.medias(viewModel.medias[section], section: section)
-                            .loadingContext(viewModel.sectionsContext, section: section, reloader: viewModel)
+                            .setLoading(viewModel.sectionsContext[section].isAwaitingData)
+                            .setError(viewModel.sectionsContext[section].error, retry: {
+                                viewModel.reloadFailedSections()
+                            })
+//                            .loadingContext(viewModel.sectionsContext, section: section, reloader: viewModel)
                     }
                 }
                 .padding()
