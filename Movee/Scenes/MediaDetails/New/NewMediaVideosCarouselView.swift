@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct NewMediaVideosCarouselView: View {
+    @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
+    @Environment(\.placeholder) private var placeholder: Bool
+
     let videos: [Video]
-    private let horizontalPadding: CGFloat = 20
     
     @ViewBuilder
     private func carouselContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
@@ -23,33 +25,24 @@ struct NewMediaVideosCarouselView: View {
         .scrollTargetBehavior(.viewAligned)
         .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
         .padding(.horizontal, -horizontalPadding)
+        .loadable()
     }
 
     var body: some View {
         carouselContainer {
-            ForEach(videos, id: \.id) { video in
-                NewMediaVideoView(data: .init(video: video))
+            if placeholder {
+                ForEach(0..<3, id: \.self) { _ in
+                    NewMediaVideoView(data: .placeholder)
+                }
+            } else {
+                ForEach(videos, id: \.id) { video in
+                    NewMediaVideoView(data: .init(video: video))
+                }
             }
         }
     }
-}
-
-// MARK: - LoadableView conformance
-extension NewMediaVideosCarouselView: LoadableView {
-    func loadingView() -> some View {
-        carouselContainer {
-            ForEach(0..<3, id: \.self) { _ in
-                NewMediaVideoView(data: .placeholder)
-                    .shimmering()
-                    .disabled(true)
-            }
-        }
-    }
-}
-
-// MARK: - FailableView conformance
-extension NewMediaVideosCarouselView: FailableView {
-    func errorView(error: any Error, retry: (() -> Void)?) -> some View {
-        ErrorRetryView(error: error, retry: retry)
+    
+    init(videos: [Video]) {
+        self.videos = videos
     }
 }

@@ -10,10 +10,6 @@ import SwiftUI
 struct NewMediaDetailsView: View {
     @StateObject var viewModel: NewMediaDetailsViewModel
     @State private var isHeaderVisible: Bool = true
-
-    private var context: AsyncLoadingContext<MediaDetailsSection> {
-        viewModel.sectionsContext
-    }
     
     private var navigationTitle: String {
         isHeaderVisible ? "" : viewModel.media?.title ?? ""
@@ -36,7 +32,6 @@ struct NewMediaDetailsView: View {
                 .padding(.bottom, 20)
             }
         }
-        //.postponedAnimation(0.5, .default, value: context)
         .onFirstAppear {
             viewModel.fetchInitialData()
         }
@@ -78,7 +73,7 @@ private extension NewMediaDetailsView {
     func setupDetailsSection() -> some View {
         VStack(alignment: .leading, spacing: 4) {
             NewMediaTaglineView(tagline: viewModel.media?.tagline)
-                .loading(context[.details].isAwaitingData)
+                .loading(viewModel.sectionsContext[.details].isAwaitingData)
             DescriptionView(text: viewModel.media?.overview)
                 .loading(viewModel.media == nil)
         }
@@ -87,13 +82,13 @@ private extension NewMediaDetailsView {
     @ViewBuilder
     func setupVideosSection() -> some View {
         SectionView.trailers(viewModel.videos)
-            .loadingContext(context, section: .videos, reloader: viewModel)
+            .loadingState(viewModel, section: .videos)
     }
 
     @ViewBuilder
     func setupReviewsSection() -> some View {
         SectionView.reviews(viewModel.reviews)
-            .loadingContext(context, section: .reviews, reloader: viewModel)
+            .loadingState(viewModel, section: .reviews)
     }
     
     @ViewBuilder
@@ -102,13 +97,13 @@ private extension NewMediaDetailsView {
             viewModel.seasons.items,
             media: viewModel.media,
             section: viewModel.seasons.section
-        ).loadingContext(context, section: .seasons, reloader: viewModel)
+        ).loadingState(viewModel, section: .seasons)
     }
     
     @ViewBuilder
     func setupCastAndCrewSection() -> some View {
         SectionView.castAndCrew(viewModel.credits)
-            .loadingContext(context, section: .credits, reloader: viewModel)
+            .loadingState(viewModel, section: .credits)
     }
     
     @ViewBuilder
@@ -116,7 +111,7 @@ private extension NewMediaDetailsView {
         SectionView.medias(
             viewModel.related.items,
             section: viewModel.related.section)
-        .loadingContext(context, section: .related, reloader: viewModel)
+        .loadingState(viewModel, section: .related)
     }
     
     @ViewBuilder
@@ -131,6 +126,6 @@ private extension NewMediaDetailsView {
     func setupCollectionSection() -> some View {
         SectionView.medias(viewModel.collection.items,
                            section: viewModel.collection.section
-        ).loadingContext(context, section: .collection, reloader: viewModel)
+        ).loadingState(viewModel, section: .collection)
     }
 }

@@ -8,22 +8,21 @@
 import SwiftUI
 
 struct DescriptionView: View {
-    let text: String?
+    @Environment(\.placeholder) private var placeholder: Bool
+    
+    private let _text: String?
+    
+    var text: String {
+        placeholder ? .placeholder(.multiline) : _text ?? ""
+    }
     
     var body: some View {
-        Text(text ?? "")
+        Text(text)
             .textStyle(.mediumText)
+            .loadable()
+    }
+    
+    init(text: String?) {
+        self._text = text
     }
 }
-
-extension DescriptionView: LoadableView {
-    func loadingView() -> some View {
-        Self(
-            text: .placeholder(.multiline)
-        )
-        .redacted(reason: .placeholder)
-        .shimmering()
-    }
-}
-
-extension DescriptionView: FailableView { }

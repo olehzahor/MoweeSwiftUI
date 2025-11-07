@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct MediasCarouselView: View {
-    @Environment(\.isLoading) private var isLoading: Bool
+    @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
+    @Environment(\.placeholder) private var placeholder: Bool
     
     var medias: [MediaUIModel]
-    var horizontalPadding: CGFloat = 20
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(alignment: .top) {
-                if isLoading {
+                if placeholder {
                     ForEach(0..<5, id: \.self) { _ in
                         MediaPosterView(.placeholder)
                             .loadable()
@@ -42,29 +42,5 @@ struct MediasCarouselView: View {
         }
         .padding(.horizontal, -horizontalPadding)
         .failable()
-    }
-}
-
-// MARK: - LoadableView conformance
-extension MediasCarouselView: LoadableView {
-    func loadingView() -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top) {
-                ForEach(0..<5, id: \.self) { _ in
-                    MediaPosterView(.placeholder)
-                        .redacted(reason: .placeholder)
-                        .shimmering()
-                }
-            }
-            .padding(.horizontal, horizontalPadding)
-        }
-        .padding(.horizontal, -horizontalPadding)
-    }
-}
-
-// MARK: - FailableView conformance
-extension MediasCarouselView: FailableView {
-    func errorView(error: any Error, retry: (() -> Void)?) -> some View {
-        ErrorRetryView(error: error, retry: retry)
     }
 }

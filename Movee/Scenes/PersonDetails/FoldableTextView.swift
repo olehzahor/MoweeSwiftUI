@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 struct FoldableTextView: View {
-    @Environment(\.isLoading) private var isLoading: Bool
+    @Environment(\.placeholder) private var placeholder: Bool
     
     @State var text: String
     @State var lineLimit: Int? = 5
@@ -25,7 +25,7 @@ struct FoldableTextView: View {
     private let buttonPadding: CGFloat = 36
     
     private var displayText: String {
-        isLoading ? .placeholder(.multiline) : text
+        placeholder ? .placeholder(.multiline) : text
     }
     
     var body: some View {
@@ -63,20 +63,6 @@ struct FoldableTextView: View {
                 }.saveSize(in: $collapsedSize)
                 .transition(.identity)
         }
+        .loadable()
     }
-}
-
-extension FoldableTextView: LoadableView, FailableView {
-    func loadingView() -> some View {
-        Self(text: .placeholder(.multiline))
-            .redacted(reason: .placeholder)
-            .shimmering()
-    }
-}
-
-#Preview {
-    FoldableTextView(
-        text: .placeholder(.multiline),
-        lineLimit: 5
-    )
 }

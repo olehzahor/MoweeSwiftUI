@@ -7,6 +7,42 @@
 
 import SwiftUI
 
+private struct CarouselPaddingEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 20.0
+}
+
+extension EnvironmentValues {
+    var carouselPadding: CGFloat {
+        get { self[CarouselPaddingEnvironmentKey.self] }
+        set { self[CarouselPaddingEnvironmentKey.self] = newValue }
+    }
+}
+
+extension View {
+    func carouselPadding(_ value: CGFloat) -> some View {
+        self.environment(\.carouselPadding, value)
+    }
+}
+
+
+private struct PlaceholderEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+extension EnvironmentValues {
+    var placeholder: Bool {
+        get { self[PlaceholderEnvironmentKey.self] }
+        set { self[PlaceholderEnvironmentKey.self] = newValue }
+    }
+}
+
+extension View {
+    func placeholder() -> some View {
+        self.environment(\.placeholder, true)
+        //self.modifier(LoadingModifier(isLoading: isLoading))
+    }
+}
+
 private struct IsLoadingEnvironmentKey: EnvironmentKey {
     static let defaultValue: Bool = false
 }
@@ -86,22 +122,37 @@ struct FailableModifier<FailedContent: View>: ViewModifier {
 }
 
 extension View {
-    func setLoading(_ isLoading: Bool) -> some View {
-        self.environment(\.isLoading, isLoading)
-        //self.modifier(LoadingModifier(isLoading: isLoading))
+    func loading(_ isLoading: Bool) -> some View {
+        self
+            .environment(\.placeholder, isLoading)
+            .environment(\.isLoading, isLoading)
     }
     
     func loadable() -> some View {
         self.modifier(LoadableModifier())
-        //self.modifier(LoadingModifier(isLoading: isLoading))
     }
     
     func failable() -> some View {
         self.modifier(FailableModifier())
     }
     
-    func setError(_ error: Error?, retry: (() -> Void)? = nil) -> some View {
+    func error(_ error: Error?, retry: (() -> Void)? = nil) -> some View {
         self.environment(\.errorConfig, .init(error: error, retry: retry))
+    }
+    
+    func loadingState(_ state: AsyncLoadingState, hideWhenEmpty: Bool = true, retry: (() -> Void)? = nil) -> some View {
+        self
+            .loading(state.isAwaitingData)
+            .error(state.error, retry: retry)
+            .hideWhen(hideWhenEmpty ? state.isEmpty : false)
+    }
+    
+    func loadingState<Fetcher: SectionFetchable&FailedSectionsReloadable, Section>(_ fetcher: Fetcher, section: Section, hideWhenEmpty: Bool = true) -> some View where Section == Fetcher.SectionType {
+        let state = fetcher.sectionsContext[section]
+        return self
+            .loading(state.isAwaitingData)
+            .error(state.error, retry: { fetcher.reloadFailedSections() })
+            .hideWhen(hideWhenEmpty ? state.isEmpty : false)
     }
 }
 
