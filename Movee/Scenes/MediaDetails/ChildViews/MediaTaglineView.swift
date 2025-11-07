@@ -22,6 +22,8 @@ struct MediaTaglineView: View {
                     .redacted(reason: .placeholder)
                     .shimmering()
             }
-        }.textStyle(.tagline)
+        }
+        .textStyle(.tagline)
+        .loadable()
     }
 }

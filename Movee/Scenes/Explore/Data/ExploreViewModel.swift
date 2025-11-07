@@ -20,10 +20,6 @@ final class ExploreViewModel: SectionFetchable, FailedSectionsReloadable {
     func fetchConfig(for section: NewMediasSection) -> AnyFetchConfig? {
         AnyFetchConfig(
             FetchConfig {
-                try await Task.sleep(for: .seconds(2))
-                if Bool.random() {
-                    throw NetworkError2.invalidURL
-                }
                 return try await section.dataProvider?.fetch(page: 1) ?? .wrap([])
             } onSuccess: { [weak self] response in
                 self?.medias[section] = response.results
