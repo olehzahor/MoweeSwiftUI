@@ -16,6 +16,7 @@ struct NewMediaTaglineView: View {
         if placeholder {
             Text(verbatim: .placeholder(.medium))
                 .textStyle(.tagline)
+                .loadable()
         } else if let tagline, !tagline.isEmpty {
             Text(tagline)
                 .textStyle(.tagline)

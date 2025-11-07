@@ -24,6 +24,5 @@ struct MediaTaglineView: View {
             }
         }
         .textStyle(.tagline)
-        .loadable()
     }
 }

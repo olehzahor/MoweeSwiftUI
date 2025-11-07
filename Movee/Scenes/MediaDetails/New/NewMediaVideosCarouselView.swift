@@ -25,7 +25,6 @@ struct NewMediaVideosCarouselView: View {
         .scrollTargetBehavior(.viewAligned)
         .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
         .padding(.horizontal, -horizontalPadding)
-        .loadable()
     }
 
     var body: some View {
@@ -40,6 +39,7 @@ struct NewMediaVideosCarouselView: View {
                 }
             }
         }
+        .failable()
     }
     
     init(videos: [Video]) {

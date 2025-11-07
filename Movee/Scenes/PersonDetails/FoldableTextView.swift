@@ -64,5 +64,6 @@ struct FoldableTextView: View {
                 .transition(.identity)
         }
         .loadable()
+        .failable()
     }
 }

@@ -64,6 +64,11 @@ final class NetworkClient2 {
         let interceptedRequest = try await applyRequestInterceptors(to: urlRequest)
 
         do {
+//            try await Task.sleep(for: .seconds(2))
+//            if Bool.random() {
+//                throw NetworkError2.invalidURL
+//            }
+
             let (data, response) = try await session.data(for: interceptedRequest)
 
             guard let httpResponse = response as? HTTPURLResponse else {

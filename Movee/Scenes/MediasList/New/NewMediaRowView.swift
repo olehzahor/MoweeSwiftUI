@@ -202,7 +202,10 @@ struct NewMediaRowView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }.frame(maxHeight: maxHeight)
+        }
+        .frame(maxHeight: maxHeight)
+        .loadable()
+        .failable()
     }
     
     init(data: MediaUIModel = .placeholder) {
