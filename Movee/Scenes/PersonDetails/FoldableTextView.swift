@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 struct FoldableTextView: View {
-    @Environment(\.isPlaceholder) private var isPlaceholder: Bool
+    @Environment(\.isLoading) private var isLoading: Bool
     
     @State var text: String
     @State var lineLimit: Int? = 5
@@ -25,7 +25,7 @@ struct FoldableTextView: View {
     private let buttonPadding: CGFloat = 36
     
     private var displayText: String {
-        isPlaceholder ? .placeholder(.multiline) : text
+        isLoading ? .placeholder(.multiline) : text
     }
     
     var body: some View {

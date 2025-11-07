@@ -28,7 +28,7 @@ struct NewPersonDetailsView: View {
                         .textStyle(.mediumText)
                 }
                 .loadable()
-                .loading(viewModel.sectionsContext[.bio].isAwaitingData)
+                .setLoading(viewModel.sectionsContext[.bio].isAwaitingData)
                 //.loadingState(viewModel.sectionsContext[.bio], reloader: viewModel)
                 
 //                SectionView(header: .init(title: "Biography")) {
