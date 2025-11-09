@@ -10,7 +10,7 @@ import SwiftData
 import Combine
 
 struct ExploreView: View {
-    private let viewModel = ExploreViewModel(sections: .homePageSections)
+    @State private var viewModel: ExploreViewModel = ExploreViewModel(sections: .homePageSections)
 
     var body: some View {
         NavigationStack {
@@ -18,11 +18,7 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     ForEach(viewModel.fetchableSections) { section in
                         SectionView.medias(viewModel.medias[section], section: section)
-                            .loading(viewModel.sectionsContext[section].isAwaitingData)
-                            .error(viewModel.sectionsContext[section].error, retry: {
-                                viewModel.reloadFailedSections()
-                            })
-//                            .loadingContext(viewModel.sectionsContext, section: section, reloader: viewModel)
+                            .loadingState(viewModel, section: section)
                     }
                 }
                 .padding()

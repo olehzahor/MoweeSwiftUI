@@ -37,7 +37,8 @@ struct MediasSectionView: View {
             SectionHeaderView(
                 title: section.title,
                 isButtonHidden: viewState != .loaded || section.publisherBuilder == nil) {
-                AnyView(MediasListView(section: section))
+                    AnyView(EmptyView())
+                //AnyView(MediasListView(section: section))
             }
             Group {
                 switch viewState {

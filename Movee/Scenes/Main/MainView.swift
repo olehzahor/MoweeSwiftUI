@@ -15,7 +15,7 @@ struct MainView: View {
             }
             
             Tab("Watchlist", systemImage: "list.and.film") {
-                MediasListView(section: .watchlistSection)
+                //MediasListView(section: .watchlistSection)
             }
             
             Tab("Discover", systemImage: "magnifyingglass", role: .search) {

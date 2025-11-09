@@ -13,7 +13,7 @@ import Foundation
 }
 
 @MainActor @Observable
-final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable, ObservableObject {
+final class NewMediaDetailsViewModel: SectionFetchable, FailedSectionsReloadable {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
 
     private var mediaIdentifier: MediaIdentifier

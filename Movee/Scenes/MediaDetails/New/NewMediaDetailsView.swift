@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NewMediaDetailsView: View {
-    @StateObject var viewModel: NewMediaDetailsViewModel
+    @State private var viewModel: NewMediaDetailsViewModel
     @State private var isHeaderVisible: Bool = true
     
     private var navigationTitle: String {
@@ -46,11 +46,11 @@ struct NewMediaDetailsView: View {
     }
     
     init(media: Media) {
-        _viewModel = StateObject(wrappedValue: NewMediaDetailsViewModel(media: media))
+        viewModel = NewMediaDetailsViewModel(media: media)
     }
     
     init(mediaID: Int, mediaType: MediaType) {
-        _viewModel = StateObject(wrappedValue: NewMediaDetailsViewModel(mediaID: mediaID, mediaType: mediaType))
+        viewModel = NewMediaDetailsViewModel(mediaID: mediaID, mediaType: mediaType)
     }
 }
 
