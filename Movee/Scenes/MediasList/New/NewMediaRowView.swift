@@ -96,6 +96,7 @@ struct LoadableModifier: ViewModifier {
             content
                 .redacted(reason: .placeholder)
                 .shimmering()
+                .disabled(true)
         } else {
             content
         }
