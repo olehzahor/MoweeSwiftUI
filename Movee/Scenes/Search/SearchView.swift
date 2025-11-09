@@ -109,7 +109,7 @@ struct SearchView: View {
     private func destinationView(for result: SearchResult) -> some View {
         switch viewModel.getNavigationDestination(for: result) {
         case .media(let media):
-            MediaDetailsView(media: media).onFirstAppear {
+            NewMediaDetailsView(media: media).onFirstAppear {
                 viewModel.saveToHistory(media)
             }
         case .person(let person):

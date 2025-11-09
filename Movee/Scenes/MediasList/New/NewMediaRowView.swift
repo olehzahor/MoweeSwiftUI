@@ -144,7 +144,7 @@ extension View {
         self
             .loading(state.isAwaitingData)
             .error(state.error, retry: retry)
-            .hideWhen(hideWhenEmpty ? state.isEmpty : false)
+            .hidden(hideWhenEmpty ? state.isEmpty : false)
     }
     
     func loadingState<Fetcher: SectionFetchable&FailedSectionsReloadable, Section>(_ fetcher: Fetcher, section: Section, hideWhenEmpty: Bool = true) -> some View where Section == Fetcher.SectionType {
@@ -152,7 +152,7 @@ extension View {
         return self
             .loading(state.isAwaitingData)
             .error(state.error, retry: { fetcher.reloadFailedSections() })
-            .hideWhen(hideWhenEmpty ? state.isEmpty : false)
+            .hidden(hideWhenEmpty ? state.isEmpty : false)
     }
 }
 

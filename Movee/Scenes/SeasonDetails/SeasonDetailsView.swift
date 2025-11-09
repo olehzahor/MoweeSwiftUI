@@ -65,7 +65,7 @@ struct EpisodeDetailsView: View {
                 FoldableTextView(text: episode.overview, lineLimit: nil) {
                     isExpanded = true
                 }
-                .hideWhen(episode.overview.isEmpty)
+                .hidden(episode.overview.isEmpty)
                 .textStyle(.smallText)
                 .lineSpacing(-3)
             }
