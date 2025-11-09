@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct NewPersonDetailsView: View {
-    var viewModel: NewPersonDetailsViewModel
-    @State private var isBioCollapsed = true
+    @State private var viewModel: NewPersonDetailsViewModel
 
     var body: some View {
         ScrollView {
@@ -24,7 +23,7 @@ struct NewPersonDetailsView: View {
                 .padding(.vertical)
                 
                 SectionView(header: .init(title: "Biography")) {
-                    FoldableTextView(text: viewModel.person.biography ?? "", lineLimit: 8)
+                    FoldableTextView(text: viewModel.bio, lineLimit: 8)
                         .textStyle(.mediumText)
                 }
                 .loadingState(viewModel, section: .bio)

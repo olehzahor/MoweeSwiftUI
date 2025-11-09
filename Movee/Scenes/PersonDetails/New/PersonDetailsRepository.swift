@@ -19,13 +19,11 @@ struct PersonDetailsRepository: PersonDetailsRepositoryProtocol {
     private let parser: PersonDetailsRepositoryParserProtocol = PersonDetailsRepositoryParser()
     
     func fetchDetails(personID: Int) async throws -> MediaPerson {
-        try await Task.sleep(for: .seconds(3))
         let person = try await network.request(TMDB.PersonDetails(personID: personID))
         return MediaPerson(person: person)
     }
     
     func fetchKnownFor(personID: Int) async throws -> [Media] {
-        //try await Task.sleep(for: .seconds(3))
         let response = try await network.request(TMDB.PersonCredits(personID: personID))
         return parser.parse(response)
     }

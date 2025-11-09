@@ -14,8 +14,6 @@ struct ReviewView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                //Text(mediaTitle).font(.title).fontWeight(.semibold)
-                
                 HStack(spacing: 16) {
                     AsyncImageView(url: review.authorAvatarURL, width: 50, height: 50, cornerRadius: 25, placeholder: .init(resource: .imageMalePersonPlaceholder))
                     VStack(alignment: .leading) {
@@ -32,7 +30,3 @@ struct ReviewView: View {
         }
     }
 }
-
-//#Preview {
-//    ReviewView()
-//}
