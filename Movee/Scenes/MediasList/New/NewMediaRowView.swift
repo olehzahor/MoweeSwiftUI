@@ -54,6 +54,7 @@ struct NewMediaRowView: View {
         )
         .loadable()
         .fallible()
+        .background(.red)
     }
     
     init(data: MediaUIModel = .placeholder) {
