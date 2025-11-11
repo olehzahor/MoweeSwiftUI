@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import Combine
-
 
 struct NewMediasListView: View {
     var viewModel: NewMediasListViewModel
