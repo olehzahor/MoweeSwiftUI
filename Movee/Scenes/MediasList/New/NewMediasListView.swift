@@ -10,13 +10,9 @@ import SwiftUI
 struct NewMediasListView: View {
     var viewModel: NewMediasListViewModel
 
-    private var title: String {
-        viewModel.section.fullTitle ?? viewModel.section.title
-    }
-
     var body: some View {
         NavigationStack {
-            InfiniteList(viewModel) { media in
+            InfiniteList(viewModel.dataSource) { media in
                 NavigationLink {
                     NewMediaDetailsView(media: media)
                 } label: {
@@ -26,15 +22,10 @@ struct NewMediasListView: View {
                 NewMediaRowView()
                     .loading(true)
             }
-            .fallible()
-            .error(viewModel.loadingState.error)
             .listStyle(.plain)
             .scrollIndicators(.hidden)
-            .onFirstAppear {
-                viewModel.fetch()
-            }
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(title == "Watchlist" ? .large : .inline)
+            .navigationTitle(viewModel.title)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 

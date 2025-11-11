@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// TODO: implement pull to refresh
 struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View {
     let items: [Item]
     @ViewBuilder let content: (Item) -> Content
@@ -17,6 +18,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
     let hasMorePages: Bool
     let threshold: Int
     let isSeparatorHidden: Bool
+    let error: Error?
 
     private var separatorVisibility: Visibility {
         isSeparatorHidden ? .hidden : .visible
@@ -25,7 +27,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
     // MARK: - Body
     var body: some View {
         List {
-            if items.isEmpty {
+            if items.isEmpty, error == nil {
                 ForEach(Array(0..<placeholdersCount), id: \.self) { _ in
                     placeholder()
                         .listRowSeparator(separatorVisibility)
@@ -40,9 +42,14 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
                 }
                 if hasMorePages {
                     placeholder()
+                        .fallible()
+                        .error(error, retry: onFetchNextPage)
                         .listRowSeparator(separatorVisibility)
                 }
             }
+        }
+        .onFirstAppear {
+            onFetchNextPage()
         }
     }
 
@@ -66,6 +73,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
         threshold: Int = 3,
         placeholdersCount: Int = 5,
         isSeparatorHidden: Bool = true,
+        error: Error?,
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder placeholder: @escaping () -> Placeholder = {
             ProgressView()
@@ -83,28 +91,30 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
         self.threshold = threshold
         self.placeholdersCount = placeholdersCount
         self.isSeparatorHidden = isSeparatorHidden
+        self.error = error
     }
 }
 
 extension InfiniteList {
-    init<Fetcher: AutomaticPaginatedFetcher>(
-        _ fetcher: Fetcher,
+    init<DataProvider: InfiniteListDataProvider>(
+        _ dataProvider: DataProvider,
         threshold: Int = 3,
         placeholdersCount: Int = 5,
         isSeparatorHidden: Bool = true,
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder placeholder: @escaping () -> Placeholder)
-    where Fetcher.Item == Item {
+    where DataProvider.Item == Item {
             self.init(
-                items: fetcher.items,
-                isLoading: fetcher.loadingState.isLoading,
-                hasMorePages: fetcher.paginationContext.hasMorePages,
+                items: dataProvider.items,
+                isLoading: dataProvider.loadState.isLoading,
+                hasMorePages: dataProvider.hasMorePages,
                 threshold: threshold,
                 placeholdersCount: placeholdersCount,
                 isSeparatorHidden: isSeparatorHidden,
+                error: dataProvider.loadState.error,
                 content: content,
                 placeholder: placeholder,
-                onFetchNextPage: { fetcher.fetch() }
+                onFetchNextPage: dataProvider.fetch
             )
         }
 }
