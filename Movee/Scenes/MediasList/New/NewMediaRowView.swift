@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct NewMediaRowView: View {
-    @Environment(\.isLoading) var isLoading: Bool
+    @Environment(\.placeholder) var placeholder: Bool
     
     private let _data: MediaUIModel
     
     var data: MediaUIModel {
-        isLoading ? .placeholder : _data
+        placeholder ? .placeholder : _data
     }
     
     @State var isExpanded: Bool = false
