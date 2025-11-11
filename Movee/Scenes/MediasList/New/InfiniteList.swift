@@ -17,7 +17,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
     let hasMorePages: Bool
     let threshold: Int
     let isSeparatorHidden: Bool
-    
+
     private var separatorVisibility: Visibility {
         isSeparatorHidden ? .hidden : .visible
     }
