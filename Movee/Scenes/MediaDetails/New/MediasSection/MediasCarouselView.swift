@@ -41,6 +41,6 @@ struct MediasCarouselView: View {
             .padding(.horizontal, horizontalPadding)
         }
         .padding(.horizontal, -horizontalPadding)
-        .failable()
+        .fallible()
     }
 }

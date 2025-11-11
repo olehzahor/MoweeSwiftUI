@@ -1,19 +1,16 @@
 //
-//  ListResponse.swift
+//  ListResponse2.swift
 //  Movee
 //
-//  Created by user on 5/9/25.
+//  Created by user on 11/10/25.
 //
 
-import Foundation
-
-/// Response model for the TMDB /list/{list_id} endpoint.
 struct ListResponse: Decodable {
     let createdBy: String?
     let description: String?
     let favoriteCount: Int?
     let id: Int
-    let items: [SearchResult]
+    let items: [Media]
     let itemCount: Int?
     let iso639_1: String?
     let name: String
@@ -38,7 +35,7 @@ struct ListResponse: Decodable {
 }
 
 extension ListResponse {
-    var paginatedResponse: PaginatedResponse<SearchResult> {
+    var paginatedResponse: PaginatedResponse<Media> {
         .init(page: page, results: items, total_pages: totalPages, total_results: totalResults)
     }
 }

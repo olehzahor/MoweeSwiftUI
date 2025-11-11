@@ -39,7 +39,7 @@ struct NewMediaVideosCarouselView: View {
                 }
             }
         }
-        .failable()
+        .fallible()
     }
     
     init(videos: [Video]) {

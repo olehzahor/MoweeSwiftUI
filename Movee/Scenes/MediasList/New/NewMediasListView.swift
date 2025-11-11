@@ -132,6 +132,8 @@ struct NewMediasListView: View {
                 NewMediaRowView()
                     .loading(true)
             }
+            .fallible()
+            .error(viewModel.loadingState.error)
             .listStyle(.plain)
             .scrollIndicators(.hidden)
             .onFirstAppear {

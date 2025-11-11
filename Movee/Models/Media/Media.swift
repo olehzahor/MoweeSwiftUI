@@ -39,9 +39,30 @@ struct Media: Codable, Equatable, Identifiable {
     
     // Type-specific extra info stored in an enum.
     var extra: ExtraInfo?
-//    
+
     static func == (lhs: Media, rhs: Media) -> Bool {
         lhs.id == rhs.id
+    }
+}
+
+extension Media {
+    enum CodingKeys: String, CodingKey {
+        case id
+        case mediaType = "media_type"
+        case title
+        case originalTitle = "original_title"
+        case subtitle
+        case tagline
+        case overview
+        case posterPath = "poster_path"
+        case backdropPath = "backdrop_path"
+        case popularity
+        case voteAverage = "vote_average"
+        case voteCount = "vote_count"
+        case releaseDate = "release_date"
+        case genreIDs = "genre_ids"
+        case genres
+        case extra
     }
 }
 
