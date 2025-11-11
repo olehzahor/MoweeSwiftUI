@@ -9,54 +9,121 @@ import SwiftUI
 import Combine
 
 struct MediaPosterView: View {
-    let model: MediaUIModel
-    
-    let width: CGFloat = 100
-    let aspectRatio: CGFloat = 2/3
+    let data: Data
+    let config: Config
 
     var body: some View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
                 AsyncImageView(
-                    url: model.posterURL,
-                    cornerRadius: 8,
-                    placeholder: model.placeholder
+                    url: data.posterURL,
+                    cornerRadius: config.cornerRadius,
+                    placeholder: data.placeholder
                 )
-                .aspectRatio(aspectRatio, contentMode: .fit)
-                if let rating = model.rating, rating > 0 {
+                .aspectRatio(config.aspectRatio, contentMode: .fit)
+                if let rating = data.rating, rating > 0 {
                     MediaRatingView(rating: rating)
                         .padding(.bottom, 4)
                         .padding(.trailing, 4)
                 }
             }
-            if let title = model.title {
-                Text(title)
-                    .textStyle(.mediaSmallTitle)
-                    .lineLimit(model.subtitle == nil ? 2...3 : 0...3)
-            }
-            if let subtitle = model.subtitle {
-                Text(subtitle)
-                    .textStyle(.smallSubtitle)
-                    .lineLimit(2...3)
+            if config.showTitles {
+                if let title = data.title {
+                    Text(title)
+                        .textStyle(.mediaSmallTitle)
+                        .lineLimit(data.subtitle == nil ? 2...3 : 0...3)
+                }
+                if let subtitle = data.subtitle {
+                    Text(subtitle)
+                        .textStyle(.smallSubtitle)
+                        .lineLimit(2...3)
+                }
             }
         }
-        .frame(width: width)
+        .frame(width: config.width)
         .tint(.primary)
     }
-    
-    init(_ data: MediaUIModel) {
-        self.model = data
+
+    init(data: Data, config: Config = .default) {
+        self.data = data
+        self.config = config
+    }
+
+    // Convenience init for backward compatibility
+    init(_ mediaUIModel: MediaUIModel, config: Config = .default) {
+        self.data = Data(mediaUIModel)
+        self.config = config
+    }
+}
+
+// MARK: - Data
+extension MediaPosterView {
+    struct Data {
+        let posterURL: URL?
+        let rating: Double?
+        let title: String?
+        let subtitle: String?
+        let placeholder: UIImage?
+
+        init(
+            posterURL: URL?,
+            rating: Double? = nil,
+            title: String? = nil,
+            subtitle: String? = nil,
+            placeholder: UIImage? = nil
+        ) {
+            self.posterURL = posterURL
+            self.rating = rating
+            self.title = title
+            self.subtitle = subtitle
+            self.placeholder = placeholder
+        }
+
+        init(_ media: MediaUIModel) {
+            self.posterURL = media.posterURL
+            self.rating = media.rating
+            self.title = media.title
+            self.subtitle = media.subtitle
+            self.placeholder = media.placeholder
+        }
+    }
+}
+
+// MARK: - Config
+extension MediaPosterView {
+    struct Config {
+        let width: CGFloat
+        let aspectRatio: CGFloat
+        let cornerRadius: CGFloat
+        let showTitles: Bool
+
+        init(
+            width: CGFloat = 100,
+            aspectRatio: CGFloat = 2/3,
+            cornerRadius: CGFloat = 8,
+            showTitles: Bool = true
+        ) {
+            self.width = width
+            self.aspectRatio = aspectRatio
+            self.cornerRadius = cornerRadius
+            self.showTitles = showTitles
+        }
+
+        static let `default` = Config()
+        static let row = Config(showTitles: false)
+        static let grid = Config(showTitles: true)
     }
 }
 
 struct MediaPosterView_Previews: PreviewProvider {
     static var previews: some View {
-        MediaPosterView(.init(
-            id: 100,
-            title: "Beneath the Silence, a Storm Awaits",
-            subtitle: nil,
-            posterURL: URL(string: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=myke-simon-atsUqIm3wxo-unsplash.jpg&w=640"),
-            rating: 7.3,
-            object: nil))
+        MediaPosterView(
+            data: .init(
+                posterURL: URL(string: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&dl=myke-simon-atsUqIm3wxo-unsplash.jpg&w=640"),
+                rating: 7.3,
+                title: "Beneath the Silence, a Storm Awaits",
+                subtitle: "2024 · Action"
+            )
+        )
     }
 }
