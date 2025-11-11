@@ -17,11 +17,6 @@ struct NewMediaRowView: View {
     }
     
     @State var isExpanded: Bool = false
-    @State private var posterSize: CGSize = .zero
-    
-    private var maxHeight: CGFloat? {
-        isExpanded ? nil : 150
-    }
     
     private var subtitleLineLimit: Int? {
         isExpanded ? nil : 1
@@ -29,8 +24,7 @@ struct NewMediaRowView: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            MediaPosterView(.init(posterURL: data.posterURL, placeholder: data.placeholder, rating: data.rating))
-                .saveSize(in: $posterSize)
+            MediaPosterView(data)
             VStack(alignment: .leading, spacing: 4) {
                 if let title = data.title {
                     Text(title)
@@ -53,7 +47,11 @@ struct NewMediaRowView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxHeight: maxHeight)
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: isExpanded ? .infinity : nil,
+            alignment: .topLeading
+        )
         .loadable()
         .fallible()
     }

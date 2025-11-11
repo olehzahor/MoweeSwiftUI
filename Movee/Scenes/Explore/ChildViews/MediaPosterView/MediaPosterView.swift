@@ -10,17 +10,19 @@ import Combine
 
 struct MediaPosterView: View {
     let model: MediaUIModel
+    
+    let width: CGFloat = 100
+    let aspectRatio: CGFloat = 2/3
 
     var body: some View {
         VStack {
             ZStack(alignment: .bottomTrailing) {
                 AsyncImageView(
                     url: model.posterURL,
-                    width: 100,
-                    height: 150,
                     cornerRadius: 8,
                     placeholder: model.placeholder
                 )
+                .aspectRatio(aspectRatio, contentMode: .fit)
                 if let rating = model.rating, rating > 0 {
                     MediaRatingView(rating: rating)
                         .padding(.bottom, 4)
@@ -38,7 +40,7 @@ struct MediaPosterView: View {
                     .lineLimit(2...3)
             }
         }
-        .frame(width: 100)
+        .frame(width: width)
         .tint(.primary)
     }
     
