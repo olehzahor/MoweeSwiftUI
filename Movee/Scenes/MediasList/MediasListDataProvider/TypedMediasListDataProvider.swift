@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 struct TypedMediasListDataProvider: MediasListDataProvider {
     let networkClient: NetworkClient2
     
