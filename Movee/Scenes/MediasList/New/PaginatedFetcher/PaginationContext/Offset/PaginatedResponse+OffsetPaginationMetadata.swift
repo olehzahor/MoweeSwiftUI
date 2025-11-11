@@ -1,10 +1,9 @@
 //
-//  PaginatedResponse+OffsetPaginationMedia.swift
+//  PaginatedResponse+OffsetPaginationMetadata.swift
 //  Movee
 //
 //  Created by user on 11/11/25.
 //
-
 
 extension PaginatedResponse: OffsetPaginationMetadata {
     var currentPage: Int {
