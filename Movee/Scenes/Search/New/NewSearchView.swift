@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NewSearchView: View {
     var body: some View {
-        
+        CollectionView()
     }
 }
 

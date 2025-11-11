@@ -164,7 +164,7 @@ final class TMDBAPIClient {
 
     /// Fetches a TMDB user-created list by its identifier.
     /// - Parameter listID: the TMDB list identifier.
-    func fetchList(listID: Int, page: Int = 1) -> AnyPublisher<ListResponse, Error> {
+    func fetchList(listID: Int, page: Int = 1) -> AnyPublisher<OldListResponse, Error> {
         return getPublisher(for: "list/\(listID)", parameters: ["page": page])
     }
     

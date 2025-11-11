@@ -14,4 +14,5 @@ struct MediasList: Decodable, Hashable {
     let name: String
     let path: String?
     let query: String?
+    let nestedLists: [MediasList]?
 }

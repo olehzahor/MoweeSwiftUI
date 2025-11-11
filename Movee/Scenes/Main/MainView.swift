@@ -19,7 +19,10 @@ struct MainView: View {
             }
             
             Tab("Discover", systemImage: "magnifyingglass", role: .search) {
-                SearchView()
+                NavigationStack {
+                    NewSearchView()
+                }
+                //.navigationBarTitleDisplayMode(.automatic)
             }
         }
     }
