@@ -7,6 +7,8 @@
 
 import Observation
 
+
+// TODO: intergrate SectionLoader for fetches
 @Observable
 class PagedDataSource<Item: Identifiable&Decodable> {
     private let loadNext: () async throws -> PageLoadResult<Item>
