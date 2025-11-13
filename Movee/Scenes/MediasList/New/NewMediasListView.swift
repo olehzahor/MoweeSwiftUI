@@ -14,7 +14,7 @@ struct NewMediasListView: View {
         NavigationStack {
             InfiniteList(viewModel.dataSource) { media in
                 NavigationLink {
-                    NewMediaDetailsView(media: media)
+                    MediaDetailsView(media: media)
                 } label: {
                     NewMediaRowView(data: .init(media: media))
                 }

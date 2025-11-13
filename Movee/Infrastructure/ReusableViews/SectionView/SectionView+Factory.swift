@@ -8,9 +8,9 @@
 import SwiftUI
 
 extension SectionView {
-    static func trailers(_ videos: [Video]?) -> SectionView where Content == NewMediaVideosCarouselView {
+    static func trailers(_ videos: [Video]?) -> SectionView where Content == MediaVideosCarouselView {
         SectionView(header: .init(title: "Trailers")) {
-            NewMediaVideosCarouselView(videos: videos ?? [])
+            MediaVideosCarouselView(videos: videos ?? [])
         }
     }
     
@@ -33,9 +33,9 @@ extension SectionView {
         }
     }
     
-    static func reviews(_ reviews: [Review]?) -> SectionView where Content == NewMediaReviewsCarouselView {
+    static func reviews(_ reviews: [Review]?) -> SectionView where Content == MediaReviewsCarouselView {
         SectionView(header: .init(title: "Reviews")) {
-            NewMediaReviewsCarouselView(reviews: reviews ?? [])
+            MediaReviewsCarouselView(reviews: reviews ?? [])
         }
     }
     

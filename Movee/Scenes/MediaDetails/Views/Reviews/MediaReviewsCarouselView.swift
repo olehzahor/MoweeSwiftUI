@@ -1,5 +1,5 @@
 //
-//  NewMediaReviewsCarouselView.swift
+//  MediaReviewsCarouselView.swift
 //  Movee
 //
 //  Created by Oleh on 25.10.2025.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-struct NewMediaReviewsCarouselView: View {
+struct MediaReviewsCarouselView: View {
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
     
