@@ -1,5 +1,5 @@
 //
-//  NewMediaVideoView.swift
+//  MediaVideoView.swift
 //  Movee
 //
 //  Created on 24.10.2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NewMediaVideoView: View {
+struct MediaVideoView: View {
     var data: DataModel
 
     @State private var isPlayerVisible: Bool = false

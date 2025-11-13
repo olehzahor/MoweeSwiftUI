@@ -1,5 +1,5 @@
 //
-//  NewMediaDetailsViewModel.swift
+//  MediaDetailsViewModel.swift
 //  Movee
 //
 //  Created by Oleh on 19.10.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor @Observable
-final class NewMediaDetailsViewModel {
+final class MediaDetailsViewModel {
     private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
     private var mediaIdentifier: MediaIdentifier
 
@@ -121,7 +121,7 @@ final class NewMediaDetailsViewModel {
     }
 }
 
-extension NewMediaDetailsViewModel: MediaDetailsWatchlistManager {
+extension MediaDetailsViewModel: MediaDetailsWatchlistManager {
     private func loadWatchlistStatus() {
         guard let media else { return }
         Task {

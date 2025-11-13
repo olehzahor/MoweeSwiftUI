@@ -113,7 +113,7 @@ struct MediasListView: View {
         } else {
             return AnyView(
                 NavigationLink {
-                    NewMediaDetailsView(media: media)
+                    MediaDetailsView(media: media)
                 } label: {
                     AnyView(view)
                 }

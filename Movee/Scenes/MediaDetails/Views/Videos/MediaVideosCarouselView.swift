@@ -1,5 +1,5 @@
 //
-//  NewMediaVideosCarouselView.swift
+//  MediaVideosCarouselView.swift
 //  Movee
 //
 //  Created on 24.10.2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NewMediaVideosCarouselView: View {
+struct MediaVideosCarouselView: View {
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
 
@@ -31,11 +31,11 @@ struct NewMediaVideosCarouselView: View {
         carouselContainer {
             if placeholder {
                 ForEach(0..<3, id: \.self) { _ in
-                    NewMediaVideoView(data: .placeholder)
+                    MediaVideoView(data: .placeholder)
                 }
             } else {
                 ForEach(videos, id: \.id) { video in
-                    NewMediaVideoView(data: .init(video: video))
+                    MediaVideoView(data: .init(video: video))
                 }
             }
         }

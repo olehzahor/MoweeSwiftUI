@@ -1,5 +1,5 @@
 //
-//  NewMediaDetailsView.swift
+//  MediaDetailsView.swift
 //  Movee
 //
 //  Created by Oleh on 23.10.2025.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewMediaDetailsView: View {
-    @State private var viewModel: NewMediaDetailsViewModel
+struct MediaDetailsView: View {
+    @State private var viewModel: MediaDetailsViewModel
     @State private var isHeaderVisible: Bool = true
     
     private var navigationTitle: String {
@@ -45,20 +45,20 @@ struct NewMediaDetailsView: View {
         .ignoresSafeArea(edges: .top)
     }
     
-    init(viewModel: NewMediaDetailsViewModel) {
+    init(viewModel: MediaDetailsViewModel) {
         self.viewModel = viewModel
     }
-    
+
     init(media: Media) {
-        self.init(viewModel: NewMediaDetailsViewModel(media: media))
+        self.init(viewModel: MediaDetailsViewModel(media: media))
     }
-    
+
     init(mediaID: Int, mediaType: MediaType) {
-        self.init(viewModel: NewMediaDetailsViewModel(mediaID: mediaID, mediaType: mediaType))
+        self.init(viewModel: MediaDetailsViewModel(mediaID: mediaID, mediaType: mediaType))
     }
 }
 
-private extension NewMediaDetailsView {
+private extension MediaDetailsView {
     @ViewBuilder
     func setupStretchyHeader() -> some View {
         BackdropStretchyHeaderView(backdropURL: viewModel.media?.backdropURL)
@@ -76,7 +76,7 @@ private extension NewMediaDetailsView {
     @ViewBuilder
     func setupDetailsSection() -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            NewMediaTaglineView(tagline: viewModel.media?.tagline)
+            MediaTaglineView(tagline: viewModel.media?.tagline)
                 .loading(viewModel.loader.loadState(for: .details).isAwaitingData)
             DescriptionView(text: viewModel.media?.overview)
                 .loading(viewModel.media == nil)

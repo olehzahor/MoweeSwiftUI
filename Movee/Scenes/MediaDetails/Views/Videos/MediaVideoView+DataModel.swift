@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension NewMediaVideoView {
+extension MediaVideoView {
     struct DataModel {
         var title: String
         var backdropURL: URL?

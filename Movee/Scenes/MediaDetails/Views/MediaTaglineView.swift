@@ -1,5 +1,5 @@
 //
-//  NewMediaTaglineView.swift
+//  MediaTaglineView.swift
 //  Movee
 //
 //  Created by user on 4/28/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NewMediaTaglineView: View {
+struct MediaTaglineView: View {
     @Environment(\.placeholder) private var placeholder: Bool
     
     var tagline: String?
