@@ -22,4 +22,16 @@ extension View {
             .error(state.error, retry: { fetcher.reloadFailedSections() })
             .hidden(hideWhenEmpty ? state.isEmpty : false)
     }
+    
+    func loadingState<Section: Hashable>(
+        _ loader: SectionLoader<Section>,
+        section: Section,
+        hideWhenEmpty: Bool = true
+    ) -> some View {
+        let state = loader.loadState(for: section)
+        return self
+            .loading(state.isAwaitingData)
+            .error(state.error, retry: { Task { await loader.refetchFailed() } })
+            .hidden(hideWhenEmpty ? state.isEmpty : false)
+    }
 }

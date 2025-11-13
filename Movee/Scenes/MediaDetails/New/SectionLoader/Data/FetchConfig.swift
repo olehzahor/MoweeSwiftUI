@@ -35,6 +35,42 @@ struct FetchConfig<Output> {
     }
 }
 
+struct FetchConfig2 {
+    let priority: Int
+    
+    private let _fetch: () async throws -> Bool
+    
+    func fetch() async throws -> Bool {
+        try await _fetch()
+    }
+
+    init<Output>(
+        priority: Int = .max,
+        fetch: @escaping () async throws -> Output,
+        update: @escaping (Output) -> Void,
+        isEmpty: @escaping (Output) -> Bool = { _ in false }
+    ) {
+        self.priority = priority
+        self._fetch = {
+            let result = try await fetch()
+            update(result)
+            return isEmpty(result)
+        }
+    }
+    
+    init<Output: EmptyCheckable>(
+        priority: Int = .max,
+        fetch: @escaping () async throws -> Output,
+        update: @escaping (Output) -> Void
+    ) {
+        self.init(
+            priority: priority,
+            fetch: fetch, update:
+                update, isEmpty: { $0.isEmpty }
+        )
+    }
+}
+
 extension FetchConfig where Output: EmptyCheckable {
     init(
         priority: Int = .max,
