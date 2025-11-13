@@ -1,5 +1,5 @@
 //
-//  NewMediasListView.swift
+//  MediasListView.swift
 //  Movee
 //
 //  Created by Oleh on 03.11.2025.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewMediasListView: View {
-    var viewModel: NewMediasListViewModel
+struct MediasListView: View {
+    var viewModel: MediasListViewModel
 
     var body: some View {
         NavigationStack {
@@ -16,10 +16,10 @@ struct NewMediasListView: View {
                 NavigationLink {
                     MediaDetailsView(media: media)
                 } label: {
-                    NewMediaRowView(data: .init(media: media))
+                    MediaRowView(data: .init(media: media))
                 }
             } placeholder: {
-                NewMediaRowView()
+                MediaRowView()
                     .loading(true)
             }
             .listStyle(.plain)
@@ -29,7 +29,7 @@ struct NewMediasListView: View {
         }
     }
 
-    init(section: NewMediasSection) {
-        viewModel = NewMediasListViewModel(section: section)
+    init(section: MediasSection) {
+        viewModel = MediasListViewModel(section: section)
     }
 }

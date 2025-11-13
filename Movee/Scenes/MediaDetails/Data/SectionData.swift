@@ -8,12 +8,12 @@
 struct SectionData<T> {
     var name: String
     var fullName: String?
-    var placeholder: NewMediasSection.Placeholder?
+    var placeholder: MediasSection.Placeholder?
     var dataProvider: (any MediasListDataProvider)?
-    
+
     var items = [T]()
-    
-    var section: NewMediasSection { .init(
+
+    var section: MediasSection { .init(
         title: name,
         fullTitle: fullName,
         placeholder: placeholder,

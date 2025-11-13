@@ -14,7 +14,7 @@ extension SectionView {
         }
     }
     
-    static func medias(_ medias: [Media]?, section: NewMediasSection) -> SectionView where Content == MediasCarouselView {
+    static func medias(_ medias: [Media]?, section: MediasSection) -> SectionView where Content == MediasCarouselView {
         return SectionView(header: .init(section: section)) {
             MediasCarouselView(
                 medias: (medias ?? []).map { .init(media: $0) }
@@ -22,7 +22,7 @@ extension SectionView {
         }
     }
     
-    static func seasons(_ seasons: [Season]?, media: Media?, section: NewMediasSection) -> SectionView where Content == MediasCarouselView {
+    static func seasons(_ seasons: [Season]?, media: Media?, section: MediasSection) -> SectionView where Content == MediasCarouselView {
         SectionView(header: .init(section: section)) {
             MediasCarouselView(
                 medias: (seasons ?? []).compactMap {
@@ -49,10 +49,10 @@ extension SectionView {
 }
 
 extension SectionHeaderData {
-    init(section: NewMediasSection) {
+    init(section: MediasSection) {
         self.init(
             title: section.title,
-            action: section.dataProvider != nil ? { AnyView(NewMediasListView(section: section)) } : nil
+            action: section.dataProvider != nil ? { AnyView(MediasListView(section: section)) } : nil
         )
     }
 }

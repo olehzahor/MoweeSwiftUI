@@ -10,14 +10,14 @@ import Foundation
 
 @MainActor @Observable
 final class ExploreViewModel: SectionFetchable, FailedSectionsReloadable {
-    var fetchableSections: [NewMediasSection]
+    var fetchableSections: [MediasSection]
 
-    var medias: [NewMediasSection: [Media]] = [:]
-    
-    var sectionsContext = AsyncLoadingContext<NewMediasSection>()
+    var medias: [MediasSection: [Media]] = [:]
+
+    var sectionsContext = AsyncLoadingContext<MediasSection>()
     var maxConcurrentFetches: Int { 2 }
 
-    func fetchConfig(for section: NewMediasSection) -> AnyFetchConfig? {
+    func fetchConfig(for section: MediasSection) -> AnyFetchConfig? {
         AnyFetchConfig(
             FetchConfig {
                 return try await section.dataProvider?.fetch(page: 1) ?? .wrap([])
@@ -29,7 +29,7 @@ final class ExploreViewModel: SectionFetchable, FailedSectionsReloadable {
         )
     }
     
-    init(sections: [NewMediasSection]) {
+    init(sections: [MediasSection]) {
         fetchableSections = sections
     }
 }
