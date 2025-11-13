@@ -25,7 +25,7 @@ struct MediaPersonsListView: View {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(viewModel.getPersons(forDepartment: department), id: \.creditID) { person in
                             NavigationLink {
-                                PersonDetailsView(person: person)
+                                NewPersonDetailsView(person: person)
                             } label: {
                                 PersonMediumView(person: person)
                             }
