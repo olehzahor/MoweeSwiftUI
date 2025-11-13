@@ -7,7 +7,6 @@
 
 import Foundation
 
-/// Errors that can occur during section fetching
 enum FetchError: LocalizedError {
     case noConfigurationFound(section: String)
 
