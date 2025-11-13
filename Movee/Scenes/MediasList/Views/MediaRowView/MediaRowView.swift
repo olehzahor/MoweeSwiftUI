@@ -1,5 +1,5 @@
 //
-//  NewMediaRowView.swift
+//  MediaRowView.swift
 //  Movee
 //
 //  Created by Oleh on 06.11.2025.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NewMediaRowView: View {
+struct MediaRowView: View {
     @Environment(\.placeholder) var placeholder: Bool
     
     private let _data: MediaUIModel

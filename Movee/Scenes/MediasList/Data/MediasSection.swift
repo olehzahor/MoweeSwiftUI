@@ -1,5 +1,5 @@
 //
-//  NewMediasSection.swift
+//  MediasSection.swift
 //  Movee
 //
 //  Created by Oleh on 29.10.2025.
@@ -15,7 +15,7 @@ struct Dependencies {
     )
 }
 
-struct NewMediasSection {
+struct MediasSection {
     // TODO: add id
     struct Placeholder {
         let title: String
@@ -35,23 +35,23 @@ struct NewMediasSection {
     }
 }
 
-extension Array where Element == NewMediasSection {
-    static var homePageSections: [NewMediasSection] = [
-        NewMediasSection(title: "Popular Movies", dataProvider: MoviesListDataProvider.popular),
-        NewMediasSection(title: "Now Playing Movies", dataProvider: MoviesListDataProvider.nowPlaying),
-        NewMediasSection(title: "Upcoming Movies", dataProvider: MoviesListDataProvider.upcoming),
-        NewMediasSection(title: "Top Rated Movies", dataProvider: MoviesListDataProvider.topRated),
-        NewMediasSection(title: "Popular TV Shows", dataProvider: TVShowsListDataProvider.popular),
-        NewMediasSection(title: "Top Rated TV Shows", dataProvider: TVShowsListDataProvider.topRated),
-        NewMediasSection(title: "On The Air TV Shows", dataProvider: TVShowsListDataProvider.onTheAir),
-        NewMediasSection(title: "Airing Today TV Shows", dataProvider: TVShowsListDataProvider.airingToday),
+extension Array where Element == MediasSection {
+    static var homePageSections: [MediasSection] = [
+        MediasSection(title: "Popular Movies", dataProvider: MoviesListDataProvider.popular),
+        MediasSection(title: "Now Playing Movies", dataProvider: MoviesListDataProvider.nowPlaying),
+        MediasSection(title: "Upcoming Movies", dataProvider: MoviesListDataProvider.upcoming),
+        MediasSection(title: "Top Rated Movies", dataProvider: MoviesListDataProvider.topRated),
+        MediasSection(title: "Popular TV Shows", dataProvider: TVShowsListDataProvider.popular),
+        MediasSection(title: "Top Rated TV Shows", dataProvider: TVShowsListDataProvider.topRated),
+        MediasSection(title: "On The Air TV Shows", dataProvider: TVShowsListDataProvider.onTheAir),
+        MediasSection(title: "Airing Today TV Shows", dataProvider: TVShowsListDataProvider.airingToday),
     ]
 }
 
-extension NewMediasSection: Hashable, Identifiable {
+extension MediasSection: Hashable, Identifiable {
     var id: String { title }
-    
-    static func == (lhs: NewMediasSection, rhs: NewMediasSection) -> Bool {
+
+    static func == (lhs: MediasSection, rhs: MediasSection) -> Bool {
         return lhs.id == rhs.id
     }
 

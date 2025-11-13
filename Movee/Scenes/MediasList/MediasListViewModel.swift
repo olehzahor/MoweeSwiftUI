@@ -1,5 +1,5 @@
 //
-//  NewMediasListViewModel.swift
+//  MediasListViewModel.swift
 //  Movee
 //
 //  Created by Oleh on 03.11.2025.
@@ -9,15 +9,15 @@ import Combine
 import Foundation
 
 @MainActor @Observable
-class NewMediasListViewModel {
-    private let section: NewMediasSection
+class MediasListViewModel {
+    private let section: MediasSection
     let dataSource: PagedDataSource<Media>
     
     var title: String {
         section.fullTitle ?? section.title
     }
     
-    init(section: NewMediasSection) {
+    init(section: MediasSection) {
         self.section = section
         self.dataSource = .pageNumber { [section] page in
             guard let dataProvider = section.dataProvider else {

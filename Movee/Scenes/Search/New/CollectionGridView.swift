@@ -29,7 +29,7 @@ struct CollectionGridView: View {
                     NavigationLink {
                         switch item.destination {
                         case .section(let section):
-                            NewMediasListView(section: section)
+                            MediasListView(section: section)
                         case .nestedLists(let nested):
                             CollectionView(title: item.name, lists: nested)
                         case .none:
@@ -56,7 +56,7 @@ extension CollectionGridView {
     struct Data {
         enum Destination {
             case nestedLists([MediasList])
-            case section(NewMediasSection)
+            case section(MediasSection)
         }
         
         let name: String

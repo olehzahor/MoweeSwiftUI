@@ -6,7 +6,7 @@
 //
 
 extension MediasList {
-    var section: NewMediasSection? {
+    var section: MediasSection? {
         guard let dataProvider: MediasListDataProvider? = switch mediaType {
         case .themedList:
             ThemedListDataProvider(path: path ?? "")
