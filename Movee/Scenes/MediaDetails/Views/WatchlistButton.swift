@@ -22,16 +22,6 @@ struct WatchlistButton: View {
     }
 }
 
-// MARK: - Convenience initializer for watchlist manager
-extension WatchlistButton {
-    init(watchlistManager: MediaDetailsWatchlistManager) {
-        self.init(
-            isInWatchlist: watchlistManager.isInWatchlist,
-            action: watchlistManager.toggleWatchlist
-        )
-    }
-}
-
 #Preview {
     VStack(spacing: 20) {
         WatchlistButton(isInWatchlist: true) { }

@@ -41,3 +41,13 @@ struct PersonsCarouselView: View {
         .fallible()
     }
 }
+
+// MARK: - MediaPerson placeholder
+extension MediaPerson {
+    static let placeholder = MediaPerson(
+        person: Person(
+            id: -1,
+            name: "##########",
+            profilePath: nil)
+    )
+}

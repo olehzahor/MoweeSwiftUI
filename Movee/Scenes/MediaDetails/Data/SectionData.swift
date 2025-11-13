@@ -1,5 +1,5 @@
 //
-//  MediasSection.swift
+//  SectionData.swift
 //  Movee
 //
 //  Created by Oleh on 25.10.2025.
