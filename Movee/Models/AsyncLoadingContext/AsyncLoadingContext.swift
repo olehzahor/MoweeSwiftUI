@@ -6,9 +6,9 @@
 //
 
 struct AsyncLoadingContext<T: Hashable>: Equatable {
-    private var states: [T: AsyncLoadingState] = [:]
+    private var states: [T: LoadState] = [:]
     
-    subscript(section: T) -> AsyncLoadingState {
+    subscript(section: T) -> LoadState {
         get {
             states[section] ?? .idle
         }

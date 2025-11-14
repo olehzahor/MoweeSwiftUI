@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension View {
-    func loadingState(_ state: AsyncLoadingState, hideWhenEmpty: Bool = true, retry: (() -> Void)? = nil) -> some View {
+    func loadingState(_ state: LoadState, hideWhenEmpty: Bool = true, retry: (() -> Void)? = nil) -> some View {
         self
             .loading(state.isAwaitingData)
             .error(state.error, retry: retry)

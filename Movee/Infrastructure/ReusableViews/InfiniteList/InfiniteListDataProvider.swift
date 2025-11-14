@@ -9,7 +9,7 @@ protocol InfiniteListDataProvider {
     associatedtype Item: Identifiable
 
     var items: [Item] { get }
-    var loadState: AsyncLoadingState { get }
+    var loadState: LoadState { get }
     var hasMorePages: Bool { get }
 
     func fetch()

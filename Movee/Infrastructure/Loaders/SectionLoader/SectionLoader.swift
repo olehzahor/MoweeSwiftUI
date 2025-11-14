@@ -10,12 +10,12 @@ import Foundation
 @MainActor
 final class SectionLoader<Section: Hashable> {
     private var configs: [Section: FetchConfig2]
-    private let sections: [Section]
-    private let maxConcurrent: Int
+    let sections: [Section]
+    let maxConcurrent: Int
 
     private var currentTasks: [Section: Task<Void, Never>] = [:]
 
-    private(set) var loadStates: [Section: AsyncLoadingState] = [:]
+    private(set) var loadStates: [Section: LoadState] = [:]
 
     init(
         sections: [Section],
@@ -31,11 +31,11 @@ final class SectionLoader<Section: Hashable> {
         self.configs = configs
     }
     
-    func loadState(for section: Section) -> AsyncLoadingState {
+    func loadState(for section: Section) -> LoadState {
         loadStates[section] ?? .idle
     }
 
-    func updateLoadState(for section: Section, _ state: AsyncLoadingState) {
+    func updateLoadState(for section: Section, _ state: LoadState) {
         loadStates[section] = state
     }
 
