@@ -48,8 +48,6 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
     }
     
     func fetchCredits(_ identifier: MediaIdentifier) async throws -> [MediaPerson] {
-        //try await Task.sleep(for: .seconds(3))
-
         let response = switch identifier.type {
         case .movie:
             try await networkClient.request(TMDB.MovieCredits(movieID: identifier.id))

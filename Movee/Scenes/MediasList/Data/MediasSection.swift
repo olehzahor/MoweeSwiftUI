@@ -59,28 +59,3 @@ extension MediasSection: Hashable, Identifiable {
         hasher.combine(id)
     }
 }
-
-/*
-struct RelatedMediasSectionDataProvider: MediasListDataProvider {
-    private let networkClient = NetworkClient2(
-        interceptors: [
-            TMDBInterceptor(),
-            LoggingInterceptor(logger: Logger.shared)
-        ],
-        decoder: TMDBJSONDecoder()
-    )
-
-    let identifier: MediaIdentifier
-    
-    func fetch(page: Int) async throws -> PaginatedResponse<Media> {
-        switch identifier.type {
-        case .movie:
-            let request = TMDB.MovieRecommendations(movieID: identifier.id, page: page)
-            return try await networkClient.request(request).map { Media(movie: $0) }
-        case .tvShow:
-            let request = TMDB.TVShowRecommendations(tvShowID: identifier.id, page: page)
-            return try await networkClient.request(request).map { Media(tvShow: $0) }
-        }
-    }
-}
-*/
