@@ -1,18 +1,18 @@
 //
-//  AsyncLoadingContext+State.swift
+//  LoadState.swift
 //  Movee
 //
 //  Created by Oleh on 18.10.2025.
 //
 
-enum AsyncLoadingState {
+enum LoadState {
     case idle
     case loading
     case loaded(isEmpty: Bool)
     case error(Error)
 }
 
-extension AsyncLoadingState {
+extension LoadState {
     var isIdle: Bool {
         if case .idle = self { return true }
         return false
@@ -43,8 +43,8 @@ extension AsyncLoadingState {
     }
 }
 
-extension AsyncLoadingState: Equatable {
-    static func == (lhs: AsyncLoadingState, rhs: AsyncLoadingState) -> Bool {
+extension LoadState: Equatable {
+    static func == (lhs: LoadState, rhs: LoadState) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
             return true

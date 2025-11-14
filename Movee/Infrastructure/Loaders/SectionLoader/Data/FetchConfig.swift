@@ -35,6 +35,7 @@ struct FetchConfig<Output> {
     }
 }
 
+@MainActor
 struct FetchConfig2 {
     let priority: Int
     
@@ -43,7 +44,7 @@ struct FetchConfig2 {
     func fetch() async throws -> Bool {
         try await _fetch()
     }
-
+    
     init<Output>(
         priority: Int = .max,
         fetch: @escaping () async throws -> Output,

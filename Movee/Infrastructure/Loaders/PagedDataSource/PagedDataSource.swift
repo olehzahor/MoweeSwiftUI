@@ -16,7 +16,7 @@ class PagedDataSource<Item: Identifiable&Decodable> {
     private var currentTask: Task<Void, Never>?
 
     private(set) var items: [Item] = []
-    private(set) var loadState = AsyncLoadingState.idle
+    private(set) var loadState = LoadState.idle
     private(set) var hasMorePages = true
 
     @MainActor

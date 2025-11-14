@@ -6,19 +6,17 @@
 //
 
 import SwiftUI
-import SwiftData
-import Combine
 
 struct ExploreView: View {
-    @State private var viewModel: ExploreViewModel = ExploreViewModel(sections: .homePageSections)
+    @State private var viewModel: ExploreViewModel
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    ForEach(viewModel.fetchableSections) { section in
+                    ForEach(viewModel.loader.sections) { section in
                         SectionView.medias(viewModel.medias[section], section: section)
-                            .loadingState(viewModel, section: section)
+                            .loadingState(viewModel.loader, section: section)
                     }
                 }
                 .padding()
@@ -26,9 +24,21 @@ struct ExploreView: View {
             .scrollIndicators(.hidden)
             .navigationTitle("Explore")
             .onFirstAppear {
-                viewModel.fetchInitialData()
+                Task { await viewModel.loader.fetchInitialData() }
             }
         }
+    }
+    
+    init(viewModel: ExploreViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    init(sections: [MediasSection]) {
+        self.init(viewModel: ExploreViewModel(sections: sections))
+    }
+    
+    init() {
+        self.init(sections: .homePageSections)
     }
 }
 
