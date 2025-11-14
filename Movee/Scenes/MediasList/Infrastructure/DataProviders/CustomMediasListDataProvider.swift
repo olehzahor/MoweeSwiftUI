@@ -8,15 +8,9 @@
 import Foundation
 
 struct CustomMediasListDataProvider: MediasListDataProvider {
-    let networkClient: NetworkClient2
-    let fetcher: (NetworkClient2, Int) async throws -> PaginatedResponse<Media>
+    let fetcher: (Int) async throws -> PaginatedResponse<Media>
     
     func fetch(page: Int) async throws -> PaginatedResponse<Media> {
-        try await fetcher(networkClient, page)
-    }
-    
-    init(networkClient: NetworkClient2 = Dependencies.networkClient, fetcher: @escaping (NetworkClient2, Int) async throws -> PaginatedResponse<Media>) {
-        self.networkClient = networkClient
-        self.fetcher = fetcher
+        try await fetcher(page)
     }
 }

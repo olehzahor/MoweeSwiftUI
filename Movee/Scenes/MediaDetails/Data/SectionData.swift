@@ -20,6 +20,7 @@ struct SectionData<T> {
         dataProvider: dataProvider)
     }
 }
+
 extension SectionData where T == Media {
     mutating func update(with collection: MediasCollection) {
         self.name = collection.name

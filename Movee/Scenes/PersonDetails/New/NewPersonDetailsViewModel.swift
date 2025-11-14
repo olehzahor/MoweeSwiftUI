@@ -41,7 +41,7 @@ class NewPersonDetailsViewModel: SectionFetchable, FailedSectionsReloadable {
                 try await repo.fetchKnownFor(personID: person.id)
             } onSuccess: { [weak self] result in
                 self?.knownFor.items = Array(result.prefix(20))
-                self?.knownFor.dataProvider = CustomMediasListDataProvider { _, _ in
+                self?.knownFor.dataProvider = CustomMediasListDataProvider { _ in
                     .wrap(result)
                 }
             }
