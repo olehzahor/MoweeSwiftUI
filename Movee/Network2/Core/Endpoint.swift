@@ -15,18 +15,24 @@ protocol Endpoint {
     var method: HTTPMethod2 { get }
     var headers: [String: String]? { get }
     var parameters: [String: Any]? { get }
-    var queryItems: [URLQueryItem]? { get } // TODO: improve with custom struct for convenience 
+    var queryItems: [URLQueryItem]? { get } // TODO: improve with custom struct for convenience
+    var interceptors: [NetworkInterceptor] { get }
+    var decoder: DataDecoder { get }
 }
 
 extension Endpoint {
     var headers: [String: String]? { nil }
     var parameters: [String: Any]? { nil }
     var queryItems: [URLQueryItem]? { nil }
+    var interceptors: [NetworkInterceptor] { [] }
+    var decoder: DataDecoder { JSONDecoder() }
 }
     
 extension Endpoint {
     func asURLRequest() throws -> URLRequest {
-        guard var components = URLComponents(string: baseURL + path) else {
+        let fullURL = buildFullURL(baseURL: baseURL, path: path)
+
+        guard var components = URLComponents(string: fullURL) else {
             throw NetworkError2.invalidURL
         }
 
@@ -51,5 +57,11 @@ extension Endpoint {
         }
 
         return request
+    }
+
+    private func buildFullURL(baseURL: String, path: String) -> String {
+        let trimmedBase = baseURL.hasSuffix("/") ? String(baseURL.dropLast()) : baseURL
+        let normalizedPath = path.hasPrefix("/") ? path : "/" + path
+        return trimmedBase + normalizedPath
     }
 }
