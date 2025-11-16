@@ -9,19 +9,13 @@ import Foundation
 
 final class NetworkClient2 {
     private let session: URLSession
-    private let decoder: DataDecoder
-    private let interceptors: [NetworkInterceptor]
 
-    init(session: URLSession = .shared,
-         interceptors: [NetworkInterceptor] = [],
-         decoder: DataDecoder) {
+    init(session: URLSession = .shared) {
         self.session = session
-        self.interceptors = interceptors
-        self.decoder = decoder
     }
 
     // MARK: - Private Helpers
-    private func applyRequestInterceptors(to request: URLRequest) async throws -> URLRequest {
+    private func applyRequestInterceptors(_ interceptors: [NetworkInterceptor], to request: URLRequest) async throws -> URLRequest {
         var modifiedRequest = request
         for interceptor in interceptors {
             modifiedRequest = try await interceptor.intercept(request: modifiedRequest)
@@ -29,7 +23,7 @@ final class NetworkClient2 {
         return modifiedRequest
     }
 
-    private func applyResponseInterceptors(response: HTTPURLResponse, data: Data) async throws -> Data {
+    private func applyResponseInterceptors(_ interceptors: [NetworkInterceptor], response: HTTPURLResponse, data: Data) async throws -> Data {
         var modifiedData = data
         for interceptor in interceptors {
             modifiedData = try await interceptor.intercept(response: response, data: modifiedData)
@@ -37,7 +31,7 @@ final class NetworkClient2 {
         return modifiedData
     }
 
-    private func applyErrorInterceptors(error: Error, request: URLRequest) async throws {
+    private func applyErrorInterceptors(_ interceptors: [NetworkInterceptor], error: Error, request: URLRequest) async throws {
         for interceptor in interceptors {
             try await interceptor.intercept(error: error, request: request)
         }
@@ -61,14 +55,9 @@ final class NetworkClient2 {
 
     private func performRequest<E: Endpoint>(_ endpoint: E) async throws -> (Data, HTTPURLResponse) {
         let urlRequest = try endpoint.asURLRequest()
-        let interceptedRequest = try await applyRequestInterceptors(to: urlRequest)
+        let interceptedRequest = try await applyRequestInterceptors(endpoint.interceptors, to: urlRequest)
 
         do {
-//            try await Task.sleep(for: .seconds(2))
-//            if Bool.random() {
-//                throw NetworkError2.invalidURL
-//            }
-
             let (data, response) = try await session.data(for: interceptedRequest)
 
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -77,11 +66,11 @@ final class NetworkClient2 {
 
             try validateResponse(httpResponse, data: data)
 
-            let interceptedData = try await applyResponseInterceptors(response: httpResponse, data: data)
+            let interceptedData = try await applyResponseInterceptors(endpoint.interceptors, response: httpResponse, data: data)
 
             return (interceptedData, httpResponse)
         } catch {
-            try await applyErrorInterceptors(error: error, request: interceptedRequest)
+            try await applyErrorInterceptors(endpoint.interceptors, error: error, request: interceptedRequest)
             throw error
         }
     }
@@ -96,7 +85,7 @@ final class NetworkClient2 {
         }
 
         do {
-            return try decoder.decode(E.Response.self, from: data)
+            return try endpoint.decoder.decode(E.Response.self, from: data)
         } catch {
             throw NetworkError2.decodingError(error)
         }

@@ -5,15 +5,7 @@
 //  Created by Oleh on 29.10.2025.
 //
 
-struct Dependencies {
-    static let networkClient = NetworkClient2(
-        interceptors: [
-            TMDBInterceptor(),
-            LoggingInterceptor(logger: Logger.shared)
-        ],
-        decoder: TMDBJSONDecoder()
-    )
-}
+import Factory
 
 struct MediasSection {
     // TODO: add id

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CE520AD92ECA6A50005B8B7A /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = CE520AD82ECA6A50005B8B7A /* Factory */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CEE665AF2D9E891900C04D9A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -76,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE520AD92ECA6A50005B8B7A /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +141,7 @@
 			);
 			name = Movee;
 			packageProductDependencies = (
+				CE520AD82ECA6A50005B8B7A /* Factory */,
 			);
 			productName = Movee;
 			productReference = CEE6659F2D9E891800C04D9A /* Movee.app */;
@@ -219,6 +225,9 @@
 			);
 			mainGroup = CEE665962D9E891700C04D9A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CE520AD72ECA6A50005B8B7A /* XCRemoteSwiftPackageReference "Factory" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEE665A02D9E891800C04D9A /* Products */;
 			projectDirPath = "";
@@ -586,6 +595,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE520AD72ECA6A50005B8B7A /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE520AD82ECA6A50005B8B7A /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE520AD72ECA6A50005B8B7A /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CEE665972D9E891700C04D9A /* Project object */;
 }
