@@ -18,7 +18,6 @@ extension String {
                 let value = parts[1]
                 queryItems.append(URLQueryItem(name: key, value: value))
             } else if parts.count == 1 {
-                // Handle parameters without values
                 queryItems.append(URLQueryItem(name: parts[0], value: nil))
             }
         }
