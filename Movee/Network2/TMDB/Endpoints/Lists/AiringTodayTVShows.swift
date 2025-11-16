@@ -21,8 +21,8 @@ extension TMDB {
             .get
         }
 
-        var queryItems: [URLQueryItem]? {
-            [URLQueryItem(name: "page", value: "\(page)")]
+        var parameters: [String: Any]? {
+            ["page": page]
         }
     }
 }
