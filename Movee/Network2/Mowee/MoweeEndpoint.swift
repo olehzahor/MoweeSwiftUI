@@ -11,7 +11,7 @@ protocol MoweeEndpoint: Endpoint {}
 
 extension MoweeEndpoint {
     var baseURL: String {
-        "https://mowee.pages.dev"
+        "https://mowee.pages.dev/"
     }
 
     var interceptors: [NetworkInterceptor] {

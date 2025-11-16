@@ -14,7 +14,7 @@ extension TMDB {
         let personID: Int
 
         var path: String {
-            "/person/\(personID)"
+            "person/\(personID)"
         }
 
         var method: HTTPMethod2 {

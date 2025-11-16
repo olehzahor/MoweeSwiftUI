@@ -27,7 +27,7 @@ extension TMDB {
         
         init(page: Int, path: String, query: String?) {
             self.page = page
-            self.path = "/" + path
+            self.path = path
             self.query = query
         }
     }

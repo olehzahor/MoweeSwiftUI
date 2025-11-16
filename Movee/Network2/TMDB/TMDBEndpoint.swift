@@ -11,7 +11,7 @@ protocol TMDBEndpoint: Endpoint {}
 
 extension TMDBEndpoint {
     var baseURL: String {
-        "https://api.themoviedb.org/3"
+        "https://api.themoviedb.org/3/"
     }
 
     var interceptors: [NetworkInterceptor] {
