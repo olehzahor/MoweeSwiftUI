@@ -12,7 +12,7 @@ extension TMDB {
         let id: Int
 
         var path: String {
-            "/collection/\(id)"
+            "collection/\(id)"
         }
 
         var method: HTTPMethod2 {

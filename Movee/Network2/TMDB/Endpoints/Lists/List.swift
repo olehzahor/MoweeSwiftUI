@@ -15,7 +15,7 @@ extension TMDB {
         let listID: Int
         
         var path: String {
-            "/list/\(listID)"
+            "list/\(listID)"
         }
 
         var method: HTTPMethod2 {

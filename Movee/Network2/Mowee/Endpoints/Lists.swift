@@ -12,7 +12,7 @@ extension Mowee {
         typealias Response = MediasListsResponse
 
         var path: String {
-            "/explore.json"
+            "explore.json"
         }
 
         var method: HTTPMethod2 {

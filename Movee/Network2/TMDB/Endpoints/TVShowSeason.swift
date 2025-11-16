@@ -13,7 +13,7 @@ extension TMDB {
         let seasonNumber: Int
 
         var path: String {
-            "/tv/\(tvShowID)/season/\(seasonNumber)"
+            "tv/\(tvShowID)/season/\(seasonNumber)"
         }
 
         var method: HTTPMethod2 {

@@ -14,7 +14,7 @@ extension TMDB {
         let tvShowID: Int
 
         var path: String {
-            "/tv/\(tvShowID)/videos"
+            "tv/\(tvShowID)/videos"
         }
 
         var method: HTTPMethod2 {

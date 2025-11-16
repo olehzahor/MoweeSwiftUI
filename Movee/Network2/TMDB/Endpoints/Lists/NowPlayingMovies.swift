@@ -14,7 +14,7 @@ extension TMDB {
         let page: Int
 
         var path: String {
-            "/movie/now_playing"
+            "movie/now_playing"
         }
 
         var method: HTTPMethod2 {
