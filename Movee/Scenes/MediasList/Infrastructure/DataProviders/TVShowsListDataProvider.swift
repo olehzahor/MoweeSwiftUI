@@ -17,22 +17,18 @@ struct TVShowsListDataProvider: MediasListDataProvider {
 
 extension TVShowsListDataProvider {
     static var popular = Self { page in
-        let networkClient = Dependencies.networkClient
         return try await networkClient.request(TMDB.PopularTVShows(page: page))
     }
 
     static var topRated = Self { page in
-        let networkClient = Dependencies.networkClient
         return try await networkClient.request(TMDB.TopRatedTVShows(page: page))
     }
 
     static var onTheAir = Self { page in
-        let networkClient = Dependencies.networkClient
         return try await networkClient.request(TMDB.OnTheAirTVShows(page: page))
     }
 
     static var airingToday = Self { page in
-        let networkClient = Dependencies.networkClient
         return try await networkClient.request(TMDB.AiringTodayTVShows(page: page))
     }
 }

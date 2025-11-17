@@ -6,15 +6,10 @@
 //
 
 import Foundation
+import Factory
 
 struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
-    private let networkClient = NetworkClient2(
-        interceptors: [
-            TMDBInterceptor(),
-            LoggingInterceptor(logger: Logger.shared)
-        ],
-        decoder: TMDBJSONDecoder()
-    )
+    private let networkClient: NetworkClient2
     
     func fetchMedia(_ identifier: MediaIdentifier) async throws -> Media {
         return switch identifier.type {
@@ -85,5 +80,9 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
             .request(TMDB.Collection(id: collection.id))
         let medias = response.parts.map { Media(movie: $0) }
         return MediasCollection(name: response.name, medias: medias)
+    }
+    
+    init(networkClient: NetworkClient2 = Container.shared.networkClient()) {
+        self.networkClient = networkClient
     }
 }

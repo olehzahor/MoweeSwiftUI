@@ -9,10 +9,8 @@ import Foundation
 import Factory
 
 // MARK: - Factory Container
-
 extension Container {
     // MARK: - Network Client
-
     var networkClient: Factory<NetworkClient2> {
         self { NetworkClient2() }
             .singleton

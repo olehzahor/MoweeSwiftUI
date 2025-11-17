@@ -77,7 +77,7 @@ final class NetworkClient2 {
 
     // MARK: - Public Request Methods
     @discardableResult
-    func request<E: Endpoint>(_ endpoint: E) async throws -> E.Response {
+    func request<E: Endpoint>(_ endpoint: E) async throws -> E.Response where E.Response: Decodable {
         let (data, _) = try await performRequest(endpoint)
 
         guard !data.isEmpty else {
@@ -91,12 +91,8 @@ final class NetworkClient2 {
         }
     }
 
-//    func request<E: Endpoint>(_ endpoint: E) async throws -> Data {
-//        let (data, _) = try await performRequest(endpoint)
-//        return data
-//    }
-//
-//    func request<E: Endpoint>(_ endpoint: E) async throws {
-//        _ = try await performRequest(endpoint)
-//    }
+    func request<E: Endpoint>(_ endpoint: E) async throws -> E.Response where E.Response == Data {
+        let (data, _) = try await performRequest(endpoint)
+        return data
+    }
 }
