@@ -10,6 +10,7 @@ import Foundation
 @MainActor @Observable
 final class MediaDetailsViewModel {
     private let repo: MediaDetailsRepositoryProtocol
+    
     private var mediaIdentifier: MediaIdentifier
 
     enum Section: CaseIterable {

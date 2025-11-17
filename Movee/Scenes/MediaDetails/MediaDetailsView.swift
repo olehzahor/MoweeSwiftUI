@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct MediaDetailsView: View {
-    @State private var viewModel: MediaDetailsViewModel
+    private let viewModel: MediaDetailsViewModel
+    
     @State private var isHeaderVisible: Bool = true
     
     private var navigationTitle: String {
