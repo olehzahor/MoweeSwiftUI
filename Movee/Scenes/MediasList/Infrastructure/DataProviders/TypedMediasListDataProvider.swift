@@ -30,12 +30,10 @@ extension TypedMediasListDataProvider {
     static func related(_ identifier: MediaIdentifier) -> Self {
         .init(
             mediaType: identifier.type) { page in
-                let networkClient = Dependencies.networkClient
                 return try await networkClient.request(
                     TMDB.MovieRecommendations(movieID: identifier.id, page: page)
                 )
             } tvShowFetcher: { page in
-                let networkClient = Dependencies.networkClient
                 return try await networkClient.request(
                     TMDB.TVShowRecommendations(tvShowID: identifier.id, page: page)
                 )
@@ -46,13 +44,11 @@ extension TypedMediasListDataProvider {
 extension TypedMediasListDataProvider {
     static func customList(_ type: MediaType, path: String, query: String?) -> Self {
         return .init(mediaType: type) { page in
-                let network = Dependencies.networkClient
-                return try await network.request(
+                return try await networkClient.request(
                     TMDB.CustomList<Movie>(page: page, path: path, query: query)
                 )
             } tvShowFetcher: { page in
-                let network = Dependencies.networkClient
-                return try await network.request(
+                return try await networkClient.request(
                     TMDB.CustomList<TVShow>(page: page, path: path, query: query)
                 )
             }

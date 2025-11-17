@@ -5,9 +5,7 @@
 //  Created by Oleh on 05.11.2025.
 //
 
-
-import SwiftUI
-import Combine
+import Factory
 
 protocol PersonDetailsRepositoryProtocol {
     func fetchDetails(personID: Int) async throws -> MediaPerson
@@ -15,8 +13,8 @@ protocol PersonDetailsRepositoryProtocol {
 }
 
 struct PersonDetailsRepository: PersonDetailsRepositoryProtocol {
-    private let network: NetworkClient2 = Dependencies.networkClient
-    private let parser: PersonDetailsRepositoryParserProtocol = PersonDetailsRepositoryParser()
+    private let network: NetworkClient2
+    private let parser: PersonDetailsRepositoryParserProtocol
     
     func fetchDetails(personID: Int) async throws -> MediaPerson {
         let person = try await network.request(TMDB.PersonDetails(personID: personID))
@@ -26,5 +24,11 @@ struct PersonDetailsRepository: PersonDetailsRepositoryProtocol {
     func fetchKnownFor(personID: Int) async throws -> [Media] {
         let response = try await network.request(TMDB.PersonCredits(personID: personID))
         return parser.parse(response)
+    }
+    
+    init(network: NetworkClient2 = Container.shared.networkClient(),
+         parser: PersonDetailsRepositoryParserProtocol = PersonDetailsRepositoryParser()) {
+        self.network = network
+        self.parser = parser
     }
 }
