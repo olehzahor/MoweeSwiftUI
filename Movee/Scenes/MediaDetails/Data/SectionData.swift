@@ -8,7 +8,7 @@
 struct SectionData<T> {
     var name: String
     var fullName: String?
-    var placeholder: MediasSection.Placeholder?
+    var emptyState: MediasSection.EmptyState?
     var dataProvider: (any MediasListDataProvider)?
 
     var items = [T]()
@@ -16,7 +16,7 @@ struct SectionData<T> {
     var section: MediasSection { .init(
         title: name,
         fullTitle: fullName,
-        placeholder: placeholder,
+        emptyState: emptyState,
         dataProvider: dataProvider)
     }
 }

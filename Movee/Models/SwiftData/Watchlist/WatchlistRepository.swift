@@ -10,27 +10,30 @@ import Foundation
 import Combine
 import SwiftUI
 
-protocol WatchlistManagerInterface {
-    func addToWatchlist(_ media: Media) async
-    func removeFromWatchlist(_ media: Media) async
-    func isInWatchlist(_ media: Media) async -> Bool
+protocol WatchlistRepository {
+    var items: [WatchlistItem] { get }
+    
+    func add(_ media: Media) async
+    func remove(_ media: Media) async
+    func toggle(_ media: Media) async
+    func contains(_ mediaID: Int) async -> Bool
 }
 
-class WatchlistManager: WatchlistManagerInterface {
-    static let shared = WatchlistManager()
-    
+@MainActor @Observable
+final class SwiftDataWatchlistRepository: @MainActor WatchlistRepository {
     private let dataService = SwiftDataService<WatchlistItem>(modelContainer: AppContainer.shared)
     private let itemsSubject = CurrentValueSubject<[WatchlistItem], Never>([])
     
-    var itemsPublisher: AnyPublisher<[WatchlistItem], Never> {
-        itemsSubject
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-    }
+    private(set) var items: [WatchlistItem] = []
+//    var itemsPublisher: AnyPublisher<[WatchlistItem], Never> {
+//        itemsSubject
+//            .receive(on: DispatchQueue.main)
+//            .eraseToAnyPublisher()
+//    }
 
     private func fetchAndSendItems() async {
         do {
-            let items = try await dataService.fetch()
+            items = try await dataService.fetch()
             await MainActor.run {
                 itemsSubject.send(items)
             }
@@ -39,7 +42,7 @@ class WatchlistManager: WatchlistManagerInterface {
         }
     }
     
-    func addToWatchlist(_ media: Media) async {
+    func add(_ media: Media) async {
         do {
             let item = WatchlistItem(media: .init(media))
             try await dataService.create(item)
@@ -50,7 +53,7 @@ class WatchlistManager: WatchlistManagerInterface {
         }
     }
     
-    func removeFromWatchlist(_ media: Media) async {
+    func remove(_ media: Media) async {
         do {
             let predicate = #Predicate<WatchlistItem> { $0.media.id == media.id }
             let items = try await dataService.fetch(predicate: predicate)
@@ -63,21 +66,8 @@ class WatchlistManager: WatchlistManagerInterface {
             Logger.shared.log("Failed to remove watchlist items: \(error)", level: .error)
         }
     }
-    
-    func isInWatchlist(_ media: Media) async -> Bool {
-        do {
-            let predicate = #Predicate<WatchlistItem> { $0.media.id == media.id }
-            let items = try await dataService.fetch(predicate: predicate)
-            let exists = !items.isEmpty
-            Logger.shared.log("Checked watchlist for \(media.title) (\(media.id)): \(exists)", level: .info)
-            return exists
-        } catch {
-            Logger.shared.log("Failed to check watchlist: \(error)", level: .error)
-            return false
-        }
-    }
-    
-    func isInWatchlist(_ mediaID: Int) async -> Bool {
+        
+    func contains(_ mediaID: Int) async -> Bool {
         do {
             let predicate = #Predicate<WatchlistItem> { $0.media.id == mediaID }
             let items = try await dataService.fetch(predicate: predicate)
@@ -90,18 +80,18 @@ class WatchlistManager: WatchlistManagerInterface {
         }
     }
 
-    /// Toggles the watchlist state: adds if not present, removes if present.
-    func toggleWatchlist(_ media: Media) async {
-        if await isInWatchlist(media) {
-            await removeFromWatchlist(media)
+    func toggle(_ media: Media) async {
+        if await contains(media.id) {
+            await remove(media)
         } else {
-            await addToWatchlist(media)
+            await add(media)
         }
     }
     
-    private init() {
-        Task { [weak self] in
-            await self?.fetchAndSendItems()
+    
+    nonisolated init() {
+        Task { @MainActor in
+            await fetchAndSendItems()
         }
     }
 }

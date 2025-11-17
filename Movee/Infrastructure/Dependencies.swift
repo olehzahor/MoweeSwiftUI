@@ -15,4 +15,10 @@ extension Container {
         self { NetworkClient2() }
             .singleton
     }
+    
+    // MARK: - Watchlist Repository
+    var watchlistRepository: Factory<SwiftDataWatchlistRepository> {
+        self { SwiftDataWatchlistRepository() }
+            .singleton
+    }
 }

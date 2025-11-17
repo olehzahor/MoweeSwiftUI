@@ -11,7 +11,7 @@ struct MediasListView: View {
     var viewModel: MediasListViewModel
 
     var body: some View {
-        NavigationStack {
+        NavigationStack {            
             InfiniteList(viewModel.dataSource) { media in
                 NavigationLink {
                     MediaDetailsView(media: media)
