@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 protocol WatchlistRepository {
     var items: [WatchlistItem] { get }
     
@@ -20,23 +21,14 @@ protocol WatchlistRepository {
 }
 
 @MainActor @Observable
-final class SwiftDataWatchlistRepository: @MainActor WatchlistRepository {
+final class SwiftDataWatchlistRepository: WatchlistRepository {
     private let dataService = SwiftDataService<WatchlistItem>(modelContainer: AppContainer.shared)
-    private let itemsSubject = CurrentValueSubject<[WatchlistItem], Never>([])
     
     private(set) var items: [WatchlistItem] = []
-//    var itemsPublisher: AnyPublisher<[WatchlistItem], Never> {
-//        itemsSubject
-//            .receive(on: DispatchQueue.main)
-//            .eraseToAnyPublisher()
-//    }
 
     private func fetchAndSendItems() async {
         do {
             items = try await dataService.fetch()
-            await MainActor.run {
-                itemsSubject.send(items)
-            }
         } catch {
             Logger.shared.log("Failed to fetch watchlist items: \(error)", level: .error)
         }
@@ -87,7 +79,6 @@ final class SwiftDataWatchlistRepository: @MainActor WatchlistRepository {
             await add(media)
         }
     }
-    
     
     nonisolated init() {
         Task { @MainActor in

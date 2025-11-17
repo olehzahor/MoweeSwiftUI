@@ -6,16 +6,23 @@
 //
 
 import SwiftUI
+import Factory
 
 struct MainView: View {
+    let items = Container.shared.watchlistRepository().items
+    
     var body: some View {
         TabView {
             Tab("Explore", systemImage: "house") {
-                ExploreView()
+                NavigationStack {
+                    ExploreView()
+                }
             }
             
             Tab("Watchlist", systemImage: "list.and.film") {
-                MediasListView(section: .watchlist)
+                NavigationStack {
+                    WatchlistView()
+                }
             }
             
             Tab("Discover", systemImage: "magnifyingglass", role: .search) {

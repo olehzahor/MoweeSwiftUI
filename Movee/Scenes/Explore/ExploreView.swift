@@ -11,21 +11,19 @@ struct ExploreView: View {
     @State private var viewModel: ExploreViewModel
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    ForEach(viewModel.loader.sections) { section in
-                        SectionView.medias(viewModel.medias[section], section: section)
-                            .loadingState(viewModel.loader, section: section)
-                    }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                ForEach(viewModel.loader.sections) { section in
+                    SectionView.medias(viewModel.medias[section], section: section)
+                        .loadingState(viewModel.loader, section: section)
                 }
-                .padding()
             }
-            .scrollIndicators(.hidden)
-            .navigationTitle("Explore")
-            .onFirstAppear {
-                Task { await viewModel.loader.fetchInitialData() }
-            }
+            .padding()
+        }
+        .scrollIndicators(.hidden)
+        .navigationTitle("Explore")
+        .onFirstAppear {
+            Task { await viewModel.loader.fetchInitialData() }
         }
     }
     
