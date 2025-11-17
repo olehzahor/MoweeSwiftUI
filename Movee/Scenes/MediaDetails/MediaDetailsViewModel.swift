@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor @Observable
 final class MediaDetailsViewModel {
-    private let repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()
+    private let repo: MediaDetailsRepositoryProtocol
     private var mediaIdentifier: MediaIdentifier
 
     enum Section: CaseIterable {
@@ -33,9 +33,11 @@ final class MediaDetailsViewModel {
         }
     }
 
-    init(mediaID: Int, mediaType: MediaType) {
+    init(mediaID: Int, mediaType: MediaType, repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()) {
         let mediaIdentifier = MediaIdentifier(id: mediaID, type: mediaType)
         self.mediaIdentifier = mediaIdentifier
+        
+        self.repo = repo
 
         self.related = .init(
             name: "Related",
@@ -112,27 +114,25 @@ final class MediaDetailsViewModel {
         ])
 
         setupSectionsContext()
+        loadWatchlistStatus()
     }
 
-    convenience init(media: Media) {
-        self.init(mediaID: media.id, mediaType: media.mediaType)
+    convenience init(media: Media, repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository()) {
+        self.init(mediaID: media.id, mediaType: media.mediaType, repo: repo)
         self.media = media
-        loadWatchlistStatus()
     }
 }
 
 extension MediaDetailsViewModel: MediaDetailsWatchlistManager {
     private func loadWatchlistStatus() {
-        guard let media else { return }
         Task {
-            // TODO: update WatchlistManager to work with IDs
-            isInWatchlist = await WatchlistManager.shared.isInWatchlist(media)
+            isInWatchlist = await WatchlistManager.shared.isInWatchlist(mediaIdentifier.id)
         }
     }
 
     func toggleWatchlist() {
-        guard let media else { return }
         Task {
+            guard let media else { return }
             await WatchlistManager.shared.toggleWatchlist(media)
             loadWatchlistStatus()
         }

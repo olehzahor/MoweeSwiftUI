@@ -76,6 +76,19 @@ class WatchlistManager: WatchlistManagerInterface {
             return false
         }
     }
+    
+    func isInWatchlist(_ mediaID: Int) async -> Bool {
+        do {
+            let predicate = #Predicate<WatchlistItem> { $0.media.id == mediaID }
+            let items = try await dataService.fetch(predicate: predicate)
+            let exists = !items.isEmpty
+            Logger.shared.log("Checked watchlist for (\(mediaID)): \(exists)", level: .info)
+            return exists
+        } catch {
+            Logger.shared.log("Failed to check watchlist: \(error)", level: .error)
+            return false
+        }
+    }
 
     /// Toggles the watchlist state: adds if not present, removes if present.
     func toggleWatchlist(_ media: Media) async {
