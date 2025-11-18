@@ -10,6 +10,12 @@ import Factory
 
 // MARK: - Factory Container
 extension Container {
+    // MARK: - Logger
+    var logger: Factory<Logger> {
+        self { Logger() }
+            .singleton
+    }
+
     // MARK: - Network Client
     var networkClient: Factory<NetworkClient2> {
         self { NetworkClient2() }
@@ -18,7 +24,7 @@ extension Container {
     
     // MARK: - Watchlist Repository
     var watchlistRepository: Factory<SwiftDataWatchlistRepository> {
-        self { SwiftDataWatchlistRepository() }
+        self { SwiftDataWatchlistRepository(logger: self.logger.resolve()) }
             .singleton
     }
 }
