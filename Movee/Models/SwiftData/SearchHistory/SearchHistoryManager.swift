@@ -9,34 +9,26 @@ import Foundation
 import SwiftData
 import Combine
 
-/// Defines the public interface for managing search history.
-protocol SearchHistoryManagerInterface {
+@MainActor
+protocol SearchHistoryManager {
     func addToHistory(_ media: Media) async
     func removeFromHistory(_ media: Media) async
     var itemsPublisher: AnyPublisher<[SearchHistoryItem], Never> { get }
 }
 
-/// Manages persisting and observing search history items.
-final class SearchHistoryManager: SearchHistoryManagerInterface {
-    static let shared = SearchHistoryManager()
+@MainActor @Observable
+final class SwiftDataSearchHistoryManager: SearchHistoryManager {
+    //static let shared = SearchHistoryManager()
 
     private let dataService = SwiftDataService<SearchHistoryItem>(modelContainer: AppContainer.shared)
     private let itemsSubject = CurrentValueSubject<[SearchHistoryItem], Never>([])
 
-    /// Emits the current list of history items on the main thread.
     var itemsPublisher: AnyPublisher<[SearchHistoryItem], Never> {
         itemsSubject
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
-    private init() {
-        Task { [weak self] in
-            await self?.reloadItems()
-        }
-    }
-
-    /// Adds a new entry for the given media.
     func addToHistory(_ media: Media) async {
         do {
             let stored = StoredMedia(media)
@@ -49,7 +41,6 @@ final class SearchHistoryManager: SearchHistoryManagerInterface {
         }
     }
 
-    /// Removes all history entries matching the given media.
     func removeFromHistory(_ media: Media) async {
         do {
             let predicate = #Predicate<SearchHistoryItem> { $0.media.id == media.id }
@@ -64,12 +55,10 @@ final class SearchHistoryManager: SearchHistoryManagerInterface {
         }
     }
 
-    /// Returns the current number of search history items from the in-memory cache.
     func count() -> Int {
         itemsSubject.value.count
     }
 
-    /// Fetches the current items and emits them via the publisher.
     private func reloadItems() async {
         do {
             let items = try await dataService.fetch()
@@ -78,6 +67,12 @@ final class SearchHistoryManager: SearchHistoryManagerInterface {
             }
         } catch {
             Logger.shared.log("Failed to fetch search history: \(error)", level: .error)
+        }
+    }
+    
+    nonisolated init() {
+        Task { [weak self] in
+            await self?.reloadItems()
         }
     }
 }

@@ -9,8 +9,6 @@ import SwiftUI
 import Factory
 
 struct MainView: View {
-    let items = Container.shared.watchlistRepository().items
-    
     var body: some View {
         TabView {
             Tab("Explore", systemImage: "house") {
@@ -29,7 +27,6 @@ struct MainView: View {
                 NavigationStack {
                     NewSearchView()
                 }
-                //.navigationBarTitleDisplayMode(.automatic)
             }
         }
     }

@@ -9,7 +9,7 @@ import SwiftUI
 import Factory
 
 struct WatchlistView: View {
-    private let repository: WatchlistRepository
+    private let repository: SwiftDataWatchlistRepository = Container.shared.watchlistRepository()
 
     private var emptyState: some View {
         ContentUnavailableView(
@@ -50,9 +50,5 @@ struct WatchlistView: View {
         }
         .navigationTitle("Watchlist")
         .navigationBarTitleDisplayMode(.large)
-    }
-    
-    init(repository: WatchlistRepository = Container.shared.watchlistRepository()) {
-        self.repository = repository
     }
 }
