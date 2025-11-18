@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CollectionView: View {
-    private let viewModel: CollectionViewModel
+    @State private var viewModel: CollectionViewModel
     
     var body: some View {
         ScrollView {

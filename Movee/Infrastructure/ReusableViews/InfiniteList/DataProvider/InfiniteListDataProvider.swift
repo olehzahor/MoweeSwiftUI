@@ -16,4 +16,4 @@ protocol InfiniteListDataProvider {
     func refresh()
 }
 
-extension PagedDataSource: @preconcurrency InfiniteListDataProvider { }
+extension PagedDataSource: @MainActor InfiniteListDataProvider { }

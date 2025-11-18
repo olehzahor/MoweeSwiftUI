@@ -19,7 +19,7 @@ struct MainView: View {
             
             Tab("Watchlist", systemImage: "list.and.film") {
                 NavigationStack {
-                    WatchlistView()
+                    MediasListView(.watchlist())
                 }
             }
             
