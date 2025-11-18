@@ -15,7 +15,7 @@ struct MediasCarouselView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(alignment: .top) {
+            HStack(alignment: .top) {
                 if placeholder {
                     ForEach(0..<5, id: \.self) { _ in
                         MediaPosterView(.placeholder)
@@ -24,6 +24,7 @@ struct MediasCarouselView: View {
                 } else {
                     ForEach(medias) { media in
                         NavigationLink {
+                            EmptyView()
                             switch media.object {
                             case .media(let media):
                                 MediaDetailsView(media: media)

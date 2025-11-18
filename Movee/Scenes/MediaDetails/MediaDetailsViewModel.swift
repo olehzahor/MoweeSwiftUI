@@ -30,6 +30,71 @@ final class MediaDetailsViewModel {
     var videos: [Video]?
     var collection = SectionData<Media>(name: "Collection")
     
+    @ObservationIgnored
+    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+        .details: .init(
+            priority: 0,
+            fetch: { [repo, mediaIdentifier] in
+                try await repo.fetchMedia(mediaIdentifier)
+            },
+            update: { [weak self] media in
+                self?.media = media
+                self?.loadWatchlistStatus()
+            }
+        ),
+        .seasons: .init(
+            fetch: { [weak self] in
+                self?.media?.seasons ?? []
+            },
+            update: { [weak self] seasons in
+                self?.seasons.items = seasons
+            }
+        ),
+        .related: .init(
+            fetch: { [repo, mediaIdentifier] in
+                try await repo.fetchRelated(mediaIdentifier)
+            },
+            update: { [weak self] related in
+                self?.related.items = related
+            }
+        ),
+        .credits: .init(
+            fetch: { [repo, mediaIdentifier] in
+                try await repo.fetchCredits(mediaIdentifier)
+            },
+            update: { [weak self] credits in
+                self?.credits = credits
+            }
+        ),
+        .reviews: .init(
+            fetch: { [repo, mediaIdentifier] in
+                try await repo.fetchReviews(mediaIdentifier)
+            },
+            update: { [weak self] reviews in
+                self?.reviews = reviews
+            }
+        ),
+        .videos: .init(
+            fetch: { [repo, mediaIdentifier] in
+                try await repo.fetchVideos(mediaIdentifier)
+            },
+            update: { [weak self] videos in
+                self?.videos = videos
+            }
+        ),
+        .collection: .init(
+            fetch: { [weak self, repo] in
+                try await repo.fetchCollection(self?.media)
+            },
+            update: { [weak self] collection in
+                guard let collection else { return }
+                self?.collection.update(with: collection)
+            }, isEmpty: { collection in
+                collection?.medias.isEmpty ?? true
+            }
+        )
+    ]
+    
     private func setupSectionsContext() {
         if mediaIdentifier.type != .tvShow {
             loader.updateLoadState(for: .seasons, .loaded(isEmpty: true))
@@ -54,70 +119,7 @@ final class MediaDetailsViewModel {
             sections: Section.allCases,
             maxConcurrent: 3
         )
-        
-        self.loader.setConfigs([
-            .details: .init(
-                priority: 0,
-                fetch: { [repo, mediaIdentifier] in
-                    try await repo.fetchMedia(mediaIdentifier)
-                },
-                update: { [weak self] media in
-                    self?.media = media
-                    self?.loadWatchlistStatus()
-                }
-            ),
-            .seasons: .init(
-                fetch: { [weak self] in
-                    self?.media?.seasons ?? []
-                },
-                update: { [weak self] seasons in
-                    self?.seasons.items = seasons
-                }
-            ),
-            .related: .init(
-                fetch: { [repo, mediaIdentifier] in
-                    try await repo.fetchRelated(mediaIdentifier)
-                },
-                update: { [weak self] related in
-                    self?.related.items = related
-                }
-            ),
-            .credits: .init(
-                fetch: { [repo, mediaIdentifier] in
-                    try await repo.fetchCredits(mediaIdentifier)
-                },
-                update: { [weak self] credits in
-                    self?.credits = credits
-                }
-            ),
-            .reviews: .init(
-                fetch: { [repo, mediaIdentifier] in
-                    try await repo.fetchReviews(mediaIdentifier)
-                },
-                update: { [weak self] reviews in
-                    self?.reviews = reviews
-                }
-            ),
-            .videos: .init(
-                fetch: { [repo, mediaIdentifier] in
-                    try await repo.fetchVideos(mediaIdentifier)
-                },
-                update: { [weak self] videos in
-                    self?.videos = videos
-                }
-            ),
-            .collection: .init(
-                fetch: { [weak self, repo] in
-                    try await repo.fetchCollection(self?.media)
-                },
-                update: { [weak self] collection in
-                    guard let collection else { return }
-                    self?.collection.update(with: collection)
-                }, isEmpty: { collection in
-                    collection?.medias.isEmpty ?? true
-                }
-            )
-        ])
+        self.loader.setConfigs(fetchConfigs)
 
         setupSectionsContext()
         loadWatchlistStatus()

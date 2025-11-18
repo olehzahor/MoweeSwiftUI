@@ -8,28 +8,61 @@
 import SwiftUI
 
 struct MediasListView: View {
-    var viewModel: MediasListViewModel
+    @State private var viewModel: MediasListViewModel
 
-    var body: some View {
-        NavigationStack {            
-            InfiniteList(viewModel.dataSource) { media in
-                NavigationLink {
-                    MediaDetailsView(media: media)
-                } label: {
-                    MediaRowView(data: .init(media: media))
-                }
-            } placeholder: {
-                MediaRowView()
-                    .loading(true)
+    private var titleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        viewModel.largeTitle ? .large : .inline
+    }
+    
+    private var emptyState: some View {
+        ContentUnavailableView(
+            viewModel.emptyState.title,
+            systemImage: viewModel.emptyState.systemImage,
+            description: Text(viewModel.emptyState.description)
+        )
+    }
+
+    private var mediaList: some View {
+        InfiniteList(viewModel.dataSource) { media in
+            NavigationLink {
+                MediaDetailsView(media: media)
+            } label: {
+                MediaRowView(data: .init(media: media))
             }
-            .listStyle(.plain)
-            .scrollIndicators(.hidden)
-            .navigationTitle(viewModel.title)
-            .navigationBarTitleDisplayMode(.inline)
+            .swipeActions(edge: .trailing) {
+                if let onDelete = viewModel.onDelete {
+                    Button(role: .destructive) {
+                        onDelete(media)
+                    } label: {
+                        Label("Remove", systemImage: "trash")
+                    }
+                }
+            }
+        } placeholder: {
+            MediaRowView()
+                .loading(true)
+        }
+        .listStyle(.plain)
+        .scrollIndicators(.hidden)
+        .navigationTitle(viewModel.title)
+        .navigationBarTitleDisplayMode(titleDisplayMode)
+    }
+    
+    var body: some View {
+        NavigationStack {
+            if viewModel.dataSource.loadState.isEmpty {
+                emptyState
+            } else {
+                mediaList
+            }
         }
     }
 
+    init(_ viewModel: MediasListViewModel) {
+        self.viewModel = viewModel
+    }
+    
     init(section: MediasSection) {
-        viewModel = MediasListViewModel(section: section)
+        self.init(.section(section))
     }
 }

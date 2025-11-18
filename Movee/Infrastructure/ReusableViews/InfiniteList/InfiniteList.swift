@@ -106,7 +106,7 @@ extension InfiniteList {
     where DataProvider.Item == Item {
             self.init(
                 items: dataProvider.items,
-                isLoading: dataProvider.loadState.isLoading,
+                isLoading: dataProvider.loadState.isAwaitingData,
                 hasMorePages: dataProvider.hasMorePages,
                 threshold: threshold,
                 placeholdersCount: placeholdersCount,
