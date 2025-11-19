@@ -40,8 +40,10 @@ extension SectionView {
     }
     
     static func castAndCrew(_ persons: [MediaPerson]?) -> SectionView where Content == PersonsCarouselView {
-        SectionView(header: .init(title: "Cast and crew") {
-            AnyView(MediaPersonsListView(persons: persons))
+        SectionView(header: .init(title: "Cast and crew") { coordinator in
+            if let persons {
+                coordinator?.push(.personsList(persons))
+            }
         }) {
             PersonsCarouselView(persons: persons ?? [])
         }
@@ -50,9 +52,10 @@ extension SectionView {
 
 extension SectionHeaderData {
     init(section: MediasSection) {
-        self.init(
-            title: section.title,
-            action: section.dataProvider != nil ? { AnyView(MediasListView(section: section)) } : nil
-        )
+        self.init(title: section.title) { coordinator in
+            if section.dataProvider != nil {
+                coordinator?.push(.mediasList(section))
+            }
+        }
     }
 }

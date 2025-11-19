@@ -50,12 +50,10 @@ struct MediasListView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            if viewModel.dataSource.loadState.isEmpty {
-                emptyState
-            } else {
-                mediaList
-            }
+        if viewModel.dataSource.loadState.isEmpty {
+            emptyState
+        } else {
+            mediaList
         }
     }
 
