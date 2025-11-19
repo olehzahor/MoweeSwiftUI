@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct MediaPerson: Identifiable {
+struct MediaPerson: Hashable, Identifiable {
     let id: Int
     let type: PersonType
     let name: String

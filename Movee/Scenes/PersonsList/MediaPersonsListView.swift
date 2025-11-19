@@ -9,12 +9,13 @@ import SwiftUI
 
 struct MediaPersonsListView: View {
     @StateObject var viewModel: MediaPersonsListViewModel
-    
+    @Environment(\.coordinator) private var coordinator
+
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
         count: 4
     )
-    
+
     var body: some View {
         ScrollView {
             ForEach(viewModel.departments, id: \.self) { department in
@@ -24,8 +25,8 @@ struct MediaPersonsListView: View {
                         .padding(.horizontal)
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(viewModel.getPersons(forDepartment: department), id: \.creditID) { person in
-                            NavigationLink {
-                                NewPersonDetailsView(person: person)
+                            Button {
+                                coordinator?.push(.personDetails(person))
                             } label: {
                                 PersonMediumView(person: person)
                             }

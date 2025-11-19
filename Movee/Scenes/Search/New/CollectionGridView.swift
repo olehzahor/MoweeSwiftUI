@@ -9,13 +9,26 @@ import SwiftUI
 
 struct CollectionGridView: View {
     @Environment(\.placeholder) private var placeholder: Bool
-    
+    @Environment(\.coordinator) private var coordinator
+
     let items: [Data]
-    
+
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: 16, alignment: .top),
         count: 2
     )
+
+    func handleSelection(_ item: Data) {
+        guard let coordinator else { return }
+        switch item.destination {
+        case .section(let section):
+            coordinator.push(.mediasList(section))
+        case .nestedLists(let nested):
+            coordinator.push(.collection(item.name, nested))
+        case .none:
+            break
+        }
+    }
 
     var body: some View {
         LazyVGrid(columns: columns) {
@@ -26,15 +39,8 @@ struct CollectionGridView: View {
                 .loadable()
             } else {
                 ForEach(items, id: \.name) { item in
-                    NavigationLink {
-                        switch item.destination {
-                        case .section(let section):
-                            MediasListView(section: section)
-                        case .nestedLists(let nested):
-                            CollectionView(title: item.name, lists: nested)
-                        case .none:
-                            EmptyView()
-                        }
+                    Button {
+                        handleSelection(item)
                     } label: {
                         CollectionItemView(item: .init(item))
                     }

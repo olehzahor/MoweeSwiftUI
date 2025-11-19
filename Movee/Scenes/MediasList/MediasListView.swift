@@ -9,11 +9,12 @@ import SwiftUI
 
 struct MediasListView: View {
     @State private var viewModel: MediasListViewModel
+    @Environment(\.coordinator) private var coordinator
 
     private var titleDisplayMode: NavigationBarItem.TitleDisplayMode {
         viewModel.largeTitle ? .large : .inline
     }
-    
+
     private var emptyState: some View {
         ContentUnavailableView(
             viewModel.emptyState.title,
@@ -24,8 +25,8 @@ struct MediasListView: View {
 
     private var mediaList: some View {
         InfiniteList(viewModel.dataSource) { media in
-            NavigationLink {
-                MediaDetailsView(media: media)
+            Button {
+                coordinator?.push(.mediaDetails(media))
             } label: {
                 MediaRowView(data: .init(media: media))
             }
