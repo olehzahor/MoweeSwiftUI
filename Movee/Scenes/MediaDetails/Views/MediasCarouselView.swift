@@ -6,16 +6,14 @@
 //
 
 import SwiftUI
-import Factory
 
 struct MediasCarouselView: View {
     typealias OnSelectClosure = (MediaUIModel.Object?) -> Void
 
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
+    @Environment(\.coordinator) private var coordinator
 
-    private let coordinator: AppCoordinator?
-    
     var medias: [MediaUIModel]
     private let onSelect: OnSelectClosure?
 
@@ -58,11 +56,8 @@ struct MediasCarouselView: View {
         .fallible()
     }
     
-    init(medias: [MediaUIModel],
-         coordinator: AppCoordinator? = Container.shared.coordinator(),
-         onSelect: OnSelectClosure? = nil) {
+    init(medias: [MediaUIModel], onSelect: OnSelectClosure? = nil) {
         self.medias = medias
-        self.coordinator = coordinator
         self.onSelect = onSelect
     }
 }
