@@ -8,13 +8,25 @@
 import SwiftUI
 
 struct PersonsCarouselView: View {
+    typealias OnSelectClosure = (MediaPerson) -> Void
+
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
+    @Environment(\.coordinator) private var coordinator
 
     var persons: [MediaPerson]
+    private let onSelect: OnSelectClosure?
 
     private var carousel: [MediaPerson] {
         Array(persons.filter({ $0.profilePictureURL != nil }).prefix(50))
+    }
+
+    func handleSelection(_ person: MediaPerson) {
+        if let onSelect {
+            onSelect(person)
+        } else if let coordinator {
+            coordinator.push(.personDetails(person))
+        }
     }
 
     var body: some View {
@@ -26,8 +38,8 @@ struct PersonsCarouselView: View {
                     }
                 } else {
                     ForEach(carousel, id: \.creditID) { person in
-                        NavigationLink {
-                            NewPersonDetailsView(person: person)
+                        Button {
+                            handleSelection(person)
                         } label: {
                             PersonCompactView(person: person)
                         }
@@ -39,6 +51,11 @@ struct PersonsCarouselView: View {
         .padding(.horizontal, -horizontalPadding)
         .loadable()
         .fallible()
+    }
+
+    init(persons: [MediaPerson], onSelect: OnSelectClosure? = nil) {
+        self.persons = persons
+        self.onSelect = onSelect
     }
 }
 
