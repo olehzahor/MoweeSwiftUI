@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct SectionHeaderData {
+    typealias ActionClosure = (AppCoordinator?) -> Void
+    
     let title: String
     let actionButton: String?
     let isButtonHidden: Bool
-    let action: (() -> AnyView)?
+    let action: ActionClosure?
     
-    init(title: String, actionButton: String? = "See All", isButtonHidden: Bool = false, action: (() -> AnyView)? = nil) {
+    init(title: String, actionButton: String? = "See All", isButtonHidden: Bool = false, action: ActionClosure? = nil) {
         self.title = title
         self.actionButton = actionButton
         self.isButtonHidden = isButtonHidden
@@ -22,6 +24,8 @@ struct SectionHeaderData {
 }
 
 struct SectionHeaderView: View {
+    @Environment(\.coordinator) private var coordinator
+    
     let data: SectionHeaderData
      
     var body: some View {
@@ -32,8 +36,8 @@ struct SectionHeaderView: View {
             if !data.isButtonHidden,
                let actionButton = data.actionButton,
                let action = data.action {
-                NavigationLink {
-                    action()
+                Button {
+                    action(coordinator)
                 } label: {
                     Text(actionButton)
                 }
@@ -43,7 +47,10 @@ struct SectionHeaderView: View {
 }
 
 extension SectionHeaderView {
-    init(title: String, actionButton: String? = "See All", isButtonHidden: Bool = false, action: (() -> AnyView)? = nil) {
+    init(title: String,
+         actionButton: String? = "See All",
+         isButtonHidden: Bool = false,
+         action: SectionHeaderData.ActionClosure? = nil) {
         self.data = .init(
             title: title,
             actionButton: actionButton,

@@ -31,7 +31,7 @@ struct PersonsCarouselView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .top) {
+            LazyHStack(alignment: .top) {
                 if placeholder {
                     ForEach(0..<5, id: \.self) { _ in
                         PersonCompactView(person: MediaPerson.placeholder)
