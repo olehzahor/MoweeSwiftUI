@@ -7,18 +7,16 @@
 
 import SwiftUI
 import Combine
-import Factory
 
 struct MediaReviewsCarouselView: View {
     typealias OnSelectClosure = (Review) -> Void
-    
+
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
-    
+    @Environment(\.coordinator) private var coordinator
+
     private let _reviews: [Review]
-    
     private let onSelect: OnSelectClosure?
-    private let coordinator: AppCoordinator?
     
     var reviews: [Review] {
         placeholder ? [.placeholder, .placeholder] : _reviews
@@ -51,11 +49,8 @@ struct MediaReviewsCarouselView: View {
         .padding(.horizontal, -horizontalPadding)
     }
         
-    init(reviews: [Review],
-         coordinator: AppCoordinator? = Container.shared.coordinator(),
-         onSelect: OnSelectClosure? = nil) {
+    init(reviews: [Review], onSelect: OnSelectClosure? = nil) {
         self._reviews = reviews
-        self.coordinator = coordinator
         self.onSelect = onSelect
     }
 }

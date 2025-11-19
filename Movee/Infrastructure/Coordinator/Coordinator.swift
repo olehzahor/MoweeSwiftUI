@@ -98,9 +98,37 @@ struct CoordinatedModifier<C: Coordinator>: ViewModifier {
     }
 }
 
+// MARK: - Environment Key
+
+private struct CoordinatorKey: EnvironmentKey {
+    static let defaultValue: AppCoordinator? = nil
+}
+
+extension EnvironmentValues {
+    var coordinator: AppCoordinator? {
+        get { self[CoordinatorKey.self] }
+        set { self[CoordinatorKey.self] = newValue }
+    }
+}
+
 extension View {
     func coordinated<C: Coordinator>(with coordinator: C) -> some View {
         modifier(CoordinatedModifier(coordinator: coordinator))
+    }
+}
+
+// MARK: - Coordinated Navigation Stack
+
+struct CoordinatedNavigationStack<Content: View>: View {
+    @ObservedObject var coordinator: AppCoordinator
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        NavigationStack(path: $coordinator.path) {
+            content()
+                .coordinated(with: coordinator)
+        }
+        .environment(\.coordinator, coordinator)
     }
 }
 
