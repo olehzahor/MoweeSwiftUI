@@ -9,23 +9,29 @@ import SwiftUI
 import Factory
 
 struct MainView: View {
+    @StateObject private var coordinator = Container.shared.coordinator()
+
     var body: some View {
         TabView {
             Tab("Explore", systemImage: "house") {
-                NavigationStack {
+                NavigationStack(path: $coordinator.path) {
                     ExploreView()
+                        .coordinated(with: coordinator)
                 }
             }
-            
+
             Tab("Watchlist", systemImage: "list.and.film") {
-                NavigationStack {
+                NavigationStack(path: $coordinator.path) {
                     MediasListView(.watchlist())
                 }
             }
-            
+
             Tab("Discover", systemImage: "magnifyingglass", role: .search) {
                 NavigationStack {
                     NewSearchView()
+                }
+                .navigationDestination(for: Media.self) { media in
+                    MediaDetailsView(media: media)
                 }
             }
         }

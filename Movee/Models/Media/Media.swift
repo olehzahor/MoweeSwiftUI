@@ -18,7 +18,7 @@ enum MediaType: String, Codable {
 }
 
 // MARK: - Top-Level Media Model
-struct Media: Codable, Equatable, Identifiable {
+struct Media: Hashable, Codable, Equatable, Identifiable {
     var id: Int
     var mediaType: MediaType
 

@@ -6,13 +6,34 @@
 //
 
 import SwiftUI
+import Factory
 
 struct MediasCarouselView: View {
+    typealias OnSelectClosure = (MediaUIModel.Object?) -> Void
+
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
+
+    private let coordinator: AppCoordinator?
     
     var medias: [MediaUIModel]
+    private let onSelect: OnSelectClosure?
 
+    func handleSelection(_ mediaObject: MediaUIModel.Object?) {
+        if let onSelect {
+            onSelect(mediaObject)
+        } else if let coordinator {
+            switch mediaObject {
+            case .media(let media):
+                coordinator.push(.mediaDetails(media))
+            case .season(let season, let media):
+                coordinator.push(.seasonDetails(media.id, season))
+            default:
+                return
+            }
+        }
+    }
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top) {
@@ -23,16 +44,8 @@ struct MediasCarouselView: View {
                     }
                 } else {
                     ForEach(medias) { media in
-                        NavigationLink {
-                            EmptyView()
-                            switch media.object {
-                            case .media(let media):
-                                MediaDetailsView(media: media)
-                            case .season(let season, let media):
-                                SeasonDetailsView(tvShowID: media.id, season: season)
-                            default:
-                                EmptyView()
-                            }
+                        Button {
+                            handleSelection(media.object)
                         } label: {
                             MediaPosterView(media)
                         }
@@ -43,5 +56,13 @@ struct MediasCarouselView: View {
         }
         .padding(.horizontal, -horizontalPadding)
         .fallible()
+    }
+    
+    init(medias: [MediaUIModel],
+         coordinator: AppCoordinator? = Container.shared.coordinator(),
+         onSelect: OnSelectClosure? = nil) {
+        self.medias = medias
+        self.coordinator = coordinator
+        self.onSelect = onSelect
     }
 }
