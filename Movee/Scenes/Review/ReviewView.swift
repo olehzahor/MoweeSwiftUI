@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Factory
 
 struct ReviewView: View {
     let mediaTitle: String

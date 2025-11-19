@@ -28,6 +28,7 @@ struct MediaDetailsView: View {
                     setupRelatedSection()
                     setupFactsSection()
                     setupCollectionSection()
+                    setupReviewsSection()
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 20)

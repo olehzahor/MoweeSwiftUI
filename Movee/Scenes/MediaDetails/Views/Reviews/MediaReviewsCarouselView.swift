@@ -7,16 +7,29 @@
 
 import SwiftUI
 import Combine
+import Factory
 
 struct MediaReviewsCarouselView: View {
+    typealias OnSelectClosure = (Review) -> Void
+    
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
     
     private let _reviews: [Review]
-    @State private var selectedReview: Review? = nil
+    
+    private let onSelect: OnSelectClosure?
+    private let coordinator: AppCoordinator?
     
     var reviews: [Review] {
         placeholder ? [.placeholder, .placeholder] : _reviews
+    }
+    
+    func handleSelection(_ review: Review) {
+        if let onSelect {
+            onSelect(review)
+        } else if let coordinator {
+            coordinator.present(.review("", review))
+        }
     }
     
     var body: some View {
@@ -26,7 +39,7 @@ struct MediaReviewsCarouselView: View {
                     MediaReviewView(review: review)
                         .containerRelativeFrame(.horizontal)
                         .onTapGesture {
-                            selectedReview = review
+                            handleSelection(review)
                         }
                         .frame(height: 250)
                 }
@@ -36,13 +49,14 @@ struct MediaReviewsCarouselView: View {
         .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
         .scrollTargetBehavior(.viewAligned)
         .padding(.horizontal, -horizontalPadding)
-        .sheet(item: $selectedReview) { review in
-            ReviewView(mediaTitle: "Hello there", review: review)
-        }
     }
-    
-    init(reviews: [Review]) {
+        
+    init(reviews: [Review],
+         coordinator: AppCoordinator? = Container.shared.coordinator(),
+         onSelect: OnSelectClosure? = nil) {
         self._reviews = reviews
+        self.coordinator = coordinator
+        self.onSelect = onSelect
     }
 }
 

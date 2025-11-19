@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Review: Codable, Identifiable {
+struct Review: Hashable, Codable, Identifiable {
     let id: String
     let author: String
     let authorDetails: AuthorDetails
@@ -82,7 +82,7 @@ extension Review {
     }
 }
 
-struct AuthorDetails: Codable {
+struct AuthorDetails: Hashable, Codable {
     let name: String
     let username: String
     let avatarPath: String?

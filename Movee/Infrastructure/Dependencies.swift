@@ -10,6 +10,12 @@ import Factory
 
 // MARK: - Factory Container
 extension Container {
+    // MARK: - Navigation
+    var coordinator: Factory<AppCoordinator> {
+        self { AppCoordinator() }
+            .singleton
+    }
+    
     // MARK: - Logger
     var logger: Factory<Logger> {
         self { Logger() }
