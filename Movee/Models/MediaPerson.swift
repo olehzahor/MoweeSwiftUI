@@ -89,7 +89,7 @@ struct MediaPerson: Hashable, Identifiable {
         self.department = person.department
         self.popularity = nil
         self.creditID = nil
-        self.gender = nil
+        self.gender = person.gender
         self.castID = nil
         self.order = nil
         self.birthday = person.birthday

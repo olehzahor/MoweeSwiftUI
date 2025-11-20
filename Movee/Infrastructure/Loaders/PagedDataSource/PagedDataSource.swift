@@ -11,6 +11,7 @@ import Observation
 @Observable
 class PagedDataSource<Item: Identifiable&Decodable> {
     private let loadNext: () async throws -> PageLoadResult<Item>
+    private let onRefresh: () -> Void
     
     private var currentTask: Task<Void, Never>?
 
@@ -52,11 +53,13 @@ class PagedDataSource<Item: Identifiable&Decodable> {
         items = []
         hasMorePages = true
         loadState = .idle
+        onRefresh()
         fetch()
     }
-
-    init(loadNext: @escaping () async throws -> PageLoadResult<Item>) {
+    
+    init(loadNext: @escaping () async throws -> PageLoadResult<Item>, onRefresh: @escaping () -> Void) {
         self.loadNext = loadNext
+        self.onRefresh = onRefresh
     }
 
     deinit {

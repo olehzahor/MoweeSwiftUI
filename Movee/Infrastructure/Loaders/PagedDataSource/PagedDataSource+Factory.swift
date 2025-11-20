@@ -24,6 +24,9 @@ extension PagedDataSource {
                 hasMore: currentPage <= totalPages,
                 isFirstPage: isFirst
             )
+        } onRefresh: {
+            currentPage = 1
+            totalPages = 1
         }
     }
 }
