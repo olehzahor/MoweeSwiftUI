@@ -30,7 +30,7 @@ enum AppRoute: Route {
         case .personsList(let persons):
             MediaPersonsListView(persons: persons)
         case .personDetails(let person):
-            NewPersonDetailsView(person: person)
+            PersonDetailsView(person: person)
         case .seasonDetails(let tvShowID, let season):
             SeasonDetailsView(tvShowID: tvShowID, season: season)
         case .review(let title, let review):
