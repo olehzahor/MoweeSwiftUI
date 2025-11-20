@@ -1,5 +1,5 @@
 //
-//  NewPersonDetailsViewModel.swift
+//  PersonDetailsViewModel.swift
 //  Movee
 //
 //  Created by Oleh on 05.11.2025.
@@ -8,7 +8,7 @@
 import Foundation
 
 @Observable @MainActor
-final class NewPersonDetailsViewModel {
+final class PersonDetailsViewModel {
     private let repo: PersonDetailsRepositoryProtocol = PersonDetailsRepository()
 
     var person: MediaPerson

@@ -1,5 +1,5 @@
 //
-//  NewPersonDetailsView.swift
+//  PersonDetailsView.swift
 //  Movee
 //
 //  Created by Oleh on 05.11.2025.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct NewPersonDetailsView: View {
-    @State private var viewModel: NewPersonDetailsViewModel
+struct PersonDetailsView: View {
+    @State private var viewModel: PersonDetailsViewModel
 
     var body: some View {
         ScrollView {
@@ -47,6 +47,6 @@ struct NewPersonDetailsView: View {
     }
 
     init(person: MediaPerson) {
-        viewModel = NewPersonDetailsViewModel(person: person)
+        viewModel = PersonDetailsViewModel(person: person)
     }
 }
