@@ -8,38 +8,40 @@
 import Foundation
 
 @Observable @MainActor
-class NewPersonDetailsViewModel: SectionFetchable, FailedSectionsReloadable {
+final class NewPersonDetailsViewModel {
     private let repo: PersonDetailsRepositoryProtocol = PersonDetailsRepository()
-    
+
     var person: MediaPerson
     var bio: String = ""
     var knownFor = SectionData<Media>(name: "Known for")
-    
+
     enum Section: CaseIterable { case details, bio, knownFor }
-    var fetchableSections: [Section] = Section.allCases
-    var sectionsContext = AsyncLoadingContext<Section>()
-    var maxConcurrentFetches: Int { 2 }
-    
+    let loader: SectionLoader<Section>
+
     @ObservationIgnored
-    private(set) lazy var fetchConfigs: [Section: AnyFetchConfig] = [
-        .details: AnyFetchConfig(
-            FetchConfig(priority: 0) { [repo, person] in
+    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+        .details: .init(
+            priority: 0,
+            fetch: { [repo, person] in
                 try await repo.fetchDetails(personID: person.id)
-            } onSuccess: { [weak self] result in
+            },
+            update: { [weak self] result in
                 self?.person = result
             }
         ),
-        .bio: AnyFetchConfig(
-            FetchConfig { [unowned self] in
-                person.biography ?? ""
-            } onSuccess: { [weak self] result in
+        .bio: .init(
+            fetch: { [weak self] in
+                self?.person.biography ?? ""
+            },
+            update: { [weak self] result in
                 self?.bio = result
             }
         ),
-        .knownFor: AnyFetchConfig(
-            FetchConfig { [repo, person] in
+        .knownFor: .init(
+            fetch: { [repo, person] in
                 try await repo.fetchKnownFor(personID: person.id)
-            } onSuccess: { [weak self] result in
+            },
+            update: { [weak self] result in
                 self?.knownFor.items = Array(result.prefix(20))
                 self?.knownFor.dataProvider = CustomMediasListDataProvider { _ in
                     .wrap(result)
@@ -47,12 +49,11 @@ class NewPersonDetailsViewModel: SectionFetchable, FailedSectionsReloadable {
             }
         )
     ]
-    
-    func fetchConfig(for section: Section) -> AnyFetchConfig? {
-        fetchConfigs[section]
-    }
-        
+
     init(person: MediaPerson) {
         self.person = person
+
+        self.loader = SectionLoader(sections: Section.allCases, maxConcurrent: 2)
+        self.loader.setConfigs(fetchConfigs)
     }
 }

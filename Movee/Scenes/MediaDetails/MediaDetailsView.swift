@@ -35,7 +35,7 @@ struct MediaDetailsView: View {
             }
         }
         .onFirstAppear {
-            Task { await viewModel.loader.fetchInitialData() }
+            await viewModel.loader.fetchInitialData()
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
