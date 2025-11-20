@@ -9,35 +9,32 @@ import Foundation
 import Combine
 
 @Observable @MainActor
-class SeasonDetailsViewModel: SectionFetchable, FailedSectionsReloadable {
+final class SeasonDetailsViewModel {
     private let repo: SeasonDetailsDataRepositoryProtocol = SeasonDetailsDataRepository()
-    
+
     private let tvShowID: Int
     var season: Season
-    
-    enum Section { case episodes }
-    var fetchableSections: [Section] = [.episodes]
-    var sectionsContext = AsyncLoadingContext<Section>()
-    var maxConcurrentFetches: Int { 1 }
+
+    enum Section: CaseIterable { case episodes }
+    let loader: SectionLoader<Section>
 
     @ObservationIgnored
-    private lazy var fetchConfigs: [Section: AnyFetchConfig] = [
-        .episodes: .init(.init(
-            fetcher: { [tvShowID, season, repo] in
+    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+        .episodes: .init(
+            fetch: { [tvShowID, season, repo] in
                 try await repo.fetchSeason(tvShowID: tvShowID, seasonNumber: season.seasonNumber)
             },
-            onSuccess: { [weak self] result in
+            update: { [weak self] result in
                 self?.season = result
-            })
+            }
         )
     ]
-    
-    func fetchConfig(for section: Section) -> AnyFetchConfig? {
-        fetchConfigs[section]
-    }
 
     init(tvShowID: Int, season: Season) {
         self.tvShowID = tvShowID
         self.season = season
+
+        self.loader = SectionLoader(sections: Section.allCases, maxConcurrent: 1)
+        self.loader.setConfigs(fetchConfigs)
     }
 }

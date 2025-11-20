@@ -16,7 +16,7 @@ struct CollectionView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
                 .onFirstAppear {
-                    viewModel.fetchInitialData()
+                    await viewModel.loader.fetchInitialData()
                 }
         }
         .scrollIndicators(.hidden)

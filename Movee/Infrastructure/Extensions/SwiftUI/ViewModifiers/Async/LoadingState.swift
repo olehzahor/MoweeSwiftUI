@@ -15,14 +15,6 @@ extension View {
             .hidden(hideWhenEmpty ? state.isEmpty : false)
     }
     
-    func loadingState<Fetcher: SectionFetchable&FailedSectionsReloadable, Section>(_ fetcher: Fetcher, section: Section, hideWhenEmpty: Bool = true) -> some View where Section == Fetcher.SectionType {
-        let state = fetcher.sectionsContext[section]
-        return self
-            .loading(state.isAwaitingData)
-            .error(state.error, retry: { fetcher.reloadFailedSections() })
-            .hidden(hideWhenEmpty ? state.isEmpty : false)
-    }
-    
     func loadingState<Section: Hashable>(
         _ loader: SectionLoader<Section>,
         section: Section,

@@ -21,17 +21,17 @@ struct NewPersonDetailsView: View {
                 )
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical)
-                
+
                 SectionView(header: .init(title: "Biography")) {
                     FoldableTextView(text: viewModel.bio, lineLimit: 8)
                         .textStyle(.mediumText)
                 }
-                .loadingState(viewModel, section: .bio)
+                .loadingState(viewModel.loader, section: .bio)
 
                 SectionView.medias(viewModel.knownFor.items,
                                    section: viewModel.knownFor.section)
-                .loadingState(viewModel, section: .knownFor)
-                                
+                .loadingState(viewModel.loader, section: .knownFor)
+
                 SectionView(header: .init(title: "Personal information")) {
                     MediaFactsView(facts: viewModel.person.facts)
                 }
@@ -41,7 +41,7 @@ struct NewPersonDetailsView: View {
             .padding(.bottom)
         }
         .onFirstAppear {
-            viewModel.fetchInitialData()
+            await viewModel.loader.fetchInitialData()
         }
         .navigationTitle(viewModel.person.name)
     }

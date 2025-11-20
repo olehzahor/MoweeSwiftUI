@@ -22,14 +22,14 @@ struct SeasonDetailsView: View {
                 }
                 
                 EpisodesListView(episodes: viewModel.season.episodes)
-                    .loadingState(viewModel, section: .episodes)
+                    .loadingState(viewModel.loader, section: .episodes)
             }.listSectionSeparator(.hidden)
         }
         .scrollIndicators(.hidden)
         .listStyle(.plain)
         .navigationTitle(viewModel.season.name)
         .onFirstAppear {
-            viewModel.fetchInitialData()
+            await viewModel.loader.fetchInitialData()
         }
     }
     

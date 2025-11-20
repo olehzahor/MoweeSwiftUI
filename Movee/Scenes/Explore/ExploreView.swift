@@ -23,7 +23,7 @@ struct ExploreView: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Explore")
         .onFirstAppear {
-            Task { await viewModel.loader.fetchInitialData() }
+            await viewModel.loader.fetchInitialData()
         }
     }
     
