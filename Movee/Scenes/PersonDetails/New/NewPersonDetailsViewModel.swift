@@ -19,7 +19,7 @@ final class NewPersonDetailsViewModel {
     let loader: SectionLoader<Section>
 
     @ObservationIgnored
-    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+    private lazy var fetchConfigs: [Section: FetchConfig] = [
         .details: .init(
             priority: 0,
             fetch: { [repo, person] in

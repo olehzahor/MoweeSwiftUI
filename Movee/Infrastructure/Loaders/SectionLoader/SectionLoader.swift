@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 final class SectionLoader<Section: Hashable> {
-    private var configs: [Section: FetchConfig2]
+    private var configs: [Section: FetchConfig]
     let sections: [Section]
     let maxConcurrent: Int
 
@@ -19,7 +19,7 @@ final class SectionLoader<Section: Hashable> {
 
     init(
         sections: [Section],
-        configs: [Section: FetchConfig2] = [:],
+        configs: [Section: FetchConfig] = [:],
         maxConcurrent: Int = 3
     ) {
         self.sections = sections
@@ -27,7 +27,7 @@ final class SectionLoader<Section: Hashable> {
         self.maxConcurrent = maxConcurrent
     }
 
-    func setConfigs(_ configs: [Section: FetchConfig2]) {
+    func setConfigs(_ configs: [Section: FetchConfig]) {
         self.configs = configs
     }
     

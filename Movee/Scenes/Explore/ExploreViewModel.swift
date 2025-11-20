@@ -17,7 +17,7 @@ final class ExploreViewModel {
         loader = SectionLoader(sections: sections, maxConcurrent: 2)
 
         let configs = Dictionary(uniqueKeysWithValues: sections.map { section in
-            (section, FetchConfig2 {
+            (section, FetchConfig {
                 return try await section.dataProvider?.fetch(page: 1) ?? .wrap([])
             } update: { [weak self] response in
                 self?.medias[section] = response.results

@@ -19,7 +19,7 @@ final class SeasonDetailsViewModel {
     let loader: SectionLoader<Section>
 
     @ObservationIgnored
-    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+    private lazy var fetchConfigs: [Section: FetchConfig] = [
         .episodes: .init(
             fetch: { [tvShowID, season, repo] in
                 try await repo.fetchSeason(tvShowID: tvShowID, seasonNumber: season.seasonNumber)

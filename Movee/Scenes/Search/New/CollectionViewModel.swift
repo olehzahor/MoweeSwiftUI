@@ -18,7 +18,7 @@ final class CollectionViewModel {
     let loader: SectionLoader<Section>
 
     @ObservationIgnored
-    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+    private lazy var fetchConfigs: [Section: FetchConfig] = [
         .main: .init(
             fetch: { [repo] in
                 try await repo.fetchLists()

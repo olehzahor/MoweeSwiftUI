@@ -31,7 +31,7 @@ final class MediaDetailsViewModel {
     var collection = SectionData<Media>(name: "Collection")
     
     @ObservationIgnored
-    private lazy var fetchConfigs: [Section: FetchConfig2] = [
+    private lazy var fetchConfigs: [Section: FetchConfig] = [
         .details: .init(
             priority: 0,
             fetch: { [repo, mediaIdentifier] in
