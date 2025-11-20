@@ -5,6 +5,7 @@
 //  Created by user on 11/11/25.
 //
 
+@MainActor
 protocol InfiniteListDataProvider {
     associatedtype Item: Identifiable
 
@@ -16,4 +17,4 @@ protocol InfiniteListDataProvider {
     func refresh()
 }
 
-extension PagedDataSource: @MainActor InfiniteListDataProvider { }
+extension PagedDataSource: InfiniteListDataProvider { }

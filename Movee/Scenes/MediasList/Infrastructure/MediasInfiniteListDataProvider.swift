@@ -8,4 +8,16 @@
 protocol MediasInfiniteListDataProvider: InfiniteListDataProvider where Item == Media { }
 
 extension PagedDataSource<Media>: MediasInfiniteListDataProvider { }
-extension StoredItemsListDataProvider<Media>: MediasInfiniteListDataProvider { }
+
+extension SwiftDataWatchlistRepository: MediasInfiniteListDataProvider {
+    var items: [Media] {
+        watchlist.map { .init($0.media) }
+    }
+    
+    var hasMorePages: Bool {
+        false
+    }
+    
+    func fetch() {}
+    func refresh() {}
+}

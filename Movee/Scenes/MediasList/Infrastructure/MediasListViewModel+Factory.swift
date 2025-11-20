@@ -21,9 +21,7 @@ extension MediasListViewModel {
     
     static func watchlist(_ repo: WatchlistRepository = Container.shared.watchlistRepository()) -> Self {
         Self(
-            StoredItemsListDataProvider(
-                items: repo.items.map { Media($0.media) }
-            ),
+            Container.shared.watchlistRepository(),
             title: "Watchlist",
             largeTitle: true,
             emptyState: .watchlist) { media in
