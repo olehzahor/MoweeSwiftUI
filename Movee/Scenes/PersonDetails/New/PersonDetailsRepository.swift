@@ -13,7 +13,7 @@ protocol PersonDetailsRepositoryProtocol {
 }
 
 struct PersonDetailsRepository: PersonDetailsRepositoryProtocol {
-    private let network: NetworkClient2
+    private let network: NetworkClient
     private let parser: PersonDetailsRepositoryParserProtocol
     
     func fetchDetails(personID: Int) async throws -> MediaPerson {
@@ -26,7 +26,7 @@ struct PersonDetailsRepository: PersonDetailsRepositoryProtocol {
         return parser.parse(response)
     }
     
-    init(network: NetworkClient2 = Container.shared.networkClient(),
+    init(network: NetworkClient = Container.shared.networkClient(),
          parser: PersonDetailsRepositoryParserProtocol = PersonDetailsRepositoryParser()) {
         self.network = network
         self.parser = parser

@@ -5,12 +5,13 @@
 //  Created by user on 4/9/25.
 //
 
-import Combine
 import Foundation
 
 class GenresMapper {
     static let shared = GenresMapper()
-    
+
+    private let client = NetworkClient()
+
     // Fallback hardcoded values for movies
     private(set) var movieGenres: [Int: String] = [
         28: "Action",
@@ -33,7 +34,7 @@ class GenresMapper {
         10752: "War",
         37: "Western"
     ]
-    
+
     // Fallback hardcoded values for TV shows
     private(set) var tvGenres: [Int: String] = [
         10759: "Action & Adventure",
@@ -53,40 +54,23 @@ class GenresMapper {
         10768: "War & Politics"
     ]
     
-    private var cancellables = Set<AnyCancellable>()
-    
-    private init() {
-        downloadGenres()
-    }
-    
-    private func downloadGenres() {
-        // Fetch movie genres using TMDBAPIClient
-        TMDBAPIClient.shared.fetchMovieGenres()
-            .sink(receiveCompletion: { completion in
-                if case let .failure(error) = completion {
-                    print("Failed to download movie genres: \(error.localizedDescription). Using fallback values.")
-                }
-            }, receiveValue: { [weak self] response in
-                let mapping = Dictionary(uniqueKeysWithValues: response.genres.map { ($0.id, $0.name) })
-                DispatchQueue.main.async {
-                    self?.movieGenres = mapping
-                }
-            })
-            .store(in: &cancellables)
-        
-        // Fetch TV genres using TMDBAPIClient
-        TMDBAPIClient.shared.fetchTVGenres()
-            .sink(receiveCompletion: { completion in
-                if case let .failure(error) = completion {
-                    print("Failed to download TV genres: \(error.localizedDescription). Using fallback values.")
-                }
-            }, receiveValue: { [weak self] response in
-                let mapping = Dictionary(uniqueKeysWithValues: response.genres.map { ($0.id, $0.name) })
-                DispatchQueue.main.async {
-                    self?.tvGenres = mapping
-                }
-            })
-            .store(in: &cancellables)
+    @MainActor
+    private func downloadGenres() async {
+        do {
+            let response: GenresResponse = try await client.request(TMDB.MovieGenres())
+            let mapping = Dictionary(uniqueKeysWithValues: response.genres.map { ($0.id, $0.name) })
+            self.movieGenres = mapping
+        } catch {
+            print("Failed to download movie genres: \(error.localizedDescription). Using fallback values.")
+        }
+
+        do {
+            let response: GenresResponse = try await client.request(TMDB.TVGenres())
+            let mapping = Dictionary(uniqueKeysWithValues: response.genres.map { ($0.id, $0.name) })
+            self.tvGenres = mapping
+        } catch {
+            print("Failed to download TV genres: \(error.localizedDescription). Using fallback values.")
+        }
     }
     
     func mapping(for mediaType: MediaType) -> [Int: String] {
@@ -100,9 +84,12 @@ class GenresMapper {
         let mapping = self.mapping(for: mediaType)
         return ids.compactMap { mapping[$0] }
     }
+    
+    private init() {
+        Task { await downloadGenres() }
+    }
 }
 
-// Models for decoding the TMDB genres responses.
 struct Genre: Codable, Hashable {
     let id: Int
     let name: String
