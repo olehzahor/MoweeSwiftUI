@@ -17,8 +17,8 @@ extension Container {
     }
 
     // MARK: - Network Client
-    var networkClient: Factory<NetworkClient2> {
-        self { NetworkClient2() }
+    var networkClient: Factory<NetworkClient> {
+        self { NetworkClient() }
             .singleton
     }
     

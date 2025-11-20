@@ -9,7 +9,7 @@ import Foundation
 import Factory
 
 struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
-    private let networkClient: NetworkClient2
+    private let networkClient: NetworkClient
     
     func fetchMedia(_ identifier: MediaIdentifier) async throws -> Media {
         return switch identifier.type {
@@ -82,7 +82,7 @@ struct MediaDetailsRepository: MediaDetailsRepositoryProtocol {
         return MediasCollection(name: response.name, medias: medias)
     }
     
-    init(networkClient: NetworkClient2 = Container.shared.networkClient()) {
+    init(networkClient: NetworkClient = Container.shared.networkClient()) {
         self.networkClient = networkClient
     }
 }

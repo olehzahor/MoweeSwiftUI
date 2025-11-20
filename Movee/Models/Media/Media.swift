@@ -67,7 +67,6 @@ extension Media {
 }
 
 // MARK: - Extra Info Enum
-
 extension Media {
     var posterURL: URL? {
         TMDBImageURLProvider.shared.url(path: posterPath, size: .w154)

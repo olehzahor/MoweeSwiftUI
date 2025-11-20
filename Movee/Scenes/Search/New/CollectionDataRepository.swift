@@ -13,9 +13,9 @@ protocol CollectionDataRepository {
 }
 
 struct DiscoverCollectionDataRepository: CollectionDataRepository {
-    private let network: NetworkClient2
+    private let network: NetworkClient
 
-    init(network: NetworkClient2 = Container.shared.networkClient()) {
+    init(network: NetworkClient = Container.shared.networkClient()) {
         self.network = network
     }
 

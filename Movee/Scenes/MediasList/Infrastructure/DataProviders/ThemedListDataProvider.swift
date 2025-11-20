@@ -8,7 +8,7 @@
 import Factory
 
 struct ThemedListDataProvider: MediasListDataProvider {
-    let networkClient: NetworkClient2
+    let networkClient: NetworkClient
     
     let listID: Int
 
@@ -16,7 +16,7 @@ struct ThemedListDataProvider: MediasListDataProvider {
         try await networkClient.request(TMDB.List(page: page, listID: listID)).paginatedResponse
     }
     
-    init(networkClient: NetworkClient2 = Container.shared.networkClient(), listID: Int) {
+    init(networkClient: NetworkClient = Container.shared.networkClient(), listID: Int) {
         self.networkClient = networkClient
         self.listID = listID
     }

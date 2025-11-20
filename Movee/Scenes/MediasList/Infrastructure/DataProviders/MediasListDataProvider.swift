@@ -13,7 +13,7 @@ protocol MediasListDataProvider {
 }
 
 extension MediasListDataProvider {
-    static var networkClient: NetworkClient2 {
+    static var networkClient: NetworkClient {
         Container.shared.networkClient()
     }
 }
