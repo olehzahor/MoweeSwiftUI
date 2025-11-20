@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 // Collection
 struct Collection: Codable, Hashable {
@@ -246,9 +247,10 @@ struct Person: Codable, Hashable, Identifiable {
     let homepage: String?
     let alsoKnownAs: [String]?
     let knownFor: [PersonCredit]?
+    let gender: Int?
     
     enum CodingKeys: String, CodingKey {
-        case id, name, birthday, deathday, biography, popularity, adult, homepage
+        case id, name, birthday, deathday, biography, popularity, adult, homepage, gender
         case department = "known_for_department"
         case placeOfBirth = "place_of_birth"
         case profilePath = "profile_path"
@@ -257,7 +259,7 @@ struct Person: Codable, Hashable, Identifiable {
         case knownFor = "known_for"
     }
     
-    init(id: Int, name: String, birthday: String? = nil, department: String? = nil, deathday: String? = nil, biography: String? = nil, popularity: Double? = nil, placeOfBirth: String? = nil, profilePath: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil, knownFor: [PersonCredit]? = nil) {
+    init(id: Int, name: String, birthday: String? = nil, department: String? = nil, deathday: String? = nil, biography: String? = nil, popularity: Double? = nil, placeOfBirth: String? = nil, profilePath: String? = nil, adult: Bool? = nil, imdbID: String? = nil, homepage: String? = nil, alsoKnownAs: [String]? = nil, knownFor: [PersonCredit]? = nil, gender: Int? = nil) {
         self.id = id
         self.name = name
         self.birthday = birthday
@@ -272,5 +274,6 @@ struct Person: Codable, Hashable, Identifiable {
         self.homepage = homepage
         self.alsoKnownAs = alsoKnownAs
         self.knownFor = knownFor
+        self.gender = gender
     }
 }

@@ -16,11 +16,7 @@ struct MediasListView: View {
     }
 
     private var emptyState: some View {
-        ContentUnavailableView(
-            viewModel.emptyState.title,
-            systemImage: viewModel.emptyState.systemImage,
-            description: Text(viewModel.emptyState.description)
-        )
+        ContentUnavailableView(viewModel.emptyState)
     }
 
     private var mediaList: some View {
