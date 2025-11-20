@@ -12,7 +12,7 @@ import SwiftUI
 
 @MainActor
 protocol WatchlistRepository {
-    var items: [WatchlistItem] { get }
+    var watchlist: [WatchlistItem] { get }
     
     func add(_ media: Media) async
     func remove(_ media: Media) async
@@ -25,12 +25,16 @@ final class SwiftDataWatchlistRepository: WatchlistRepository {
     private let logger: WatchlistLogger?
     private let dataService: SwiftDataService<WatchlistItem>
     
-    private(set) var items: [WatchlistItem] = []
+    private(set) var watchlist: [WatchlistItem] = []
+    private(set) var loadState: LoadState = .idle
     
     private func fetchAndSendItems() async {
         do {
-            items = try await dataService.fetch()
+            loadState = .loading
+            watchlist = try await dataService.fetch()
+            loadState = .loaded(isEmpty: watchlist.isEmpty)
         } catch {
+            loadState = .error(error)
             logger?.logWatchlistError("Failed to fetch watchlist items: \(error)")
         }
     }
@@ -49,8 +53,11 @@ final class SwiftDataWatchlistRepository: WatchlistRepository {
     func remove(_ media: Media) async {
         do {
             let predicate = #Predicate<WatchlistItem> { $0.media.id == media.id }
-            let items = try await dataService.fetch(predicate: predicate)
-            for item in items {
+            let itemsToDelete = try await dataService.fetch(predicate: predicate)
+
+            watchlist.removeAll { $0.media.id == media.id }
+
+            for item in itemsToDelete {
                 try await dataService.delete(item)
             }
             logger?.logWatchlistInfo("Successfully removed \(media.title) (\(media.id)) from watchlist")
@@ -84,13 +91,15 @@ final class SwiftDataWatchlistRepository: WatchlistRepository {
     nonisolated init(logger: WatchlistLogger?, dataService: SwiftDataService<WatchlistItem> = SwiftDataService<WatchlistItem>(modelContainer: AppContainer.shared)) {
         self.logger = logger
         self.dataService = dataService
+        
         Task { @MainActor in
             await fetchAndSendItems()
         }
     }
 }
 
-public protocol WatchlistLogger {
+@MainActor
+public protocol WatchlistLogger: Sendable {
     func logWatchlistInfo(_ message: String)
     func logWatchlistError(_ message: String)
 }
