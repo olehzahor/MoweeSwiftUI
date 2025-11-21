@@ -54,3 +54,17 @@ extension TypedMediasListDataProvider {
             }
     }
 }
+
+extension TypedMediasListDataProvider {
+    static func discover(_ type: MediaType, filters: DiscoverFilters) -> Self {
+        return .init(mediaType: type) { page in
+                return try await networkClient.request(
+                    TMDB.DiscoverMovies(page: page, filters: filters)
+                )
+            } tvShowFetcher: { page in
+                return try await networkClient.request(
+                    TMDB.DiscoverTVShows(page: page, filters: filters)
+                )
+            }
+    }
+}

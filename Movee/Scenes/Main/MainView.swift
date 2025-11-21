@@ -29,7 +29,7 @@ struct MainView: View {
 
             Tab("Discover", systemImage: "magnifyingglass", role: .search) {
                 CoordinatedNavigationStack(coordinator: discoverCoordinator) {
-                    NewSearchView()
+                    SearchView()
                 }
             }
         }

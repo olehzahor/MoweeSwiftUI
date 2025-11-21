@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct CollectionView: View {
+    @Environment(\.coordinator) private var coordinator
     @State private var viewModel: CollectionViewModel
+    
+    private var titleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        coordinator?.path.isEmpty ?? false ? .automatic : .inline
+    }
     
     var body: some View {
         ScrollView {
@@ -21,7 +26,7 @@ struct CollectionView: View {
         }
         .scrollIndicators(.hidden)
         .navigationTitle(viewModel.title)
-        //.navigationBarTitleDisplayMode(.automatic)
+        .navigationBarTitleDisplayMode(titleDisplayMode)
     }
     
     init(title: String, lists: [MediasList]) {

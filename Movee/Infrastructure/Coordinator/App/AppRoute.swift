@@ -17,6 +17,8 @@ enum AppRoute: Route {
     case seasonDetails(Int, Season)
     case review(String, Review)
     case collection(String, [MediasList])
+    
+    case advancedSearch
 
     var id: Self { self }
 
@@ -37,6 +39,8 @@ enum AppRoute: Route {
             ReviewView(mediaTitle: title, review: review)
         case .collection(let title, let lists):
             CollectionView(title: title, lists: lists)
+        case .advancedSearch:
+            AdvancedSearchView()
         }
     }
 }
