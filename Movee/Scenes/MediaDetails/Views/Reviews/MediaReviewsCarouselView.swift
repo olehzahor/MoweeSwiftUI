@@ -47,6 +47,7 @@ struct MediaReviewsCarouselView: View {
         .contentMargins(.horizontal, horizontalPadding, for: .scrollContent)
         .scrollTargetBehavior(.viewAligned)
         .padding(.horizontal, -horizontalPadding)
+        .fallible()
     }
         
     init(reviews: [Review], onSelect: OnSelectClosure? = nil) {

@@ -10,7 +10,7 @@ import SwiftUI
 struct FallibleModifier<FailedContent: View>: ViewModifier {
     @Environment(\.errorConfig) private var config: ErrorConfiguration?
     let failedView: (Error, (() -> Void)?) -> FailedContent
-    
+
     func body(content: Content) -> some View {
         if let error = config?.error {
             failedView(error, config?.retry)
@@ -18,16 +18,18 @@ struct FallibleModifier<FailedContent: View>: ViewModifier {
             content
         }
     }
-    
-    init(_ failedView: @escaping (Error, (() -> Void)?) -> FailedContent = {
-        ErrorRetryView(error: $0, retry: $1)
-    }) {
+
+    init(_ failedView: @escaping (Error, (() -> Void)?) -> FailedContent) {
         self.failedView = failedView
     }
 }
 
 extension View {
-    func fallible() -> some View {
-        self.modifier(FallibleModifier())
+    func fallible<FailedContent: View>(
+        @ViewBuilder _ failedView: @escaping (Error, (() -> Void)?) -> FailedContent = { error, retry in
+            ErrorRetryView(error: error, retry: retry)
+        }
+    ) -> some View {
+        self.modifier(FallibleModifier(failedView))
     }
 }

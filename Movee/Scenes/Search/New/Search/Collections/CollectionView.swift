@@ -23,6 +23,7 @@ struct CollectionView: View {
                 .onFirstAppear {
                     await viewModel.loader.fetchInitialData()
                 }
+                .loadingState(viewModel.loader, section: .main)
         }
         .scrollIndicators(.hidden)
         .navigationTitle(viewModel.title)

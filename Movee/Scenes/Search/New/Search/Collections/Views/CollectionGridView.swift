@@ -33,10 +33,10 @@ struct CollectionGridView: View {
     var body: some View {
         LazyVGrid(columns: columns) {
             if placeholder {
-                ForEach(0..<5, id: \.self) { _ in
-                    CollectionItemView(item: .init(name: .placeholder(.short)))
+                ForEach(0..<20, id: \.self) { _ in
+                    CollectionItemView(item: .init(name: .placeholder(.custom(40))))
+                        .loadable()
                 }
-                .loadable()
             } else {
                 ForEach(items, id: \.name) { item in
                     Button {
@@ -47,6 +47,7 @@ struct CollectionGridView: View {
                 }
             }
         }
+        .fallible()
     }
     
     init(items: [Data]) {
