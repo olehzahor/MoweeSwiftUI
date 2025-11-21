@@ -8,10 +8,11 @@
 import SwiftUI
 
 // TODO: implement pull to refresh
-struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View {
+struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyState: View>: View {
     let items: [Item]
     @ViewBuilder let content: (Item) -> Content
     @ViewBuilder let placeholder: () -> Placeholder
+    @ViewBuilder let emptyState: () -> EmptyState
     let placeholdersCount: Int
     let onFetchNextPage: () -> Void
     let isLoading: Bool
@@ -24,10 +25,10 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
         isSeparatorHidden ? .hidden : .visible
     }
 
-    // MARK: - Body
-    var body: some View {
+    @ViewBuilder
+    private var list: some View {
         List {
-            if items.isEmpty, error == nil {
+            if isLoading, error == nil {
                 ForEach(Array(0..<placeholdersCount), id: \.self) { _ in
                     placeholder()
                         .listRowSeparator(separatorVisibility)
@@ -50,6 +51,14 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
         }
         .onFirstAppear {
             onFetchNextPage()
+        }
+    }
+    
+    var body: some View {
+        if !isLoading, items.isEmpty, error == nil {
+            emptyState()
+        } else {
+            list
         }
     }
 
@@ -80,11 +89,15 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View>: View 
                 .frame(maxWidth: .infinity)
                 .padding()
         },
+        @ViewBuilder emptyState: @escaping () -> EmptyState = {
+            ContentUnavailableView(.search)
+        },
         onFetchNextPage: @escaping () -> Void
     ) {
         self.items = items
         self.content = content
         self.placeholder = placeholder
+        self.emptyState = emptyState
         self.onFetchNextPage = onFetchNextPage
         self.isLoading = isLoading
         self.hasMorePages = hasMorePages
@@ -102,8 +115,9 @@ extension InfiniteList {
         placeholdersCount: Int = 5,
         isSeparatorHidden: Bool = true,
         @ViewBuilder content: @escaping (Item) -> Content,
-        @ViewBuilder placeholder: @escaping () -> Placeholder)
-    where DataProvider.Item == Item {
+        @ViewBuilder placeholder: @escaping () -> Placeholder,
+        @ViewBuilder emptyState: @escaping () -> EmptyState
+    ) where DataProvider.Item == Item {
             self.init(
                 items: dataProvider.items,
                 isLoading: dataProvider.loadState.isAwaitingData,
@@ -114,6 +128,7 @@ extension InfiniteList {
                 error: dataProvider.loadState.error,
                 content: content,
                 placeholder: placeholder,
+                emptyState: emptyState,
                 onFetchNextPage: dataProvider.fetch
             )
         }

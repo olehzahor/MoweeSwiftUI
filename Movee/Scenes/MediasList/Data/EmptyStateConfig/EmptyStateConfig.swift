@@ -14,6 +14,12 @@ struct EmptyStateConfig {
 }
 
 extension EmptyStateConfig {
+    static var section = Self(
+        title: "Nothing Here",
+        systemImage: "film.stack",
+        description: "Looks like there's nothing here"
+    )
+    
     static var search = Self(
         title: "No results found",
         systemImage: "film.stack",

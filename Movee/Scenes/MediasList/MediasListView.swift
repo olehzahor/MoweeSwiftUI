@@ -38,6 +38,8 @@ struct MediasListView: View {
         } placeholder: {
             MediaRowView()
                 .loading(true)
+        } emptyState: {
+            ContentUnavailableView(.section)
         }
         .listStyle(.plain)
         .scrollIndicators(.hidden)
