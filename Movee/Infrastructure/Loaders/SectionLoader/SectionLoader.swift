@@ -7,12 +7,14 @@
 
 import Foundation
 
-@MainActor
+@MainActor @Observable
 final class SectionLoader<Section: Hashable> {
+    @ObservationIgnored
     private var configs: [Section: FetchConfig]
     let sections: [Section]
     let maxConcurrent: Int
-
+    
+    @ObservationIgnored
     private var currentTasks: [Section: Task<Void, Never>] = [:]
 
     private(set) var loadStates: [Section: LoadState] = [:]
