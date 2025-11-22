@@ -8,29 +8,34 @@
 import Observation
 
 // TODO: intergrate SectionLoader for fetches
-@Observable
+@MainActor @Observable
 class PagedDataSource<Item: Identifiable&Decodable> {
     private let loadNext: () async throws -> PageLoadResult<Item>
     private let onRefresh: () -> Void
-    
+
+    @ObservationIgnored
     private var currentTask: Task<Void, Never>?
 
     private(set) var items: [Item] = []
     private(set) var loadState = LoadState.idle
     private(set) var hasMorePages = true
 
-    @MainActor
     func fetch() {
         guard hasMorePages, !loadState.isLoading else { return }
-        
+
         currentTask?.cancel()
-        
-        loadState = .loading
+
+        let previousState = loadState
 
         currentTask = Task {
+            defer { currentTask = nil }
+
+            loadState = .loading
+
             do {
+                try await Task.sleep(for: .seconds(5))
                 let result = try await loadNext()
-                guard !Task.isCancelled else { return }
+                try Task.checkCancellation()
 
                 if result.isFirstPage {
                     items = result.items
@@ -40,14 +45,15 @@ class PagedDataSource<Item: Identifiable&Decodable> {
 
                 hasMorePages = result.hasMore
                 loadState = .loaded(isEmpty: result.items.isEmpty)
+            } catch is CancellationError {
+                print("CANCELED")
+                loadState = previousState
             } catch {
-                guard !Task.isCancelled else { return }
                 loadState = .error(error)
             }
         }
     }
 
-    @MainActor
     func refresh() {
         currentTask?.cancel()
         items = []
@@ -56,13 +62,13 @@ class PagedDataSource<Item: Identifiable&Decodable> {
         onRefresh()
         fetch()
     }
-    
+
+    func cancelAll() {
+        currentTask?.cancel()
+    }
+
     init(loadNext: @escaping () async throws -> PageLoadResult<Item>, onRefresh: @escaping () -> Void) {
         self.loadNext = loadNext
         self.onRefresh = onRefresh
-    }
-
-    deinit {
-        currentTask?.cancel()
     }
 }
