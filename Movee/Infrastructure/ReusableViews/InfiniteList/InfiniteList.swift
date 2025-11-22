@@ -14,7 +14,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     @ViewBuilder let placeholder: () -> Placeholder
     @ViewBuilder let emptyState: () -> EmptyState
     let placeholdersCount: Int
-    let onFetchNextPage: () -> Void
+    let onFetchNextPage: () async -> Void
     let isLoading: Bool
     let hasMorePages: Bool
     let threshold: Int
@@ -37,20 +37,20 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
                 ForEach(items) { item in
                     content(item)
                         .listRowSeparator(separatorVisibility)
-                        .onAppear {
-                            handleItemAppear(item)
+                        .task {
+                            await handleItemAppear(item)
                         }
                 }
                 if hasMorePages {
                     placeholder()
                         .fallible()
-                        .error(error, retry: onFetchNextPage)
+                        .error(error, retry: { Task { await onFetchNextPage() } })
                         .listRowSeparator(separatorVisibility)
                 }
             }
         }
         .onFirstAppear {
-            onFetchNextPage()
+            await onFetchNextPage()
         }
     }
     
@@ -63,14 +63,14 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     }
 
     // MARK: - Helpers
-    private func handleItemAppear(_ item: Item) {
+    private func handleItemAppear(_ item: Item) async {
         guard hasMorePages, !isLoading else { return }
         guard let itemIndex = items.firstIndex(where: { $0.id == item.id }) else { return }
 
         let thresholdIndex = items.count - threshold
 
         if itemIndex >= thresholdIndex {
-            onFetchNextPage()
+            await onFetchNextPage()
         }
     }
     
@@ -92,7 +92,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
         @ViewBuilder emptyState: @escaping () -> EmptyState = {
             ContentUnavailableView(.search)
         },
-        onFetchNextPage: @escaping () -> Void
+        onFetchNextPage: @escaping () async -> Void
     ) {
         self.items = items
         self.content = content
