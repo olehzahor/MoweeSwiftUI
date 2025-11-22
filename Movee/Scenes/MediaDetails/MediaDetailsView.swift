@@ -34,9 +34,12 @@ struct MediaDetailsView: View {
                 .padding(.bottom, 20)
             }
         }
-        .onFirstAppear {
+        .task {
             await viewModel.loader.fetchInitialData()
         }
+//        .onFirstAppear {
+//            await viewModel.loader.fetchInitialData()
+//        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 WatchlistButton(watchlistManager: viewModel)

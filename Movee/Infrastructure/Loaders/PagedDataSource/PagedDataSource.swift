@@ -27,7 +27,7 @@ class PagedDataSource<Item: Identifiable&Decodable> {
         
         loadState = .loading
 
-        currentTask = Task { @MainActor in
+        currentTask = Task {
             do {
                 let result = try await loadNext()
                 guard !Task.isCancelled else { return }

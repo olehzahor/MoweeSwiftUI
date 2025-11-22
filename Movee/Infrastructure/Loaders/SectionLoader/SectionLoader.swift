@@ -19,16 +19,6 @@ final class SectionLoader<Section: Hashable> {
 
     private(set) var loadStates: [Section: LoadState] = [:]
 
-    init(
-        sections: [Section],
-        configs: [Section: FetchConfig] = [:],
-        maxConcurrent: Int = 3
-    ) {
-        self.sections = sections
-        self.configs = configs
-        self.maxConcurrent = maxConcurrent
-    }
-
     func setConfigs(_ configs: [Section: FetchConfig]) {
         self.configs = configs
     }
@@ -41,45 +31,42 @@ final class SectionLoader<Section: Hashable> {
         loadStates[section] = state
     }
 
-    func fetchInitialData() async {
-        await fetchSections(sections)
-    }
-
     func fetch(_ section: Section) async {
-        currentTasks[section]?.cancel()
-
         guard let config = configs[section] else {
             let error = FetchError.noConfigurationFound(section: String(describing: section))
             loadStates[section] = .error(error)
             return
         }
-
-        guard !loadState(for: section).isLoading else { return }
-        let task = Task { @MainActor [weak self] in
-            self?.loadStates[section] = .loading
+        
+        currentTasks[section]?.cancel()
+        
+        let previousState = loadStates[section]
+        
+        let task = Task {
+            defer { currentTasks[section] = nil }
+            
+            loadStates[section] = .loading
 
             do {
                 let isEmpty = try await config.fetch()
-                guard !Task.isCancelled else { return }
-                self?.loadStates[section] = .loaded(isEmpty: isEmpty)
+                try Task.checkCancellation()
+                loadStates[section] = .loaded(isEmpty: isEmpty)
+            } catch is CancellationError {
+                loadStates[section] = previousState ?? .idle
             } catch {
-                guard !Task.isCancelled else { return }
-                self?.loadStates[section] = .error(error)
+                loadStates[section] = .error(error)
             }
-
-            self?.currentTasks[section] = nil
         }
 
         currentTasks[section] = task
         
-        await task.value
+        await withTaskCancellationHandler {
+            await task.value
+        } onCancel: {
+            task.cancel()
+        }
     }
 
-    func refetchFailed() async {
-        let failedSections = sections.filter { loadStates[$0]?.error != nil }
-        await fetchSections(failedSections)
-    }
-    
     private func fetchSections(_ sections: [Section]) async {
         let grouped = Dictionary(grouping: sections) { section in
             configs[section]?.priority ?? .max
@@ -99,8 +86,34 @@ final class SectionLoader<Section: Hashable> {
             }
         }
     }
+    
+    func fetchInitialData() async {
+        await fetchSections(sections)
+    }
+    
+    func refetchFailed() async {
+        let failedSections = sections.filter { loadStates[$0]?.error != nil }
+        await fetchSections(failedSections)
+    }
+    
+    func cancelAll() {
+        for task in currentTasks.values {
+            task.cancel()
+        }
+    }
+    
+    init(
+        sections: [Section],
+        configs: [Section: FetchConfig] = [:],
+        maxConcurrent: Int = 3
+    ) {
+        self.sections = sections
+        self.configs = configs
+        self.maxConcurrent = maxConcurrent
+    }
 }
 
+@MainActor
 extension SectionLoader {
     var hasFailedSections: Bool {
         loadStates.values.contains { $0.error != nil }
