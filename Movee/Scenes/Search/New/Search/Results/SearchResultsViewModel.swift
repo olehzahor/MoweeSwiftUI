@@ -27,8 +27,10 @@ final class SearchResultsViewModel {
 
             self.query = query
             self.scope = scope
+            
+            self.dataSource.cancelAll()
             self.dataSource = Self.createDataSource(repo, query: query, scope: scope)
-            self.dataSource.fetch()
+            await self.dataSource.fetch()
         }
     }
 

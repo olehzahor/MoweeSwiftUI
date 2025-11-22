@@ -7,7 +7,6 @@
 
 import Observation
 
-// TODO: intergrate SectionLoader for fetches
 @MainActor @Observable
 class PagedDataSource<Item: Identifiable&Decodable> {
     private let loadNext: () async throws -> PageLoadResult<Item>
@@ -20,14 +19,14 @@ class PagedDataSource<Item: Identifiable&Decodable> {
     private(set) var loadState = LoadState.idle
     private(set) var hasMorePages = true
 
-    func fetch() {
+    func fetch() async {
         guard hasMorePages, !loadState.isLoading else { return }
 
         currentTask?.cancel()
 
         let previousState = loadState
 
-        currentTask = Task {
+        let task = Task {
             defer { currentTask = nil }
 
             loadState = .loading
@@ -52,15 +51,23 @@ class PagedDataSource<Item: Identifiable&Decodable> {
                 loadState = .error(error)
             }
         }
+        
+        currentTask = task
+        
+        await withTaskCancellationHandler {
+            await task.value
+        } onCancel: {
+            task.cancel()
+        }
     }
 
-    func refresh() {
+    func refresh() async {
         currentTask?.cancel()
         items = []
         hasMorePages = true
         loadState = .idle
         onRefresh()
-        fetch()
+        await fetch()
     }
 
     func cancelAll() {

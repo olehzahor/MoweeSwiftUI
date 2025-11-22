@@ -13,8 +13,8 @@ protocol InfiniteListDataProvider {
     var loadState: LoadState { get }
     var hasMorePages: Bool { get }
 
-    func fetch()
-    func refresh()
+    func fetch() async
+    func refresh() async
 }
 
 extension PagedDataSource: InfiniteListDataProvider { }
