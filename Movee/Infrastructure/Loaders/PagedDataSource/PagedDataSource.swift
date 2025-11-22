@@ -32,6 +32,7 @@ class PagedDataSource<Item: Identifiable&Decodable> {
             loadState = .loading
 
             do {
+                if Bool.random() { throw NetworkError.invalidURL }
                 try await Task.sleep(for: .seconds(5))
                 let result = try await loadNext()
                 try Task.checkCancellation()

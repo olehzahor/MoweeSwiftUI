@@ -20,6 +20,8 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     let threshold: Int
     let isSeparatorHidden: Bool
     let error: Error?
+    
+    @State private var retriesCount: Int = 0
 
     private var separatorVisibility: Visibility {
         isSeparatorHidden ? .hidden : .visible
@@ -44,10 +46,14 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
                 if hasMorePages {
                     placeholder()
                         .fallible()
-                        .error(error, retry: { Task { await onFetchNextPage() } })
+                        .error(error) { retriesCount += 1 }
                         .listRowSeparator(separatorVisibility)
                 }
             }
+        }
+        .task(id: retriesCount) {
+            guard retriesCount > 0 else { return }
+            await onFetchNextPage()
         }
         .onFirstAppear {
             await onFetchNextPage()
