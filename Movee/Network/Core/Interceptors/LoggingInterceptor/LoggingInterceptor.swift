@@ -28,6 +28,7 @@ private actor TimingTracker {
 }
 
 final class LoggingInterceptor: NetworkInterceptor {
+    private let formatter: NetworkLogFormatterProtocol
     private let logger: NetworkLogger
     private let timingTracker = TimingTracker()
 
@@ -43,7 +44,7 @@ final class LoggingInterceptor: NetworkInterceptor {
         let requestKey = requestKey(for: request)
 
         await timingTracker.recordStart(for: requestKey)
-        logger.logRequest(request)
+        logger.logNetworkRequest(formatter.formatRequest(request))
 
         return request
     }
@@ -52,7 +53,7 @@ final class LoggingInterceptor: NetworkInterceptor {
         let requestKey = requestKey(for: response)
         let duration = await timingTracker.calculateDuration(for: requestKey)
 
-        logger.logResponse(response, data: data, duration: duration)
+        logger.logNetworkResponse(formatter.formatResponse(response, data: data, duration: duration))
 
         return data
     }
@@ -61,13 +62,17 @@ final class LoggingInterceptor: NetworkInterceptor {
         let requestKey = requestKey(for: request)
 
         await timingTracker.cleanup(for: requestKey)
-        logger.logError(error, for: request)
+        logger.logNetworkError(formatter.formatError(error, for: request))
 
         return error
     }
     
-    init(logger: NetworkLogger) {
+    init(logger: NetworkLogger, formatter: NetworkLogFormatterProtocol) {
         self.logger = logger
+        self.formatter = formatter
+    }
+    
+    convenience init(logger: NetworkLogger, level: NetworkLogFormatter.LogMode = .compact) {
+        self.init(logger: logger, formatter: NetworkLogFormatter(mode: level))
     }
 }
-
