@@ -10,7 +10,7 @@ struct ListResponse: Decodable {
     let description: String?
     let favoriteCount: Int?
     let id: Int
-    let items: [Media]
+    let items: [SearchResult]
     let itemCount: Int?
     let iso639_1: String?
     let name: String
@@ -36,6 +36,6 @@ struct ListResponse: Decodable {
 
 extension ListResponse {
     var paginatedResponse: PaginatedResponse<Media> {
-        .init(page: page, results: items, total_pages: totalPages, total_results: totalResults)
+        .init(page: page, results: items.compactMap(\.media), total_pages: totalPages, total_results: totalResults)
     }
 }

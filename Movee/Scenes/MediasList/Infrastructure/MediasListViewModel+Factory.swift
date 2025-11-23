@@ -14,6 +14,9 @@ extension MediasListViewModel {
             guard let dataProvider = section.dataProvider else {
                 throw MediasSectionError.noDataProvider
             }
+//            if page > 1 {
+//                try await Task.sleep(for: .seconds(3))
+//            }
             return try await dataProvider.fetch(page: page)
         }
         return Self(dataSource, title: title, largeTitle: false, emptyState: .search)

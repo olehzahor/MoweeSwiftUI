@@ -15,12 +15,12 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     @ViewBuilder let emptyState: () -> EmptyState
     let placeholdersCount: Int
     let onFetchNextPage: () async -> Void
-    let isLoading: Bool
+    let isEmpty: Bool
     let hasMorePages: Bool
     let threshold: Int
     let isSeparatorHidden: Bool
     let error: Error?
-    
+        
     @State private var retryTrigger = TaskTrigger()
 
     private var separatorVisibility: Visibility {
@@ -30,7 +30,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     @ViewBuilder
     private var list: some View {
         List {
-            if isLoading, error == nil {
+            if items.isEmpty, !isEmpty, error == nil {
                 ForEach(Array(0..<placeholdersCount), id: \.self) { _ in
                     placeholder()
                         .listRowSeparator(separatorVisibility)
@@ -60,7 +60,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     }
     
     var body: some View {
-        if !isLoading, items.isEmpty, error == nil {
+        if isEmpty, error == nil {
             emptyState()
         } else {
             list
@@ -69,7 +69,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
 
     // MARK: - Helpers
     private func handleItemAppear(_ item: Item) async {
-        guard hasMorePages, !isLoading else { return }
+        guard hasMorePages else { return }
         guard let itemIndex = items.firstIndex(where: { $0.id == item.id }) else { return }
 
         let thresholdIndex = items.count - threshold
@@ -82,7 +82,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     // MARK: - Initialization
     init(
         items: [Item],
-        isLoading: Bool = false,
+        isEmpty: Bool = false,
         hasMorePages: Bool = true,
         threshold: Int = 3,
         placeholdersCount: Int = 5,
@@ -104,7 +104,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
         self.placeholder = placeholder
         self.emptyState = emptyState
         self.onFetchNextPage = onFetchNextPage
-        self.isLoading = isLoading
+        self.isEmpty = isEmpty
         self.hasMorePages = hasMorePages
         self.threshold = threshold
         self.placeholdersCount = placeholdersCount
@@ -125,7 +125,7 @@ extension InfiniteList {
     ) where DataProvider.Item == Item {
             self.init(
                 items: dataProvider.items,
-                isLoading: dataProvider.loadState.isAwaitingData,
+                isEmpty: dataProvider.loadState.isEmpty,
                 hasMorePages: dataProvider.hasMorePages,
                 threshold: threshold,
                 placeholdersCount: placeholdersCount,

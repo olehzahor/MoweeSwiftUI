@@ -12,7 +12,7 @@ extension Logger: NetworkLogger {
         let method = request.httpMethod ?? "REQUEST"
         let url = request.url?.absoluteString ?? "unknown"
 
-        log("→ \(method) \(url)", level: .debug)
+        log("\n⏩ \(method) \(url)", level: .debug)
 
         // Log headers if present
         if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
@@ -39,7 +39,7 @@ extension Logger: NetworkLogger {
         let sizeString = ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .binary)
 
         let level: LogLevel = statusCode < 400 ? .info : .error
-        log("\(emoji) \(statusCode) \(url) (\(durationString)s, \(sizeString))", level: level)
+        log("\n\(emoji) \(statusCode) \(url) (\(durationString)s, \(sizeString))", level: level)
 
         // Log response body for debugging (only for small responses in debug builds)
         #if DEBUG
@@ -54,6 +54,6 @@ extension Logger: NetworkLogger {
         let method = request.httpMethod ?? "REQUEST"
         let url = request.url?.absoluteString ?? "unknown"
 
-        log("❌ \(method) \(url) failed: \(error.localizedDescription)", level: .error)
+        log("\n❌ \(method) \(url) failed: \(error)", level: .error)
     }
 }

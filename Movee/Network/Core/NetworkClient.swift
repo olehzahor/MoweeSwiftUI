@@ -27,10 +27,12 @@ final class NetworkClient {
         return modifiedData
     }
 
-    private func applyErrorInterceptors(_ interceptors: [NetworkInterceptor], error: Error, request: URLRequest) async throws {
+    private func applyErrorInterceptors(_ interceptors: [NetworkInterceptor], error: Error, request: URLRequest) async -> Error {
+        var transformedError = error
         for interceptor in interceptors {
-            try await interceptor.intercept(error: error, request: request)
+            transformedError = await interceptor.intercept(error: transformedError, request: request)
         }
+        return transformedError
     }
 
     private func validateResponse(_ response: HTTPURLResponse, data: Data) throws {
@@ -49,7 +51,7 @@ final class NetworkClient {
         }
     }
 
-    private func performRequest<E: Endpoint>(_ endpoint: E) async throws -> (Data, HTTPURLResponse) {
+    private func performRequest<E: Endpoint>(_ endpoint: E) async throws -> (Data, HTTPURLResponse, URLRequest) {
         let urlRequest = try endpoint.asURLRequest()
         let interceptedRequest = try await applyRequestInterceptors(endpoint.interceptors, to: urlRequest)
 
@@ -64,18 +66,14 @@ final class NetworkClient {
 
             let interceptedData = try await applyResponseInterceptors(endpoint.interceptors, response: httpResponse, data: data)
 
-            return (interceptedData, httpResponse)
+            return (interceptedData, httpResponse, interceptedRequest)
         } catch {
-            try await applyErrorInterceptors(endpoint.interceptors, error: error, request: interceptedRequest)
-            throw error
+            let transformedError = await applyErrorInterceptors(endpoint.interceptors, error: error, request: interceptedRequest)
+            throw transformedError
         }
     }
 
-    // MARK: - Public Request Methods
-    @discardableResult
-    func request<E: Endpoint>(_ endpoint: E) async throws -> E.Response where E.Response: Decodable {
-        let (data, _) = try await performRequest(endpoint)
-
+    private func decode<E: Endpoint>(_ data: Data, using endpoint: E, request: URLRequest) async throws -> E.Response where E.Response: Decodable {
         guard !data.isEmpty else {
             throw NetworkError.noData
         }
@@ -83,12 +81,21 @@ final class NetworkClient {
         do {
             return try endpoint.decoder.decode(E.Response.self, from: data)
         } catch {
-            throw NetworkError.decodingError(error)
+            let decodingError = NetworkError.decodingError(error)
+            let transformedError = await applyErrorInterceptors(endpoint.interceptors, error: decodingError, request: request)
+            throw transformedError
         }
     }
 
+    // MARK: - Public Request Methods
+    @discardableResult
+    func request<E: Endpoint>(_ endpoint: E) async throws -> E.Response where E.Response: Decodable {
+        let (data, _, request) = try await performRequest(endpoint)
+        return try await decode(data, using: endpoint, request: request)
+    }
+
     func request<E: Endpoint>(_ endpoint: E) async throws -> E.Response where E.Response == Data {
-        let (data, _) = try await performRequest(endpoint)
+        let (data, _, _) = try await performRequest(endpoint)
         return data
     }
     

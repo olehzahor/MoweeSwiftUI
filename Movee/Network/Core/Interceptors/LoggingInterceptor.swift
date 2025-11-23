@@ -57,13 +57,13 @@ final class LoggingInterceptor: NetworkInterceptor {
         return data
     }
 
-    func intercept(error: Error, request: URLRequest) async throws {
+    func intercept(error: Error, request: URLRequest) async -> Error {
         let requestKey = requestKey(for: request)
 
         await timingTracker.cleanup(for: requestKey)
         logger.logError(error, for: request)
 
-        throw error
+        return error
     }
     
     init(logger: NetworkLogger) {
