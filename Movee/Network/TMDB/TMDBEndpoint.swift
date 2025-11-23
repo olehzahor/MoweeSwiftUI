@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Factory
 
 protocol TMDBEndpoint: Endpoint {}
 
@@ -26,7 +27,7 @@ extension TMDBEndpoint {
 struct TMDBInfrastructure {
     static let interceptors: [NetworkInterceptor] = [
         TMDBInterceptor(),
-        LoggingInterceptor(logger: Logger.shared)
+        LoggingInterceptor(logger: Container.shared.logger(), level: .compact)
     ]
 
     static let decoder: DataDecoder = TMDBJSONDecoder()
