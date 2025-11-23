@@ -32,8 +32,8 @@ class PagedDataSource<Item: Identifiable&Decodable> {
             loadState = .loading
 
             do {
-                if Bool.random() { throw NetworkError.invalidURL }
-                try await Task.sleep(for: .seconds(5))
+//                if Bool.random() { throw NetworkError.invalidURL }
+//                try await Task.sleep(for: .seconds(5))
                 let result = try await loadNext()
                 try Task.checkCancellation()
 
@@ -46,7 +46,7 @@ class PagedDataSource<Item: Identifiable&Decodable> {
                 hasMorePages = result.hasMore
                 loadState = .loaded(isEmpty: result.items.isEmpty)
             } catch is CancellationError {
-                print("CANCELED")
+//                print("CANCELED")
                 loadState = previousState
             } catch {
                 loadState = .error(error)
