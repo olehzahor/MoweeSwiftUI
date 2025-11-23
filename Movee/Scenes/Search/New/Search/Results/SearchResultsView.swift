@@ -15,16 +15,30 @@ struct SearchResultsView: View {
     private var scope: SearchScope
 
     @ViewBuilder
+    fileprivate func getRowView(for result: SearchResult.Result) -> some View {
+        switch result {
+        case .movie(let movie):
+            MediaRowView(data: .init(media: Media(movie: movie)))
+        case .tv(let tvShow):
+            MediaRowView(data: .init(media: Media(tvShow: tvShow)))
+        case .person(let person):
+            MediaRowView(data: .init(person: .init(person: person)))
+            //PersonRowView(person: .init(person: person))
+        }
+    }
+    
     var list: some View {
         InfiniteList(viewModel.dataSource) { result in
-            switch result.result {
-            case .movie(let movie):
-                MediaRowView(data: .init(media: Media(movie: movie)))
-            case .tv(let tvShow):
-                MediaRowView(data: .init(media: Media(tvShow: tvShow)))
-            case .person(let person):
-                PersonRowView(person: .init(person: person))
-            }
+           getRowView(for: result.result)
+//            Button {
+//                if let media = result.media {
+//                    coordinator?.push(.mediaDetails(media))
+//                } else if case .person(let person) = result.result {
+//                    coordinator?.push(.personDetails(.init(person: person)))
+//                }
+//            } label: {
+//                getRowView(for: result.result)
+//            }
         } placeholder: {
             MediaRowView()
                 .loading(true)

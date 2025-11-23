@@ -15,11 +15,7 @@ struct MediasListView: View {
         viewModel.largeTitle ? .large : .inline
     }
 
-    private var emptyState: some View {
-        ContentUnavailableView(viewModel.emptyState)
-    }
-
-    private var mediaList: some View {
+    private var list: some View {
         InfiniteList(viewModel.dataSource) { media in
             Button {
                 coordinator?.push(.mediaDetails(media))
@@ -48,11 +44,7 @@ struct MediasListView: View {
     }
     
     var body: some View {
-        if viewModel.dataSource.loadState.isEmpty {
-            emptyState
-        } else {
-            mediaList
-        }
+        list
     }
 
     init(_ viewModel: MediasListViewModel) {
