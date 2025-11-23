@@ -10,7 +10,7 @@ import Foundation
 protocol NetworkInterceptor {
     func intercept(request: URLRequest) async throws -> URLRequest
     func intercept(response: HTTPURLResponse, data: Data) async throws -> Data
-    func intercept(error: Error, request: URLRequest) async throws
+    func intercept(error: Error, request: URLRequest) async -> Error
 }
 
 extension NetworkInterceptor {
@@ -18,7 +18,7 @@ extension NetworkInterceptor {
         return data
     }
 
-    func intercept(error: Error, request: URLRequest) async throws {
-        throw error
+    func intercept(error: Error, request: URLRequest) async -> Error {
+        return error
     }
 }
