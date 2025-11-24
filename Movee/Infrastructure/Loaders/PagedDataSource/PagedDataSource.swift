@@ -22,18 +22,11 @@ class PagedDataSource<Item: Identifiable&Decodable> {
     func fetch() async {
         guard hasMorePages, !loadState.isLoading else { return }
 
-        currentTask?.cancel()
-
         let previousState = loadState
+        loadState = .loading
 
         let task = Task {
-            defer { currentTask = nil }
-
-            loadState = .loading
-
             do {
-//                if Bool.random() { throw NetworkError.invalidURL }
-//                try await Task.sleep(for: .seconds(5))
                 let result = try await loadNext()
                 try Task.checkCancellation()
 
@@ -46,7 +39,6 @@ class PagedDataSource<Item: Identifiable&Decodable> {
                 hasMorePages = result.hasMore
                 loadState = .loaded(isEmpty: result.items.isEmpty)
             } catch is CancellationError {
-//                print("CANCELED")
                 loadState = previousState
             } catch {
                 loadState = .error(error)
@@ -54,16 +46,17 @@ class PagedDataSource<Item: Identifiable&Decodable> {
         }
         
         currentTask = task
-        
         await withTaskCancellationHandler {
             await task.value
         } onCancel: {
             task.cancel()
         }
+        currentTask = nil
     }
 
     func refresh() async {
         currentTask?.cancel()
+        await currentTask?.value
         items = []
         hasMorePages = true
         loadState = .idle
