@@ -11,13 +11,17 @@ import Observation
 class PagedDataSource<Item: Identifiable&Decodable> {
     private let loadNext: () async throws -> PageLoadResult<Item>
     private let onRefresh: () -> Void
-
+    
     @ObservationIgnored
     private var currentTask: Task<Void, Never>?
-
+    
     private(set) var items: [Item] = []
+    @ObservationIgnored
     private(set) var loadState = LoadState.idle
     private(set) var hasMorePages = true
+    
+    var isEmpty: Bool { loadState.isEmpty }
+    var error: Error? { loadState.error }
 
     func fetch() async {
         guard hasMorePages, !loadState.isLoading else { return }
@@ -38,10 +42,12 @@ class PagedDataSource<Item: Identifiable&Decodable> {
 
                 hasMorePages = result.hasMore
                 loadState = .loaded(isEmpty: result.items.isEmpty)
-            } catch is CancellationError {
-                loadState = previousState
             } catch {
-                loadState = .error(error)
+                if Task.isCancelled {
+                    loadState = previousState
+                } else {
+                    loadState = .error(error)
+                }
             }
         }
         
