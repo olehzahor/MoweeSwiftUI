@@ -20,7 +20,7 @@ struct MediaRowView: View {
     private let posterConfig = MediaPosterView.Config.row
     
     private var posterHeight: CGFloat {
-        posterConfig.width / posterConfig.aspectRatio
+        posterConfig.height
     }
 
     private var subtitleLineLimit: Int? {

@@ -20,8 +20,7 @@ struct MediaPosterView: View {
                     placeholder: data.placeholder
                 )
                 .clipShape(RoundedRectangle(cornerRadius: config.cornerRadius))
-                .frame(width: 100, height: 150)
-                //.aspectRatio(config.aspectRatio, contentMode: .fit)
+                .frame(width: config.width, height: config.height)
                 if let rating = data.rating, rating > 0 {
                     MediaRatingView(rating: rating)
                         .padding(.bottom, 4)
@@ -94,18 +93,18 @@ extension MediaPosterView {
 extension MediaPosterView {
     struct Config {
         let width: CGFloat
-        let aspectRatio: CGFloat
+        let height: CGFloat
         let cornerRadius: CGFloat
         let showTitles: Bool
 
         init(
             width: CGFloat = 100,
-            aspectRatio: CGFloat = 2/3,
+            height: CGFloat = 150,
             cornerRadius: CGFloat = 8,
             showTitles: Bool = true
         ) {
             self.width = width
-            self.aspectRatio = aspectRatio
+            self.height = height
             self.cornerRadius = cornerRadius
             self.showTitles = showTitles
         }
