@@ -16,7 +16,13 @@ struct ReviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 16) {
-                    AsyncImageView(url: review.authorAvatarURL, width: 50, height: 50, cornerRadius: 25, placeholder: .init(resource: .imageMalePersonPlaceholder))
+                    AsyncImageView(
+                        url: review.authorAvatarURL,
+                        placeholder: .init(resource: .imageMalePersonPlaceholder)
+                    )
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
+                    
                     VStack(alignment: .leading) {
                         Text("\(review.authorString)")
                             .textStyle(.mediumTitle)

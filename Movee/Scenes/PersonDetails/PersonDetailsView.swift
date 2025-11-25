@@ -13,15 +13,13 @@ struct PersonDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                AsyncImageView(
-                    url: viewModel.person.largeProfilePictureURL,
-                    width: 250,
-                    height: 375,
-                    cornerRadius: 8
-                )
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical)
-
+                if let pictureURL = viewModel.person.largeProfilePictureURL {
+                    AsyncImageView(url: pictureURL)
+                        .frame(width: 250, height: 375)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical)
+                }
+                
                 SectionView(header: .init(title: "Biography")) {
                     FoldableTextView(text: viewModel.bio, lineLimit: 8)
                         .textStyle(.mediumText)

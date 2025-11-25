@@ -17,7 +17,8 @@ struct MediaVideoView: View {
         ZStack {
             ZStack(alignment: .center) {
                 AsyncImageView(url: data.backdropURL)
-                    .scaledToFillAspectRatio(16/9)
+                    .aspectRatio(16/9, contentMode: .fill)
+                    //.scaledToFillAspectRatio(16/9)
                 Color.secondary.opacity(0.1)
                 if isPlayerLoading {
                     ProgressView()

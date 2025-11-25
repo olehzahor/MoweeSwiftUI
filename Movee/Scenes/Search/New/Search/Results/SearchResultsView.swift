@@ -29,16 +29,16 @@ struct SearchResultsView: View {
     
     var list: some View {
         InfiniteList(viewModel.dataSource) { result in
-           getRowView(for: result.result)
-//            Button {
-//                if let media = result.media {
-//                    coordinator?.push(.mediaDetails(media))
-//                } else if case .person(let person) = result.result {
-//                    coordinator?.push(.personDetails(.init(person: person)))
-//                }
-//            } label: {
-//                getRowView(for: result.result)
-//            }
+           //getRowView(for: result.result)
+            Button {
+                if let media = result.media {
+                    coordinator?.push(.mediaDetails(media))
+                } else if case .person(let person) = result.result {
+                    coordinator?.push(.personDetails(.init(person: person)))
+                }
+            } label: {
+                getRowView(for: result.result)
+            }
         } placeholder: {
             MediaRowView()
                 .loading(true)

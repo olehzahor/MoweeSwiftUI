@@ -37,7 +37,10 @@ class PagedDataSource<Item: Identifiable&Decodable> {
                 if result.isFirstPage {
                     items = result.items
                 } else {
-                    items += result.items
+                    // Deduplicate: only append items not already in array
+                    let existingIDs = Set(items.map { $0.id })
+                    let newItems = result.items.filter { !existingIDs.contains($0.id) }
+                    items += newItems
                 }
 
                 hasMorePages = result.hasMore

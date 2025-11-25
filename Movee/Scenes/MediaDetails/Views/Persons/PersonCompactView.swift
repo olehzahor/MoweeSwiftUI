@@ -17,11 +17,11 @@ struct PersonCompactView: View {
         VStack {
             AsyncImageView(
                 url: pictureURL,
-                width: 100,
-                height: 100,
-                cornerRadius: 50,
                 placeholder: placeholder
             )
+            .frame(width: 100, height: 100)
+            .clipShape(Circle())
+
             if let name {
                 Text(name)
                     .textStyle(.smallTitle)
