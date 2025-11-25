@@ -30,7 +30,6 @@ actor ImageCache {
         if let cached = cache.object(forKey: key) {
             return cached
         }
-
         let (data, _) = try await session.data(from: url)
 
         guard let image = UIImage(data: data) else {
