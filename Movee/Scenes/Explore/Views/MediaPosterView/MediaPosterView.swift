@@ -17,10 +17,11 @@ struct MediaPosterView: View {
             ZStack(alignment: .bottomTrailing) {
                 AsyncImageView(
                     url: data.posterURL,
-                    cornerRadius: config.cornerRadius,
                     placeholder: data.placeholder
                 )
-                .aspectRatio(config.aspectRatio, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: config.cornerRadius))
+                .frame(width: 100, height: 150)
+                //.aspectRatio(config.aspectRatio, contentMode: .fit)
                 if let rating = data.rating, rating > 0 {
                     MediaRatingView(rating: rating)
                         .padding(.bottom, 4)

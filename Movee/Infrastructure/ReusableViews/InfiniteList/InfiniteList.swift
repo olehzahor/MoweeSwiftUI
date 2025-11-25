@@ -22,6 +22,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     let error: Error?
         
     @State private var retryTrigger = TaskTrigger()
+    @State private var fetchedForCount: Int = -1
 
     private var separatorVisibility: Visibility {
         isSeparatorHidden ? .hidden : .visible
@@ -38,6 +39,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
             } else {
                 ForEach(items) { item in
                     content(item)
+                        .id(item.id)
                         .listRowSeparator(separatorVisibility)
                         .task {
                             await handleItemAppear(item)
@@ -75,6 +77,9 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
         let thresholdIndex = items.count - threshold
 
         if itemIndex >= thresholdIndex {
+            guard items.count != fetchedForCount else { return }
+
+            fetchedForCount = items.count
             await onFetchNextPage()
         }
     }
@@ -113,6 +118,7 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
     }
 }
 
+// MARK: - Initialization with InfiniteListDataProvider
 extension InfiniteList {
     init<DataProvider: InfiniteListDataProvider>(
         _ dataProvider: DataProvider,

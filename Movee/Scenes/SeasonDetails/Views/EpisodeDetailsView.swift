@@ -44,8 +44,10 @@ struct EpisodeDetailsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             if let stillURL = episode.stillURL {
                 ZStack(alignment: .bottomTrailing) {
-                    AsyncImageView(url: stillURL, width: 110, height: 93, cornerRadius: 8, placeholder: .imageMoviePlaceholder)
+                    AsyncImageView(url: stillURL, placeholder: .imageMoviePlaceholder)
+                        .frame(width: 110, height: 93)
                         .saveSize(in: $posterSize)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                     if let rating = episode.voteAverage, rating > 0 {
                         MediaRatingView(rating: rating)
                             .padding(.bottom, 4)

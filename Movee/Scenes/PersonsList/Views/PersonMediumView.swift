@@ -14,11 +14,10 @@ struct PersonMediumView: View {
         VStack(alignment: .center) {
             AsyncImageView(
                 url: person.profilePictureURL,
-                width: nil,
-                height: nil,
-                cornerRadius: 8,
                 placeholder: person.placeholderImage
-            ).aspectRatio(2/3, contentMode: .fit)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .aspectRatio(2/3, contentMode: .fit)
             Text(person.name)
                 .textStyle(.smallTitle)
             if let role = person.role {

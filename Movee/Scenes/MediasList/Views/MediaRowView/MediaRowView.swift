@@ -61,3 +61,9 @@ struct MediaRowView: View {
         self._data = data
     }
 }
+
+extension MediaRowView: Equatable {
+    static func == (lhs: MediaRowView, rhs: MediaRowView) -> Bool {
+        lhs._data.id == rhs._data.id
+    }
+}

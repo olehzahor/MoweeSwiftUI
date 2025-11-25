@@ -16,11 +16,11 @@ struct PersonRowView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            AsyncImageView(
-                url: person.profilePictureURL,
-                width: 100, height: 150,
-                cornerRadius: 8,
-                placeholder: person.placeholderImage)
+//            AsyncImageView(
+//                url: person.profilePictureURL,
+//                width: 100, height: 150,
+//                cornerRadius: 8,
+//                placeholder: person.placeholderImage)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(person.name)
@@ -37,11 +37,11 @@ struct PersonRowView: View {
                 if !knownForMovies.isEmpty {
                     HStack(spacing: 8) {
                         ForEach(knownForMovies, id: \.self) { credit in
-                            AsyncImageView(
-                                url: credit.media.posterURL,
-                                width: 65, height: 90,
-                                cornerRadius: 8,
-                                placeholder: .imageMoviePlaceholder)
+//                            AsyncImageView(
+//                                url: credit.media.posterURL,
+//                                width: 65, height: 90,
+//                                cornerRadius: 8,
+//                                placeholder: .imageMoviePlaceholder)
                         }
                     }
                     .padding(.top, 4)
