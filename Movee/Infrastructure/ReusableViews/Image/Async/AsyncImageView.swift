@@ -33,12 +33,12 @@ struct AsyncImageView: View {
         ZStack {
             if let image {
                 ClippedImage(uiImage: image, contentMode: contentMode)
-            }
-
-            if url != nil, loader.image == nil {
+            } else if url != nil, loader.image == nil {
                 Color.secondary.opacity(0.3)
                     .loadable()
                     .fallible { _, _ in errorView }
+            } else {
+                Color.secondary.opacity(0.3)
             }
         }
         .postponedAnimation(0.1, .default, value: loader.state)
