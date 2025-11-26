@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct EpisodeDetailsView: View {
+    @Environment(\.placeholder) private var placeholder: Bool
+
     var episode: Episode
     
     @State var isExpanded: Bool = false
@@ -42,19 +44,17 @@ struct EpisodeDetailsView: View {
                 .lineSpacing(-3)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            if let stillURL = episode.stillURL {
-                ZStack(alignment: .bottomTrailing) {
-                    AsyncImageView(url: stillURL, placeholder: .imageMoviePlaceholder)
-                        .frame(width: 110, height: 93)
-                        .saveSize(in: $posterSize)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                    if let rating = episode.voteAverage, rating > 0 {
-                        MediaRatingView(rating: rating)
-                            .padding(.bottom, 4)
-                            .padding(.trailing, 4)
-                    }
-                }
-            }
+            
+            MediaPosterView(
+                data: .init(posterURL: episode.stillURL,
+                            rating: episode.voteAverage,
+                            placeholder: .imageMoviePlaceholder),
+                config: .init(width: 100,
+                              height: 93,
+                              showTitles: false)
+            )
+            .saveSize(in: $posterSize)
+            .hidden(episode.stillURL == nil && !placeholder)
         }.frame(maxHeight: maxHeight)
     }
 }
