@@ -34,14 +34,14 @@ struct PersonsCarouselView: View {
             LazyHStack(alignment: .top) {
                 if placeholder {
                     ForEach(0..<5, id: \.self) { _ in
-                        PersonCompactView(person: MediaPerson.placeholder)
+                        PersonCompactView(data: .init(MediaPerson.placeholder))
                     }
                 } else {
                     ForEach(carousel, id: \.creditID) { person in
                         Button {
                             handleSelection(person)
                         } label: {
-                            PersonCompactView(person: person)
+                            PersonCompactView(data: .init(person))
                         }
                     }
                 }

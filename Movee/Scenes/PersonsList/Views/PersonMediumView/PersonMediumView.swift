@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct PersonMediumView: View {
-    var person: MediaPerson
-    
+    let data: Data
+
     var body: some View {
         VStack(alignment: .center) {
             AsyncImageView(
-                url: person.profilePictureURL,
-                placeholder: person.placeholderImage
+                url: data.profilePictureURL,
+                placeholder: data.placeholderImage
             )
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .aspectRatio(2/3, contentMode: .fit)
-            Text(person.name)
+            Text(data.name)
                 .textStyle(.smallTitle)
-            if let role = person.role {
+            if let role = data.role {
                 Text(role)
                     .textStyle(.smallSubtitle)
             }
@@ -29,15 +29,7 @@ struct PersonMediumView: View {
 }
 
 #Preview {
-    PersonMediumView(person: MediaPerson(
-        id: 1,
-        type: .cast,
-        name: "John Doe",
-        profilePath: "/sampleProfile1.jpg",
-        role: "Director",
-        creditID: "credit123",
-        gender: 2,
-        castID: nil,
-        order: nil
-    ))
+    PersonMediumView(
+        data: .init(.mock)
+    )
 }

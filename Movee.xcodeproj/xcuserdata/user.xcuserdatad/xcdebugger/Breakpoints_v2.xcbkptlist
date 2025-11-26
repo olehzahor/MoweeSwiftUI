@@ -292,8 +292,8 @@
             filePath = "Movee/Infrastructure/ReusableViews/InfiniteList/InfiniteList.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "init(items:isEmpty:hasMorePages:threshold:placeholdersCount:isSeparatorHidden:error:content:placeholder:emptyState:onFetchNextPage:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -8,25 +8,22 @@
 import SwiftUI
 
 struct PersonCompactView: View {
-    let pictureURL: URL?
-    let name: String?
-    let role: String?
-    let placeholder: UIImage?
-    
+    let data: Data
+
     var body: some View {
         VStack {
             AsyncImageView(
-                url: pictureURL,
-                placeholder: placeholder
+                url: data.pictureURL,
+                placeholder: data.placeholder
             )
             .frame(width: 100, height: 100)
             .clipShape(Circle())
 
-            if let name {
+            if let name = data.name {
                 Text(name)
                     .textStyle(.smallTitle)
             }
-            if let role {
+            if let role = data.role {
                 Text(role)
                     .textStyle(.smallSubtitle)
             }
@@ -35,11 +32,10 @@ struct PersonCompactView: View {
         .frame(maxHeight: 185)
         .frame(width: 100)
     }
-    
-    init(person: MediaPerson) {
-        self.pictureURL = person.profilePictureURL
-        self.name = person.name
-        self.role = person.role
-        self.placeholder = person.placeholderImage
-    }
+}
+
+#Preview {
+    PersonCompactView(
+        data: .init(.mock)
+    )
 }
