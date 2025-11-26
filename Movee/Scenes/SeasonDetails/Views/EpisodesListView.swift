@@ -18,7 +18,7 @@ struct EpisodesListView: View {
 
     var body: some View {
         ForEach(Array(episodes.enumerated()), id: \.offset) { _, episode in
-            EpisodeDetailsView(episode: episode)
+            EpisodeDetailsView(data: .init(episode))
                 .loadable()
         }
     }
