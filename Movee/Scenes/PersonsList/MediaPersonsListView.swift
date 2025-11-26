@@ -28,7 +28,7 @@ struct MediaPersonsListView: View {
                             Button {
                                 coordinator?.push(.personDetails(person))
                             } label: {
-                                PersonMediumView(person: person)
+                                PersonMediumView(data: .init(person))
                             }
                         }
                     }

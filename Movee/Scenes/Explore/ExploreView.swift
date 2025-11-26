@@ -12,7 +12,7 @@ struct ExploreView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            LazyVStack(alignment: .leading, spacing: 20) {
                 ForEach(viewModel.loader.sections) { section in
                     SectionView.medias(viewModel.medias[section], section: section)
                         .loadingState(viewModel.loader, section: section)

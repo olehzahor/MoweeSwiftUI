@@ -22,14 +22,12 @@ struct SearchResultsView: View {
         case .tv(let tvShow):
             MediaRowView(data: .init(media: Media(tvShow: tvShow)))
         case .person(let person):
-            MediaRowView(data: .init(person: .init(person: person)))
-            //PersonRowView(person: .init(person: person))
+            PersonRowView(data: .init(MediaPerson(person: person)))
         }
     }
     
     var list: some View {
         InfiniteList(viewModel.dataSource) { result in
-           //getRowView(for: result.result)
             Button {
                 if let media = result.media {
                     coordinator?.push(.mediaDetails(media))
@@ -45,6 +43,7 @@ struct SearchResultsView: View {
         } emptyState: {
             ContentUnavailableView(.search)
         }
+        .scrollDismissesKeyboard(.immediately)
         .listStyle(.plain)
         .scrollIndicators(.hidden)
         .onChange(of: query) { _, newValue in
