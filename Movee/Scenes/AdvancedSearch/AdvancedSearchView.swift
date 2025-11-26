@@ -22,7 +22,7 @@ struct AdvancedSearchView: View {
         let isSelected = viewModel.isSelected(item, in: section)
         let isExcluded = viewModel.isExcluded(item, in: section)
         
-        var title = isExcluded ? "-\(item.title)" : item.title
+        let title = isExcluded ? "-\(item.title)" : item.title
         
         let button = Button(title) {
             viewModel.selectItem(item, in: section)
