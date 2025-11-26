@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+import Factory
 
+@MainActor
 final class AppCoordinator: Coordinator {
     typealias RouteType = AppRoute
 
@@ -14,5 +16,9 @@ final class AppCoordinator: Coordinator {
     @Published var presentedSheet: AppRoute?
     @Published var presentedFullScreen: AppRoute?
 
-    init() {}
+    let logger: CoordinatorLogger?
+
+    init(logger: CoordinatorLogger? = Container.shared.logger()) {
+        self.logger = logger
+    }
 }

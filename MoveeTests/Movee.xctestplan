@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "2BC8F45D-61CD-40F7-96C4-112A27C4C038",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Movee.xcodeproj",
+        "identifier" : "CEE665AD2D9E891900C04D9A",
+        "name" : "MoveeTests"
+      }
+    }
+  ],
+  "version" : 1
+}

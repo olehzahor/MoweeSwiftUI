@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SectionHeaderData {
-    typealias ActionClosure = (AppCoordinator?) -> Void
-    
+    typealias ActionClosure = @MainActor (AppCoordinator?) -> Void
+
     let title: String
     let actionButton: String?
     let isButtonHidden: Bool
