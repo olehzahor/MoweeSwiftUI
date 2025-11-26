@@ -12,7 +12,8 @@ import Factory
 final class MediaDetailsViewModel {
     private let repo: MediaDetailsRepositoryProtocol
     private let watchlist: WatchlistRepository
-    
+    private let searchHistory: SearchHistoryRepository
+
     private var mediaIdentifier: MediaIdentifier
 
     enum Section: CaseIterable {
@@ -40,6 +41,7 @@ final class MediaDetailsViewModel {
             update: { [weak self] media in
                 self?.media = media
                 self?.loadWatchlistStatus()
+                self?.saveToSearchHistory()
             }
         ),
         .seasons: .init(
@@ -101,20 +103,29 @@ final class MediaDetailsViewModel {
         }
     }
 
+    private func saveToSearchHistory() {
+        Task {
+            guard let media else { return }
+            await searchHistory.add(media)
+        }
+    }
+
     init(mediaID: Int, mediaType: MediaType,
          repo: MediaDetailsRepositoryProtocol = MediaDetailsRepository(),
-         watchlist: WatchlistRepository = Container.shared.watchlistRepository()) {
+         watchlist: WatchlistRepository = Container.shared.watchlistRepository(),
+         searchHistory: SearchHistoryRepository = Container.shared.searchHistoryRepository()) {
         let mediaIdentifier = MediaIdentifier(id: mediaID, type: mediaType)
         self.mediaIdentifier = mediaIdentifier
-        
+
         self.repo = repo
         self.watchlist = watchlist
+        self.searchHistory = searchHistory
 
         self.related = .init(
             name: "Related",
             dataProvider: TypedMediasListDataProvider.related(mediaIdentifier)
         )
-        
+
         self.loader = SectionLoader(
             sections: Section.allCases,
             maxConcurrent: 3
