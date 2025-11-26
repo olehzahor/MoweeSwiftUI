@@ -12,5 +12,5 @@ extension Episode {
         name: .placeholder(.short),
         overview: .placeholder(.custom(100)),
         seasonNumber: 1,
-        stillPath: "")
+        stillPath: nil)
 }
