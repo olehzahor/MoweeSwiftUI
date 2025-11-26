@@ -35,11 +35,17 @@ struct SearchView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button("Advanced search", action: { coordinator?.push(.advancedSearch) })
-                    Button("Search history", action: { coordinator?.push(.searchHistory) })
+                Button {
+                    coordinator?.push(.advancedSearch)
                 } label: {
-                    Image(systemName: "ellipsis")
+                    Image(systemName: "slider.horizontal.3")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    coordinator?.push(.searchHistory)
+                } label: {
+                    Image(systemName: "clock.arrow.circlepath")
                 }
             }
         }
