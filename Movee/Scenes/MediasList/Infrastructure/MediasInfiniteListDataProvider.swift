@@ -13,11 +13,24 @@ extension SwiftDataWatchlistRepository: MediasInfiniteListDataProvider {
     var items: [Media] {
         watchlist.map { .init($0.media) }
     }
-    
+
     var hasMorePages: Bool {
         false
     }
-    
+
+    func fetch() {}
+    func refresh() {}
+}
+
+extension SwiftDataSearchHistoryRepository: MediasInfiniteListDataProvider {
+    var items: [Media] {
+        searchHistory.map { .init($0.media) }
+    }
+
+    var hasMorePages: Bool {
+        false
+    }
+
     func fetch() {}
     func refresh() {}
 }

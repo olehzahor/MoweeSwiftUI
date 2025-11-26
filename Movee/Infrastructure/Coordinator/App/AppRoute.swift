@@ -19,10 +19,11 @@ enum AppRoute: Route {
     case collection(String, [MediasList])
     
     case advancedSearch
+    case searchHistory
 
     var id: Self { self }
 
-    @ViewBuilder
+    @ViewBuilder @MainActor
     var view: some View {
         switch self {
         case .mediasList(let section):
@@ -41,6 +42,8 @@ enum AppRoute: Route {
             CollectionView(title: title, lists: lists)
         case .advancedSearch:
             AdvancedSearchView()
+        case .searchHistory:
+            MediasListView(.searchHistory())
         }
     }
 }

@@ -27,4 +27,10 @@ extension Container {
         self { SwiftDataWatchlistRepository(logger: self.logger.resolve()) }
             .singleton
     }
+
+    // MARK: - Search History Repository
+    var searchHistoryRepository: Factory<SwiftDataSearchHistoryRepository> {
+        self { SwiftDataSearchHistoryRepository(logger: self.logger.resolve()) }
+            .singleton
+    }
 }

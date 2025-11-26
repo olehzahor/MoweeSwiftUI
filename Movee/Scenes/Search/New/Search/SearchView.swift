@@ -37,7 +37,7 @@ struct SearchView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button("Advanced search", action: { coordinator?.push(.advancedSearch) })
-                    Button("Search history", action: {})
+                    Button("Search history", action: { coordinator?.push(.searchHistory) })
                 } label: {
                     Image(systemName: "ellipsis")
                 }

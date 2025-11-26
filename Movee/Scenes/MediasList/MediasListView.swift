@@ -35,7 +35,7 @@ struct MediasListView: View {
             MediaRowView()
                 .loading(true)
         } emptyState: {
-            ContentUnavailableView(.section)
+            ContentUnavailableView(viewModel.emptyState)
         }
         .listStyle(.plain)
         .scrollIndicators(.hidden)
