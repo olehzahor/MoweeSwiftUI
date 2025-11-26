@@ -28,9 +28,9 @@ struct SearchResult: Decodable, Identifiable, Equatable {
     
     var media: Media? {
         switch result {
-        case .movie(let movie): return .init(movie: movie)
-        case .tv(let tvShow): return .init(tvShow: tvShow)
-        case .person(let person): return nil
+            case .movie(let movie): return .init(movie: movie)
+            case .tv(let tvShow): return .init(tvShow: tvShow)
+            case .person: return nil
         }
     }
 
