@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension MediaVideoView {
-    struct DataModel {
+    struct Data {
         var title: String
         var backdropURL: URL?
         var videoKey: String?
@@ -20,17 +20,19 @@ extension MediaVideoView {
         }
 
         static var placeholder = Self(title: .placeholder(.short))
-
+        
         init(title: String, backdropURL: URL? = nil, videoKey: String? = nil) {
             self.title = title
             self.backdropURL = backdropURL
             self.videoKey = videoKey
         }
+    }
+}
 
-        init(video: Video) {
-            self.title = video.name
-            self.backdropURL = video.thumbnailURL
-            self.videoKey = video.key
-        }
+extension MediaVideoView.Data {
+    init(video: Video) {
+        self.title = video.name
+        self.backdropURL = video.thumbnailURL
+        self.videoKey = video.key
     }
 }

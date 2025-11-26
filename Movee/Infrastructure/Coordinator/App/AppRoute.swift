@@ -37,7 +37,7 @@ enum AppRoute: Route {
         case .seasonDetails(let tvShowID, let season):
             SeasonDetailsView(tvShowID: tvShowID, season: season)
         case .review(let title, let review):
-            ReviewView(mediaTitle: title, review: review)
+            ReviewView(data: .init(mediaTitle: title, review: review))
         case .collection(let title, let lists):
             CollectionView(title: title, lists: lists)
         case .advancedSearch:

@@ -34,7 +34,7 @@ struct MediaReviewsCarouselView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(reviews) { review in
-                    MediaReviewView(review: review)
+                    MediaReviewView(data: .init(review))
                         .containerRelativeFrame(.horizontal)
                         .onTapGesture {
                             handleSelection(review)

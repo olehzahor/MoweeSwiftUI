@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MediaVideoView: View {
-    var data: DataModel
+    var data: Data
 
     @State private var isPlayerVisible: Bool = false
     @State private var isPlayerLoading: Bool = false

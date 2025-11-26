@@ -9,30 +9,29 @@ import SwiftUI
 import Factory
 
 struct ReviewView: View {
-    let mediaTitle: String
-    let review: Review
-    
+    let data: Data
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 16) {
                     AsyncImageView(
-                        url: review.authorAvatarURL,
+                        url: data.authorAvatarURL,
                         placeholder: .init(resource: .imageMalePersonPlaceholder)
                     )
                     .frame(width: 50, height: 50)
                     .clipShape(Circle())
-                    
+
                     VStack(alignment: .leading) {
-                        Text("\(review.authorString)")
+                        Text("\(data.authorString)")
                             .textStyle(.mediumTitle)
-                        if let createdAt = review.createdAtAbsoluteString {
+                        if let createdAt = data.createdAtAbsoluteString {
                             Text(createdAt)
                                 .textStyle(.mediumSubtitle)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Text(.init(review.content))
+                Text(.init(data.content))
             }.padding()
         }
     }
