@@ -14,9 +14,6 @@ extension MediasListViewModel {
             guard let dataProvider = section.dataProvider else {
                 throw MediasSectionError.noDataProvider
             }
-//            if page > 1 {
-//                try await Task.sleep(for: .seconds(3))
-//            }
             return try await dataProvider.fetch(page: page)
         }
         return Self(dataSource, title: title, largeTitle: false, emptyState: .search)
@@ -28,6 +25,16 @@ extension MediasListViewModel {
             title: "Watchlist",
             largeTitle: true,
             emptyState: .watchlist) { media in
+                Task { await repo.remove(media) }
+            }
+    }
+
+    static func searchHistory(_ repo: SearchHistoryRepository = Container.shared.searchHistoryRepository()) -> Self {
+        Self(
+            Container.shared.searchHistoryRepository(),
+            title: "Search History",
+            largeTitle: false,
+            emptyState: .searchHistory) { media in
                 Task { await repo.remove(media) }
             }
     }

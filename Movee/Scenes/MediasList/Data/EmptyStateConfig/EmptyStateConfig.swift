@@ -31,6 +31,12 @@ extension EmptyStateConfig {
         systemImage: "bookmark.slash",
         description: "Movies and TV Shows you add to your watchlist will appear here"
     )
+
+    static var searchHistory = Self(
+        title: "No search history",
+        systemImage: "clock.arrow.circlepath",
+        description: "Movies and TV Shows you view will appear here"
+    )
 }
 
 extension ContentUnavailableView where Label == SwiftUI.Label<Text, Image>, Description == Text?, Actions == EmptyView {
