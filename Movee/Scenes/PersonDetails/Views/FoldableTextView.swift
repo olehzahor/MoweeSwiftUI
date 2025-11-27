@@ -73,8 +73,10 @@ struct FoldableTextView: View {
                 .saveSize(in: $collapsedSize)
                 .loadable()
                 .fallible()
-
-            mask.blendMode(.destinationOut)
+            
+            if !moreButtonIsHidden {
+                mask.blendMode(.destinationOut)
+            }
         }
         .compositingGroup()
         .overlay(alignment: .bottomTrailing) {
