@@ -11,6 +11,7 @@ import Foundation
 final class PersonDetailsViewModel {
     private let repo: PersonDetailsRepositoryProtocol = PersonDetailsRepository()
 
+    var pictureURL: URL?
     var person: MediaPerson
     var bio: String = ""
     var knownFor = SectionData<Media>(name: "Known for")
@@ -27,6 +28,9 @@ final class PersonDetailsViewModel {
             },
             update: { [weak self] result in
                 self?.person = result
+                if self?.pictureURL == nil {
+                    self?.pictureURL = result.largeProfilePictureURL
+                }
             }
         ),
         .bio: .init(
@@ -52,6 +56,7 @@ final class PersonDetailsViewModel {
 
     init(person: MediaPerson) {
         self.person = person
+        self.pictureURL = person.largeProfilePictureURL
 
         self.loader = SectionLoader(sections: Section.allCases, maxConcurrent: 2)
         self.loader.setConfigs(fetchConfigs)

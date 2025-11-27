@@ -13,9 +13,10 @@ struct PersonDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                if let pictureURL = viewModel.person.largeProfilePictureURL {
+                if let pictureURL = viewModel.pictureURL {
                     AsyncImageView(url: pictureURL)
                         .frame(width: 250, height: 375)
+                        .clipShape(.rect(cornerRadius: 12))
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.vertical)
                 }
@@ -34,6 +35,7 @@ struct PersonDetailsView: View {
                     MediaFactsView(facts: viewModel.person.facts)
                 }
             }
+            .scrollIndicators(.hidden)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .padding(.bottom)
@@ -47,4 +49,8 @@ struct PersonDetailsView: View {
     init(person: MediaPerson) {
         viewModel = PersonDetailsViewModel(person: person)
     }
+}
+
+#Preview {
+    PersonDetailsView(person: .mockWithoutMedia)
 }
