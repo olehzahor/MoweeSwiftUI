@@ -11,7 +11,7 @@ import Foundation
 final class CollectionViewModel {
     private let repo: CollectionDataRepository
 
-    private(set) var lists: [MediasList] = []
+    private(set) var lists: [CollectionList] = []
     private(set) var title: String
 
     enum Section: CaseIterable { case main }
@@ -37,7 +37,7 @@ final class CollectionViewModel {
         self.loader.setConfigs(fetchConfigs)
     }
 
-    convenience init(title: String, lists: [MediasList]) {
+    convenience init(title: String, lists: [CollectionList]) {
         self.init(title: title, repo: StaticCollectionDataRepository(lists: lists))
     }
 

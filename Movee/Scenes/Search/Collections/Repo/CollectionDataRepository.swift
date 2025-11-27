@@ -9,7 +9,7 @@ import Foundation
 import Factory
 
 protocol CollectionDataRepository {
-    func fetchLists() async throws -> [MediasList]
+    func fetchLists() async throws -> [CollectionList]
 }
 
 struct DiscoverCollectionDataRepository: CollectionDataRepository {
@@ -19,15 +19,15 @@ struct DiscoverCollectionDataRepository: CollectionDataRepository {
         self.network = network
     }
 
-    func fetchLists() async throws -> [MediasList] {
+    func fetchLists() async throws -> [CollectionList] {
         try await network.request(Mowee.Lists()).discoverLists
     }
 }
 
 struct StaticCollectionDataRepository: CollectionDataRepository {
-    let lists: [MediasList]
+    let lists: [CollectionList]
     
-    func fetchLists() async throws -> [MediasList] {
+    func fetchLists() async throws -> [CollectionList] {
         lists
     }
 }

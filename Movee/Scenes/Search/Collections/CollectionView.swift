@@ -30,7 +30,7 @@ struct CollectionView: View {
         .navigationBarTitleDisplayMode(titleDisplayMode)
     }
     
-    init(title: String, lists: [MediasList]) {
+    init(title: String, lists: [CollectionList]) {
         viewModel = .init(title: title, lists: lists)
     }
     
