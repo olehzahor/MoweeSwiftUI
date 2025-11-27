@@ -5,7 +5,6 @@
 //  Created by user on 5/4/25.
 //
 
-
 // MARK: - Collection Response
 struct CollectionResponse: Decodable {
     let id: Int
