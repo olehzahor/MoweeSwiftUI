@@ -16,20 +16,13 @@ extension SectionView {
     
     static func medias(_ medias: [Media]?, section: MediasSection) -> SectionView where Content == MediasCarouselView {
         return SectionView(header: .init(section: section)) {
-            MediasCarouselView(
-                medias: (medias ?? []).map { .init(media: $0) }
-            )
+            MediasCarouselView(medias: medias ?? [])
         }
     }
     
     static func seasons(_ seasons: [Season]?, media: Media?, section: MediasSection) -> SectionView where Content == MediasCarouselView {
         SectionView(header: .init(section: section)) {
-            MediasCarouselView(
-                medias: (seasons ?? []).compactMap {
-                    guard let media else { return nil }
-                    return .init(season: $0, media: media)
-                }
-            )
+            MediasCarouselView(seasons: seasons ?? [], media: media)
         }
     }
     

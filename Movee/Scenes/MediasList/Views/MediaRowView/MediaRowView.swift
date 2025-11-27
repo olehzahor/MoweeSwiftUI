@@ -9,16 +9,16 @@ import SwiftUI
 
 struct MediaRowView: View {
     @Environment(\.placeholder) var placeholder: Bool
-    
-    private let _data: MediaUIModel
-    
-    var data: MediaUIModel {
+
+    private let _data: Data
+
+    var data: Data {
         placeholder ? .placeholder : _data
     }
-    
+
     @State var isExpanded: Bool = false
     private let posterConfig = MediaPosterView.Config.row
-    
+
     private var posterHeight: CGFloat {
         posterConfig.height
     }
@@ -29,7 +29,7 @@ struct MediaRowView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            MediaPosterView(data, config: posterConfig)
+            MediaPosterView(data: data.posterData, config: posterConfig)
             VStack(alignment: .leading, spacing: 4) {
                 if let title = data.title {
                     Text(title)
@@ -56,8 +56,8 @@ struct MediaRowView: View {
         .loadable()
         .fallible()
     }
-    
-    init(data: MediaUIModel = .placeholder) {
+
+    init(data: Data = .placeholder) {
         self._data = data
     }
 }

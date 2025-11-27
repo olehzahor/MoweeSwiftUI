@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension MediaDetailedInfoView {
     struct Data {
@@ -15,23 +16,28 @@ extension MediaDetailedInfoView {
         let duration: String?
         let genres: String
         let mediaRating: Double?
-        
-        init(title: String, posterURL: URL? = nil, releaseDate: String? = nil, duration: String? = nil, genres: String, mediaRating: Double? = nil) {
-            self.title = title
-            self.posterURL = posterURL
-            self.releaseDate = releaseDate
-            self.duration = duration
-            self.genres = genres
-            self.mediaRating = mediaRating
-        }
-        
-        init(media: Media) {
-            title = media.title
-            posterURL = media.posterURL
-            releaseDate = media.releaseDateString
-            duration = media.durationString
-            genres = media.genresString
-            mediaRating = media.voteAverage
-        }
+        let placeholder: UIImage?
+    }
+}
+
+extension MediaDetailedInfoView.Data {
+    var posterData: MediaPosterView.Data {
+        .init(
+            posterURL: posterURL,
+            rating: mediaRating,
+            placeholder: placeholder
+        )
+    }
+}
+
+extension MediaDetailedInfoView.Data {
+    init(media: Media) {
+        title = media.title
+        posterURL = media.posterURL
+        releaseDate = media.releaseDateString
+        duration = media.durationString
+        genres = media.genresString
+        mediaRating = media.voteAverage
+        placeholder = media.placeholder
     }
 }
