@@ -12,10 +12,10 @@ import Combine
 struct FoldableTextView: View {
     @Environment(\.placeholder) private var placeholder: Bool
     
-    @State var text: String
-    @State var lineLimit: Int? = 5
+    let text: String
+    let lineLimit: Int?
     
-    var onMoreTapped: (() -> Void)?
+    let onMoreTapped: (() -> Void)?
     
     @State private var isCollapsed = true
     
@@ -28,42 +28,67 @@ struct FoldableTextView: View {
         placeholder ? .placeholder(.multiline) : text
     }
     
+    private var moreButtonIsHidden: Bool {
+        collapsedSize.height >= fullSize.height
+    }
+        
+    @ViewBuilder
+    private var moreButton: some View {
+        Button("more") {
+            isCollapsed = false
+            onMoreTapped?()
+        }
+        .fontWeight(.semibold)
+        .padding(.leading, buttonPadding)
+        .saveSize(in: $buttonSize)
+        .buttonStyle(.plain)
+    }
+    
+    @ViewBuilder
+    private var measurementText: some View {
+        Text(displayText)
+            .saveSize(in: $fullSize)
+            .foregroundStyle(.red)
+            .fixedSize(horizontal: false, vertical: true)
+            .hidden()
+    }
+    
+    @ViewBuilder
+    private var mask: some View {
+        LinearGradient(
+            gradient: Gradient(colors: [
+                Color.clear,
+                Color(uiColor: .systemBackground)
+            ]),
+            startPoint: .leading,
+            endPoint: .init(x: buttonPadding / buttonSize.width, y: 0.5)
+        )
+        .frame(width: buttonSize.width, height: buttonSize.height)
+    }
+    
     var body: some View {
-        ZStack {
-            if fullSize == .zero {
-                Text(displayText)
-                    .saveSize(in: $fullSize)
-                    .foregroundStyle(.red)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .hidden()
-            }
+        ZStack(alignment: .bottomTrailing) {
             Text(displayText)
                 .lineLimit(isCollapsed ? lineLimit : nil)
-                .overlay(alignment: .bottomTrailing) {
-                    if collapsedSize.height < fullSize.height {
-                        Button("more") {
-                            isCollapsed = false
-                            onMoreTapped?()
-                        }
-                        .fontWeight(.semibold)
-                        .padding(.leading, buttonPadding)
-                        .saveSize(in: $buttonSize)
-                        .buttonStyle(.plain)
-                        .background(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.clear,
-                                    Color(uiColor: .systemBackground)
-                                ]),
-                                startPoint: .leading,
-                                endPoint: .init(x: buttonPadding / buttonSize.width, y: 0.5)
-                            )
-                        )
-                    }
-                }.saveSize(in: $collapsedSize)
-                .transition(.identity)
+                .saveSize(in: $collapsedSize)
+                .loadable()
+                .fallible()
+
+            mask.blendMode(.destinationOut)
         }
-        .loadable()
-        .fallible()
+        .compositingGroup()
+        .overlay(alignment: .bottomTrailing) {
+            moreButton
+                .hidden(moreButtonIsHidden)
+        }
+        .background {
+            measurementText
+        }
+    }
+    
+    init(text: String, lineLimit: Int? = 5, onMoreTapped: (() -> Void)? = nil) {
+        self.text = text
+        self.lineLimit = lineLimit
+        self.onMoreTapped = onMoreTapped
     }
 }
