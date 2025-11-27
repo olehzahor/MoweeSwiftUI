@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct AdvancedSearchView: View {
     @Environment(\.coordinator) private var coordinator
     @StateObject var viewModel = AdvancedSearchViewModel()
@@ -71,7 +70,6 @@ struct AdvancedSearchView: View {
         }
     }
 }
-
 
 #Preview {
     AdvancedSearchView()

@@ -5,7 +5,6 @@
 //  Created by user on 5/2/25.
 //
 
-/// A single search result which can be a Movie, TVShow, or Person.
 struct SearchResult: Decodable, Identifiable, Equatable {
     static func == (lhs: SearchResult, rhs: SearchResult) -> Bool {
         lhs.id == rhs.id
@@ -20,9 +19,9 @@ struct SearchResult: Decodable, Identifiable, Equatable {
 
     var id: Int {
         switch result {
-        case .movie(let movie): return movie.id
-        case .tv(let tvShow): return tvShow.id
-        case .person(let person): return person.id
+            case .movie(let movie): return movie.id
+            case .tv(let tvShow): return tvShow.id
+            case .person(let person): return person.id
         }
     }
     
