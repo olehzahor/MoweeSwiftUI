@@ -1,11 +1,11 @@
 //
-//  MediasList+Section.swift
+//  CollectionList+Section.swift
 //  Movee
 //
 //  Created by user on 11/10/25.
 //
 
-extension MediasList {
+extension CollectionList {
     var section: MediasSection? {
         guard let dataProvider: MediasListDataProvider? = switch mediaType {
         case .themedList:
@@ -19,7 +19,7 @@ extension MediasList {
 }
 
 extension TypedMediasListDataProvider {
-    static func customList(_ list: MediasList) -> Self? {
+    static func customList(_ list: CollectionList) -> Self? {
         guard let type = MediaType(list.mediaType),
               let path = list.path
         else { return nil }

@@ -5,7 +5,7 @@
 //  Created by user on 11/10/25.
 //
 
-struct MediasList: Decodable, Hashable {
+struct CollectionList: Decodable, Hashable {
     enum MediaType: String, Decodable {
         case movie, tv, themedList
     }
@@ -14,5 +14,5 @@ struct MediasList: Decodable, Hashable {
     let name: String
     let path: String?
     let query: String?
-    let nestedLists: [MediasList]?
+    let nestedLists: [CollectionList]?
 }

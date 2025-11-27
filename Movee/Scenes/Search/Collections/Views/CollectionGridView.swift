@@ -54,7 +54,7 @@ struct CollectionGridView: View {
         self.items = items
     }
     
-    init(_ lists: [MediasList]) {
+    init(_ lists: [CollectionList]) {
         self.items = lists.map { .init($0) }
     }
 }
@@ -62,7 +62,7 @@ struct CollectionGridView: View {
 extension CollectionGridView {
     struct Data {
         enum Destination {
-            case nestedLists([MediasList])
+            case nestedLists([CollectionList])
             case section(MediasSection)
         }
         
@@ -74,7 +74,7 @@ extension CollectionGridView {
             self.destination = destination
         }
         
-        init(_ list: MediasList) {
+        init(_ list: CollectionList) {
             self.name = list.name
             if let section = list.section {
                 self.destination = .section(section)

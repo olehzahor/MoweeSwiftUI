@@ -9,7 +9,7 @@ import Foundation
 
 extension Mowee {
     struct Lists: MoweeEndpoint {
-        typealias Response = MediasListsResponse
+        typealias Response = CollectionListsResponse
 
         var path: String {
             "explore.json"

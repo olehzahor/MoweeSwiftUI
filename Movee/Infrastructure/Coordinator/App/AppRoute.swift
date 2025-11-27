@@ -16,7 +16,7 @@ enum AppRoute: Route {
 
     case seasonDetails(Int, Season)
     case review(String, Review)
-    case collection(String, [MediasList])
+    case collection(String, [CollectionList])
     
     case advancedSearch
     case searchHistory
