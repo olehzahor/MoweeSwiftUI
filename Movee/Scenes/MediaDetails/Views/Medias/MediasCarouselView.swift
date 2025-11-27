@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct MediasCarouselView: View {
-    typealias OnSelectClosure = (MediaUIModel.Object?) -> Void
+    typealias OnSelectClosure = (Data.Link?) -> Void
 
     @Environment(\.carouselPadding) private var horizontalPadding: CGFloat
     @Environment(\.placeholder) private var placeholder: Bool
     @Environment(\.coordinator) private var coordinator
-
-    var medias: [MediaUIModel]
+    
+    let items: [Data]
+    
     private let onSelect: OnSelectClosure?
-
-    func handleSelection(_ mediaObject: MediaUIModel.Object?) {
+    
+    func handleSelection(_ link: Data.Link?) {
         if let onSelect {
-            onSelect(mediaObject)
+            onSelect(link)
         } else if let coordinator {
-            switch mediaObject {
+            switch link {
             case .media(let media):
                 coordinator.push(.mediaDetails(media))
             case .season(let season, let media):
@@ -37,15 +38,15 @@ struct MediasCarouselView: View {
             LazyHStack(alignment: .top) {
                 if placeholder {
                     ForEach(0..<5, id: \.self) { _ in
-                        MediaPosterView(.placeholder)
+                        MediaPosterView(data: .init(media: .placeholder))
                             .loadable()
                     }
                 } else {
-                    ForEach(medias) { media in
+                    ForEach(items) { item in
                         Button {
-                            handleSelection(media.object)
+                            handleSelection(item.link)
                         } label: {
-                            MediaPosterView(media)
+                            MediaPosterView(data: item.data)
                         }
                     }
                 }
@@ -55,9 +56,16 @@ struct MediasCarouselView: View {
         .padding(.horizontal, -horizontalPadding)
         .fallible()
     }
+}
+
+extension MediasCarouselView {
+    init(medias: [Media], onSelect: OnSelectClosure? = nil) {
+        self.items = medias.map { .init(media: $0) }
+        self.onSelect = onSelect
+    }
     
-    init(medias: [MediaUIModel], onSelect: OnSelectClosure? = nil) {
-        self.medias = medias
+    init(seasons: [Season], media: Media?, onSelect: OnSelectClosure? = nil) {
+        self.items = seasons.map { .init(season: $0, media: media) }
         self.onSelect = onSelect
     }
 }

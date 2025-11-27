@@ -30,7 +30,7 @@ struct MediaDetailedInfoView: View {
     
     var body: some View {
         HStack(alignment: .bottom) {
-            MediaPosterView(.init(posterURL: data.posterURL, rating: data.mediaRating))
+            MediaPosterView(data: data.posterData)
             Spacer()
             VStack(spacing: 8) {
                 Text(data.title)

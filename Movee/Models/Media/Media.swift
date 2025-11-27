@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct MediaIdentifier {
     let id: Int
@@ -68,6 +69,10 @@ extension Media {
 
 // MARK: - Extra Info Enum
 extension Media {
+    var placeholder: UIImage? {
+        .imageMoviePlaceholder
+    }
+    
     var posterURL: URL? {
         TMDBImageURLProvider.shared.url(path: posterPath, size: .w154)
     }
