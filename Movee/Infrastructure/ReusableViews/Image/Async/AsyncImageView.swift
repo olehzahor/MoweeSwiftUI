@@ -46,6 +46,9 @@ struct AsyncImageView: View {
         .task(id: url) {
             await loader.load(url: url)
         }
+        .onDisappear {
+            loader.clear()
+        }
     }
     
     init(url: URL?,

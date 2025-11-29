@@ -53,4 +53,10 @@ final class ImageLoader {
         currentTask?.cancel()
         currentTask = nil
     }
+
+    func clear() {
+        cancel()
+        image = nil
+        state = .idle
+    }
 }
