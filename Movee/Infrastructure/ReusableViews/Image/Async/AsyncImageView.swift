@@ -41,7 +41,7 @@ struct AsyncImageView: View {
                 Color.secondary.opacity(0.3)
             }
         }
-        .animation(.interpolatingSpring, value: loader.state)
+        .animation(.easeOut, value: loader.state)
         .loadingState(loader.state)
         .task(id: url) {
             await loader.load(url: url)
