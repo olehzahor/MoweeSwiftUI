@@ -29,7 +29,7 @@ final class SwiftDataSearchHistoryRepository: SearchHistoryRepository {
     private func fetchAndSendItems() async {
         do {
             loadState = .loading
-            searchHistory = try await dataService.fetch()
+            searchHistory = try await dataService.fetch(sort: [SortDescriptor(\SearchHistoryItem.added, order: .reverse)])
             loadState = .loaded(isEmpty: searchHistory.isEmpty)
         } catch {
             loadState = .error(error)

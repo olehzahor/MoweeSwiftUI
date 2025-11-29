@@ -46,6 +46,7 @@ struct PersonsCarouselView: View {
                     }
                 }
             }
+            .frame(height: 185)
             .padding(.horizontal, horizontalPadding)
         }
         .padding(.horizontal, -horizontalPadding)
