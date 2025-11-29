@@ -67,25 +67,23 @@ struct FoldableTextView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Text(displayText)
-                .lineLimit(isCollapsed ? lineLimit : nil)
-                .saveSize(in: $collapsedSize)
-                .loadable()
-                .fallible()
-            
-            if !moreButtonIsHidden {
+        Text(displayText)
+            .lineLimit(isCollapsed ? lineLimit : nil)
+            .saveSize(in: $collapsedSize)
+            .loadable()
+            .fallible()
+            .compositingGroup()
+            .overlay(alignment: .bottomTrailing) {
                 mask.blendMode(.destinationOut)
+                    .hidden(moreButtonIsHidden)
             }
-        }
-        .compositingGroup()
-        .overlay(alignment: .bottomTrailing) {
-            moreButton
-                .hidden(moreButtonIsHidden)
-        }
-        .background {
-            measurementText
-        }
+            .overlay(alignment: .bottomTrailing) {
+                moreButton
+                    .hidden(moreButtonIsHidden)
+            }
+            .background {
+                measurementText
+            }
     }
     
     init(text: String, lineLimit: Int? = 5, onMoreTapped: (() -> Void)? = nil) {
