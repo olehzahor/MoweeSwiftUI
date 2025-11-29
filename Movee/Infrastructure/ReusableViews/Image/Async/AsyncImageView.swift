@@ -15,11 +15,15 @@ struct AsyncImageView: View {
     
     @ViewBuilder
     private var errorView: some View {
-        ZStack {
-            Color.red.opacity(0.3)
-            Image(systemName: "exclamationmark.triangle")
-                .font(.title)
-                .foregroundColor(.white)
+        if let placeholder {
+            ClippedImage(uiImage: placeholder, contentMode: contentMode)
+        } else {
+            ZStack {
+                Color.red.opacity(0.3)
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.title)
+                    .foregroundColor(.white)
+            }
         }
     }
     
