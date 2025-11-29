@@ -45,10 +45,12 @@ extension SectionView {
 
 extension SectionHeaderData {
     init(section: MediasSection) {
-        self.init(title: section.title) { coordinator in
-            if section.dataProvider != nil {
+        var action: SectionHeaderData.ActionClosure? = nil
+        if section.dataProvider != nil {
+            action = { coordinator in
                 coordinator?.push(.mediasList(section))
             }
         }
+        self.init(title: section.title, action: action)
     }
 }
