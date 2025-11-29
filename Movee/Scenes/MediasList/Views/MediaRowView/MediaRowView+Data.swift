@@ -43,7 +43,7 @@ extension MediaRowView.Data {
     init(media: Media) {
         self.id = media.id
         self.title = media.title
-        self.details = media.subtitle
+        self.details = media.subtitle ?? media.detailsString
         self.overview = media.overview
         self.posterURL = media.posterURL
         self.rating = media.voteAverage
