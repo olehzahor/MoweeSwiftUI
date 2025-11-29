@@ -14,7 +14,7 @@ actor ImageCache {
     private let session: URLSession
 
     private init() {
-        cache.totalCostLimit = 100 * 1024 * 1024
+        cache.totalCostLimit = 50 * 1024 * 1024
 
         let config = URLSessionConfiguration.default
         config.urlCache = URLCache(
@@ -36,7 +36,8 @@ actor ImageCache {
             throw ImageCacheError.invalidImageData
         }
 
-        cache.setObject(image, forKey: key)
+        let cost = image.size.width * image.size.height * image.scale * image.scale * 4
+        cache.setObject(image, forKey: key, cost: Int(cost))
 
         return image
     }
