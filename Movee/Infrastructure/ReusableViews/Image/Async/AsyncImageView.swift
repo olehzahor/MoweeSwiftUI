@@ -12,12 +12,6 @@ struct AsyncImageView: View {
 
     let placeholder: UIImage?
     let contentMode: ContentMode
-
-    @State private var loader = ImageLoader()
-
-    private var image: UIImage? {
-        url == nil ? placeholder : loader.image
-    }
     
     @ViewBuilder
     private var errorView: some View {
@@ -28,26 +22,32 @@ struct AsyncImageView: View {
                 .foregroundColor(.white)
         }
     }
-        
-    var body: some View {
-        ZStack {
-            if let image {
-                ClippedImage(uiImage: image, contentMode: contentMode)
-            } else if url != nil, loader.image == nil {
-                Color.secondary.opacity(0.3)
-                    .loadable()
-                    .fallible { _, _ in errorView }
+    
+    @ViewBuilder
+    private var placeholderView: some View {
+        if url == nil {
+            if let placeholder {
+                ClippedImage(uiImage: placeholder, contentMode: contentMode)
             } else {
                 Color.secondary.opacity(0.3)
             }
+        } else {
+            Color.secondary.opacity(0.3)
+                .loadable()
+                .loading(true)
         }
-        .animation(.easeOut, value: loader.state)
-        .loadingState(loader.state)
-        .task(id: url) {
-            await loader.load(url: url)
-        }
-        .onDisappear {
-            loader.clear()
+    }
+        
+    var body: some View {
+        AsyncImage(url: url, transaction: .init(animation: .easeOut)) { phase in
+            switch phase {
+            case .success(let image):
+                ClippedImage(image, contentMode: contentMode)
+            case .failure:
+                errorView
+            default:
+                placeholderView
+            }
         }
     }
     

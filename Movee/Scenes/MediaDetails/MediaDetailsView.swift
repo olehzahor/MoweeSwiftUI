@@ -18,7 +18,7 @@ struct MediaDetailsView: View {
             
     var body: some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(spacing: 16) {
+            VStack(spacing: 16) {
                 setupStretchyHeader()
                 LazyVStack(alignment: .leading, spacing: 16) {
                     setupDetailsSection()
