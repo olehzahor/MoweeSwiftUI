@@ -39,17 +39,16 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
             } else {
                 ForEach(items) { item in
                     content(item)
-                        .id(item.id)
-                        .listRowSeparator(separatorVisibility)
-                        .task {
-                            await handleItemAppear(item)
-                        }
                 }
+                .listRowSeparator(separatorVisibility)
+
                 if hasMorePages {
                     placeholder()
+                        .id(items.count)
                         .fallible()
                         .error(error) { retryTrigger.fire() }
                         .listRowSeparator(separatorVisibility)
+                        .task { await onFetchNextPage() }
                 }
             }
         }
@@ -66,21 +65,6 @@ struct InfiniteList<Item: Identifiable, Content: View, Placeholder: View, EmptyS
             emptyState()
         } else {
             list
-        }
-    }
-
-    // MARK: - Helpers
-    private func handleItemAppear(_ item: Item) async {
-        guard hasMorePages else { return }
-        guard let itemIndex = items.firstIndex(where: { $0.id == item.id }) else { return }
-
-        let thresholdIndex = items.count - threshold
-
-        if itemIndex >= thresholdIndex {
-            guard items.count != fetchedForCount else { return }
-
-            fetchedForCount = items.count
-            await onFetchNextPage()
         }
     }
     
