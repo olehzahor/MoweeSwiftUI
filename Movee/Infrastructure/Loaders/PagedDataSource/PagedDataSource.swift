@@ -11,15 +11,18 @@ import Observation
 class PagedDataSource<Item: Identifiable&Decodable> {
     private let loadNext: () async throws -> PageLoadResult<Item>
     private let onRefresh: () -> Void
-    
+    private let deduplicationStrategy: (any DeduplicationStrategy<Item>)?
+
     @ObservationIgnored
     private var currentTask: Task<Void, Never>?
-    
+
     private(set) var items: [Item] = []
+
     @ObservationIgnored
     private(set) var loadState = LoadState.idle
+
     private(set) var hasMorePages = true
-    
+
     var isEmpty: Bool { loadState.isEmpty }
     var error: Error? { loadState.error }
 
@@ -35,11 +38,9 @@ class PagedDataSource<Item: Identifiable&Decodable> {
                 try Task.checkCancellation()
 
                 if result.isFirstPage {
-                    items = result.items
+                    items = deduplicationStrategy?.deduplicate(result.items) ?? result.items
                 } else {
-                    // Deduplicate: only append items not already in array
-                    let existingIDs = Set(items.map { $0.id })
-                    let newItems = result.items.filter { !existingIDs.contains($0.id) }
+                    let newItems = deduplicationStrategy?.deduplicate(result.items) ?? result.items
                     items += newItems
                 }
 
@@ -67,6 +68,7 @@ class PagedDataSource<Item: Identifiable&Decodable> {
         currentTask?.cancel()
         await currentTask?.value
         items = []
+        deduplicationStrategy?.reset()
         hasMorePages = true
         loadState = .idle
         onRefresh()
@@ -77,8 +79,13 @@ class PagedDataSource<Item: Identifiable&Decodable> {
         currentTask?.cancel()
     }
 
-    init(loadNext: @escaping () async throws -> PageLoadResult<Item>, onRefresh: @escaping () -> Void) {
+    init(
+        loadNext: @escaping () async throws -> PageLoadResult<Item>,
+        onRefresh: @escaping () -> Void,
+        deduplicationStrategy: (any DeduplicationStrategy<Item>)? = SetBasedDeduplication<Item>()
+    ) {
         self.loadNext = loadNext
         self.onRefresh = onRefresh
+        self.deduplicationStrategy = deduplicationStrategy
     }
 }
