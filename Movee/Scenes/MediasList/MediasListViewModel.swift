@@ -2,57 +2,28 @@
 //  MediasListViewModel.swift
 //  Movee
 //
-//  Created by user on 4/8/25.
+//  Created by Oleh on 03.11.2025.
 //
 
 import Combine
 import Foundation
 
-class MediasListViewModel: ObservableObject {
-    @Published var medias: [Media] = []
-    @Published var section: MediasSection
-    @Published var isLoaded: Bool = false
+@MainActor @Observable
+final class MediasListViewModel {
+    typealias OnDeleteClosure = (Media) -> Void
 
-    private var cancellables = Set<AnyCancellable>()
-    
-    private var currentPage: Int = 1
-    private var totalPages: Int = 1
-    
-    @Published var isLoadingPage: Bool = false
-    
-    var hasMorePages: Bool {
-        return currentPage <= totalPages
-    }
+    let dataSource: any MediasInfiniteListDataProvider
+    let title: String
+    let largeTitle: Bool
+    let emptyState: EmptyStateConfig
+    let onDelete: OnDeleteClosure?
 
-    func fetchMedias() {
-        guard !isLoadingPage, hasMorePages else { return }
-        isLoadingPage = true
-        
-        section.publisherBuilder?(currentPage)
-            .sink { [unowned self] completion in
-                isLoadingPage = false
-                if case .failure(let error) = completion {
-                    print("Error fetching medias: \(error)")
-                }
-            } receiveValue: { [unowned self] response in
-                if response.page == 1 { medias = [] }
-                medias.append(contentsOf: response.results)
-                totalPages = response.total_pages
-                currentPage += 1
-                isLoaded = true
-            }
-            .store(in: &cancellables)
-    }
-    
-    func isLastLoaded(media: Media) -> Bool {
-        media.id == medias.last?.id
-    }
-    
-    init(section: MediasSection) {
-        self.section = section
-    }
-
-    deinit {
-        cancellables.forEach { $0.cancel() }
+    init(_ dataSource: any MediasInfiniteListDataProvider, title: String, largeTitle: Bool, emptyState: EmptyStateConfig, onDelete: OnDeleteClosure? = nil) {
+        self.dataSource = dataSource
+        self.title = title
+        self.largeTitle = largeTitle
+        self.emptyState = emptyState
+        self.onDelete = onDelete
     }
 }
+

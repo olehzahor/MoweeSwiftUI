@@ -1,0 +1,73 @@
+//
+//  SearchResult.swift
+//  Movee
+//
+//  Created by user on 5/2/25.
+//
+
+struct SearchResult: Decodable, Identifiable, Equatable {
+    static func == (lhs: SearchResult, rhs: SearchResult) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    enum MediaType: String, Decodable {
+        case movie, tv, person
+    }
+
+    let mediaType: MediaType
+    let result: Result
+
+    var id: Int {
+        switch result {
+            case .movie(let movie): return movie.id
+            case .tv(let tvShow): return tvShow.id
+            case .person(let person): return person.id
+        }
+    }
+    
+    var media: Media? {
+        switch result {
+            case .movie(let movie): return .init(movie: movie)
+            case .tv(let tvShow): return .init(tvShow: tvShow)
+            case .person: return nil
+        }
+    }
+
+    enum Result {
+        case movie(Movie)
+        case tv(TVShow)
+        case person(Person)
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        mediaType = try container.decode(MediaType.self, forKey: .mediaType)
+        switch mediaType {
+        case .movie:
+            let movie = try Movie(from: decoder)
+            result = .movie(movie)
+        case .tv:
+            let tvShow = try TVShow(from: decoder)
+            result = .tv(tvShow)
+        case .person:
+            let person = try Person(from: decoder)
+            result = .person(person)
+        }
+    }
+    
+    init(_ result: Result) {
+        self.result = result
+        switch result {
+        case .movie:
+            mediaType = .movie
+        case .tv:
+            mediaType = .tv
+        case .person:
+            mediaType = .person
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case mediaType = "media_type"
+    }
+}

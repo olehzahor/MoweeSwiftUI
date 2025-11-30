@@ -5,7 +5,7 @@
 //  Created by user on 4/15/25.
 //
 
-import SwiftUICore
+import SwiftUI
 
 struct TextStyle {
     var font: Font

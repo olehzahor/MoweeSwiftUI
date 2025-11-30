@@ -5,7 +5,7 @@
 //  Created by user on 5/1/25.
 //
 
-import SwiftUICore
+import SwiftUI
 
 struct ListSeparatorTrailingAlignment: ViewModifier {
     func body(content: Content) -> some View {

@@ -9,20 +9,18 @@ import SwiftUI
 
 // MARK: - Conditional visibility helper
 struct HideWhenModifier: ViewModifier {
-    let shouldHide: Bool
+    let isHidden: Bool
+    
     @ViewBuilder
     func body(content: Content) -> some View {
-        if shouldHide {
-            EmptyView()
-        } else {
+        if !isHidden {
             content
         }
     }
 }
 
 extension View {
-    /// Hides the view (replacing it with `EmptyView`) when `condition` is true.
-    func hideWhen(_ condition: Bool) -> some View {
-        modifier(HideWhenModifier(shouldHide: condition))
+    func hidden(_ condition: Bool) -> some View {
+        modifier(HideWhenModifier(isHidden: condition))
     }
 }

@@ -6,41 +6,37 @@
 //
 
 import SwiftUI
-import SwiftData
-import Combine
 
 struct ExploreView: View {
-    @StateObject private var viewModel = ExploreViewModel(sections: .homePageSections)
-    
+    @State private var viewModel: ExploreViewModel
+
     var body: some View {
-        NavigationStack {
-            Group {
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        ForEach(viewModel.sections) { section in
-                            Group {
-                                if viewModel.state.isEmpty(section) {
-                                    EmptyView()
-                                } else {
-                                    MediasSectionView(
-                                        section: section,
-                                        medias: viewModel.medias[section],
-                                        errorMessage: viewModel.state.getErrorMessage(section),
-                                        retry: { viewModel.fetchMedias(section: section) }
-                                    )
-                                }
-                            }.onFirstAppear {
-                                viewModel.fetchMedias(section: section)
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 20)
-                            
-                        }
-                    }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 20) {
+                ForEach(viewModel.loader.sections) { section in
+                    SectionView.medias(viewModel.medias[section], section: section)
+                        .loadingState(viewModel.loader, section: section)
                 }
             }
-            .navigationTitle("Explore")
+            .padding()
         }
+        .scrollIndicators(.hidden)
+        .navigationTitle("Explore")
+        .onFirstAppear {
+            await viewModel.loader.fetchInitialData()
+        }
+    }
+    
+    init(viewModel: ExploreViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    init(sections: [MediasSection]) {
+        self.init(viewModel: ExploreViewModel(sections: sections))
+    }
+    
+    init() {
+        self.init(sections: .homePageSections)
     }
 }
 

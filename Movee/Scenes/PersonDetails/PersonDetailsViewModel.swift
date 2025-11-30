@@ -2,60 +2,63 @@
 //  PersonDetailsViewModel.swift
 //  Movee
 //
-//  Created by user on 5/4/25.
+//  Created by Oleh on 05.11.2025.
 //
 
-import SwiftUI
-import Combine
+import Foundation
 
-class PersonDetailsViewModel: ObservableObject {
-    @Published var person: MediaPerson
-    @Published var knownForMedias: [Media]?
-    
-    lazy var knownFor = MediasSection(title: "Known for") { _ in
-        TMDBAPIClient.shared.fetchPersonCredits(personID: self.person.id)
-            .map { response in
-                // Combine cast and crew, then filter unique by id
-                let combined = response.crew + response.cast
-                var unique = [Media]()
-                for credit in combined {
-                    let media = credit.media
-                    if let idx = unique.firstIndex(where: { $0.id == media.id }) {
-                        var existing = unique[idx]
-                        let existingText = existing.subtitle ?? ""
-                        let newText = media.subtitle ?? ""
-                        if !existingText.isEmpty && !newText.isEmpty {
-                            existing.subtitle = existingText + " • " + newText
-                        } else {
-                            existing.subtitle = existingText.isEmpty ? newText : existingText
-                        }
-                        unique[idx] = existing
-                    } else {
-                        unique.append(media)
-                    }
+@Observable @MainActor
+final class PersonDetailsViewModel {
+    private let repo: PersonDetailsRepositoryProtocol = PersonDetailsRepository()
+
+    var pictureURL: URL?
+    var person: MediaPerson
+    var bio: String = ""
+    var knownFor = SectionData<Media>(name: "Known for")
+
+    enum Section: CaseIterable { case details, bio, knownFor }
+    let loader: SectionLoader<Section>
+
+    @ObservationIgnored
+    private lazy var fetchConfigs: [Section: FetchConfig] = [
+        .details: .init(
+            priority: 0,
+            fetch: { [repo, person] in
+                try await repo.fetchDetails(personID: person.id)
+            },
+            update: { [weak self] result in
+                self?.person = result
+                if self?.pictureURL == nil {
+                    self?.pictureURL = result.largeProfilePictureURL
                 }
-                // Sort by popularity and wrap
-                return .wrap(unique.sorted(by: { $0.voteCount >= $1.voteCount }))
             }
-            .eraseToAnyPublisher()
-    }
-    private var cancellables = Set<AnyCancellable>()
+        ),
+        .bio: .init(
+            fetch: { [weak self] in
+                self?.person.biography ?? ""
+            },
+            update: { [weak self] result in
+                self?.bio = result
+            }
+        ),
+        .knownFor: .init(
+            fetch: { [repo, person] in
+                try await repo.fetchKnownFor(personID: person.id)
+            },
+            update: { [weak self] result in
+                self?.knownFor.items = Array(result.prefix(20))
+                self?.knownFor.dataProvider = CustomMediasListDataProvider { _ in
+                    .wrap(result)
+                }
+            }
+        )
+    ]
 
-    func fetchDetails() {
-        TMDBAPIClient.shared.fetchPersonDetails(personID: person.id).sink { completion in
-            
-        } receiveValue: { person in
-            self.person = MediaPerson(person: person)
-        }.store(in: &cancellables)
-        
-        knownFor.publisherBuilder?(1).sink { completion in
-            
-        } receiveValue: { response in
-            self.knownForMedias = Array(response.results.prefix(20))
-        }.store(in: &cancellables)
-    }
-    
     init(person: MediaPerson) {
         self.person = person
+        self.pictureURL = person.largeProfilePictureURL
+
+        self.loader = SectionLoader(sections: Section.allCases, maxConcurrent: 2)
+        self.loader.setConfigs(fetchConfigs)
     }
 }

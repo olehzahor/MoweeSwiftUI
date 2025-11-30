@@ -2,30 +2,34 @@
 //  MediaRowView.swift
 //  Movee
 //
-//  Created by user on 4/8/25.
+//  Created by Oleh on 06.11.2025.
 //
 
 import SwiftUI
 
 struct MediaRowView: View {
-    let data: MediaUIModel
-    
-    @State var isExpanded: Bool = false
-    @State private var posterSize: CGSize = .zero
-    
-    private var maxHeight: CGFloat? {
-        isExpanded ? nil : 150// posterSize.height
+    @Environment(\.placeholder) var placeholder: Bool
+
+    private let _data: Data
+
+    var data: Data {
+        placeholder ? .placeholder : _data
     }
-    
+
+    @State var isExpanded: Bool = false
+    private let posterConfig = MediaPosterView.Config.row
+
+    private var posterHeight: CGFloat {
+        posterConfig.height
+    }
+
     private var subtitleLineLimit: Int? {
         isExpanded ? nil : 1
     }
-    
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            // TODO: add styling (hide titles when needed)
-            MediaPosterView(.init(posterURL: data.posterURL, placeholder: data.placeholder, rating: data.rating))
-                .saveSize(in: $posterSize)
+            MediaPosterView(data: data.posterData, config: posterConfig)
             VStack(alignment: .leading, spacing: 4) {
                 if let title = data.title {
                     Text(title)
@@ -47,10 +51,19 @@ struct MediaRowView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }.frame(maxHeight: maxHeight)
+        }
+        .frame(maxHeight: isExpanded ? nil : posterHeight)
+        .loadable()
+        .fallible()
     }
-    
-    init(data: MediaUIModel) {
-        self.data = data
+
+    init(data: Data = .placeholder) {
+        self._data = data
+    }
+}
+
+extension MediaRowView: Equatable {
+    static func == (lhs: MediaRowView, rhs: MediaRowView) -> Bool {
+        lhs._data.id == rhs._data.id
     }
 }

@@ -2,85 +2,56 @@
 //  MediasListView.swift
 //  Movee
 //
-//  Created by user on 4/7/25.
+//  Created by Oleh on 03.11.2025.
 //
 
 import SwiftUI
-import Combine
 
 struct MediasListView: View {
-    @StateObject var viewModel: MediasListViewModel
+    @State private var viewModel: MediasListViewModel
+    @Environment(\.coordinator) private var coordinator
 
-    private var title: String {
-        viewModel.section.fullTitle ?? viewModel.section.title
+    private var titleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        viewModel.largeTitle ? .large : .inline
     }
-    
-    private var medias: [Media] {
-        if !viewModel.medias.isEmpty {
-            return viewModel.medias
-        } else {
-            return Array(repeating: .placeholder, count: 10)
-        }
-    }
-    
-    private func setupRowView(_ media: Media) -> AnyView {
-        var view: any View = MediaRowView(data: .init(media: media)).onAppear {
-            if viewModel.isLastLoaded(media: media) {
-                viewModel.fetchMedias()
+
+    private var list: some View {
+        InfiniteList(viewModel.dataSource) { media in
+            Button {
+                coordinator?.push(.mediaDetails(media))
+            } label: {
+                MediaRowView(data: .init(media: media))
             }
-        }
-        
-        if media == .placeholder {
-            view = view.redacted(reason: .placeholder).shimmering()
-            return AnyView(view)
-        } else {
-            return AnyView(
-                NavigationLink {
-                    MediaDetailsView(media: media)
-                } label: {
-                    AnyView(view)
+            .swipeActions(edge: .trailing) {
+                if let onDelete = viewModel.onDelete {
+                    Button(role: .destructive) {
+                        onDelete(media)
+                    } label: {
+                        Label("Remove", systemImage: "trash")
+                    }
                 }
-            )
+            }
+        } placeholder: {
+            MediaRowView()
+                .loading(true)
+        } emptyState: {
+            ContentUnavailableView(viewModel.emptyState)
         }
+        .listStyle(.plain)
+        .scrollIndicators(.hidden)
+        .navigationTitle(viewModel.title)
+        .navigationBarTitleDisplayMode(titleDisplayMode)
     }
     
     var body: some View {
-        NavigationStack {
-            Group {
-                if viewModel.isLoaded, viewModel.medias.isEmpty,
-                   let placeholder = viewModel.section.placeholder {
-                    VStack(alignment: .center, spacing: 16) {
-                        Text(placeholder.title)
-                            .textStyle(.mediumTitle)
-                        if let subtitle = placeholder.subtitle {
-                            Text(subtitle)
-                                .textStyle(.mediumSubtitle)
-                        }
-                    }.padding(.horizontal)
-                } else {
-                    List(Array(medias.enumerated()), id: \.0) { _, media in
-                        ZStack {
-                            setupRowView(media)
-                        }
-                        .listRowSeparator(.hidden)
-                    }
-                    .listStyle(.plain)
-                    .scrollIndicators(.hidden)
-                    .onAppear {
-                        viewModel.fetchMedias()
-                    }
-                }
-            }
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(title == "Watchlist" ? .large : .inline)
-        }
+        list
+    }
+
+    init(_ viewModel: MediasListViewModel) {
+        self.viewModel = viewModel
     }
     
     init(section: MediasSection) {
-        _viewModel = StateObject(wrappedValue: MediasListViewModel(section: section))
+        self.init(.section(section))
     }
-}
-
-#Preview {
-    MediasListView(section: [MediasSection].homePageSections.first!)
 }

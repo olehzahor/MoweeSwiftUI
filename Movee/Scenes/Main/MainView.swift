@@ -6,22 +6,32 @@
 //
 
 import SwiftUI
+import Factory
 
 struct MainView: View {
+    @StateObject private var exploreCoordinator = AppCoordinator()
+    @StateObject private var watchlistCoordinator = AppCoordinator()
+    @StateObject private var discoverCoordinator = AppCoordinator()
+
     var body: some View {
         TabView {
-            ExploreView()
-                .tabItem {
-                    Label("Explore", systemImage: "house")
+            Tab("Explore", systemImage: "house") {
+                CoordinatedNavigationStack(coordinator: exploreCoordinator) {
+                    ExploreView()
                 }
-            MediasListView(section: .watchlistSection)
-                .tabItem {
-                    Label("Watchlist", systemImage: "list.and.film")
+            }
+
+            Tab("Watchlist", systemImage: "list.and.film") {
+                CoordinatedNavigationStack(coordinator: watchlistCoordinator) {
+                    MediasListView(.watchlist())
                 }
-            SearchView()
-                .tabItem {
-                    Label("Discover", systemImage: "magnifyingglass")
+            }
+
+            Tab("Discover", systemImage: "magnifyingglass", role: .search) {
+                CoordinatedNavigationStack(coordinator: discoverCoordinator) {
+                    SearchView()
                 }
+            }
         }
     }
 }

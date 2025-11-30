@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CE520AD92ECA6A50005B8B7A /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = CE520AD82ECA6A50005B8B7A /* Factory */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CEE665AF2D9E891900C04D9A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -30,43 +34,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CE9761452DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Movee" target */ = {
+		CE73F8EC2ED774F8008A74A3 /* Exceptions for "MoveeTests" folder in "MoveeTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Infrastructure/Extensions/Array/Array+ToggleElement.swift",
+				Movee.xctestplan,
 			);
-			target = CEE6659E2D9E891700C04D9A /* Movee */;
+			target = CEE665AD2D9E891900C04D9A /* MoveeTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		CE9761462DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Copy Bundle Resources" phase from "Movee" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = CEE6659D2D9E891700C04D9A /* Resources */;
-			membershipExceptions = (
-				"Infrastructure/Extensions/Array/Array+ToggleElement.swift",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CEE665A12D9E891800C04D9A /* Movee */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CE9761452DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Movee" target */,
-				CE9761462DCBE05800BB3B65 /* Exceptions for "Movee" folder in "Copy Bundle Resources" phase from "Movee" target */,
-			);
 			path = Movee;
 			sourceTree = "<group>";
 		};
 		CEE665B12D9E891900C04D9A /* MoveeTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CE73F8EC2ED774F8008A74A3 /* Exceptions for "MoveeTests" folder in "MoveeTests" target */,
+			);
 			path = MoveeTests;
-			sourceTree = "<group>";
-		};
-		CEE665BB2D9E891900C04D9A /* MoveeUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MoveeUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -76,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE520AD92ECA6A50005B8B7A /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +90,6 @@
 			children = (
 				CEE665A12D9E891800C04D9A /* Movee */,
 				CEE665B12D9E891900C04D9A /* MoveeTests */,
-				CEE665BB2D9E891900C04D9A /* MoveeUITests */,
 				CEE665A02D9E891800C04D9A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -136,6 +124,7 @@
 			);
 			name = Movee;
 			packageProductDependencies = (
+				CE520AD82ECA6A50005B8B7A /* Factory */,
 			);
 			productName = Movee;
 			productReference = CEE6659F2D9E891800C04D9A /* Movee.app */;
@@ -177,9 +166,6 @@
 			dependencies = (
 				CEE665BA2D9E891900C04D9A /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				CEE665BB2D9E891900C04D9A /* MoveeUITests */,
-			);
 			name = MoveeUITests;
 			packageProductDependencies = (
 			);
@@ -195,7 +181,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					CEE6659E2D9E891700C04D9A = {
 						CreatedOnToolsVersion = 16.3;
@@ -219,6 +205,9 @@
 			);
 			mainGroup = CEE665962D9E891700C04D9A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CE520AD72ECA6A50005B8B7A /* XCRemoteSwiftPackageReference "Factory" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEE665A02D9E891800C04D9A /* Products */;
 			projectDirPath = "";
@@ -351,6 +340,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -407,6 +397,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -418,7 +409,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = TU4F8N8QXW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -433,7 +424,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.myself.i.Movee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -451,7 +442,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = TU4F8N8QXW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -466,7 +457,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = me.myself.i.Movee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -586,6 +577,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE520AD72ECA6A50005B8B7A /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE520AD82ECA6A50005B8B7A /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE520AD72ECA6A50005B8B7A /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CEE665972D9E891700C04D9A /* Project object */;
 }

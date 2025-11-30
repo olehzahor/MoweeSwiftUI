@@ -1,0 +1,20 @@
+//
+//  InfiniteListDataProvider.swift
+//  Movee
+//
+//  Created by user on 11/11/25.
+//
+
+@MainActor
+protocol InfiniteListDataProvider {
+    associatedtype Item: Identifiable
+
+    var items: [Item] { get }
+    var loadState: LoadState { get }
+    var hasMorePages: Bool { get }
+
+    func fetch() async
+    func refresh() async
+}
+
+extension PagedDataSource: InfiniteListDataProvider { }

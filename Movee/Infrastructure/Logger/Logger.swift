@@ -14,7 +14,7 @@ public enum LogLevel: String {
     case error   = "ERROR"
 }
 
-public final class Logger {
+public final class Logger: Sendable {
     public static let shared = Logger()
     
     private let lock = NSLock()
