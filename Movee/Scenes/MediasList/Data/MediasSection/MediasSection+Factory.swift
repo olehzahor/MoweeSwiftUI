@@ -17,3 +17,11 @@ extension Array where Element == MediasSection {
         MediasSection(title: "Airing Today TV Shows", dataProvider: TVShowsListDataProvider.airingToday),
     ]
 }
+
+extension Array where Element == MediasSection {
+    static var appStoreHomePageSections: [MediasSection] = [
+        MediasSection(title: "Popular Movies", dataProvider: ScreenshotsMediasListDataProvider(offset: 0)),
+        MediasSection(title: "Now Playing Movies", dataProvider: ScreenshotsMediasListDataProvider(offset: 4)),
+        MediasSection(title: "Upcoming Movies", dataProvider: ScreenshotsMediasListDataProvider(offset: 8)),
+    ]
+}
