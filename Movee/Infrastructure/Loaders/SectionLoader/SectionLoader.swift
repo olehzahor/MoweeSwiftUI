@@ -16,6 +16,9 @@ final class SectionLoader<Section: Hashable> {
     
     @ObservationIgnored
     private var currentTasks: [Section: Task<Void, Never>] = [:]
+    
+    @ObservationIgnored
+    private var latestCaller: [Section: UUID] = [:]
 
     private(set) var loadStates: [Section: LoadState] = [:]
 
@@ -30,7 +33,7 @@ final class SectionLoader<Section: Hashable> {
     func updateLoadState(for section: Section, _ state: LoadState) {
         loadStates[section] = state
     }
-
+    
     func fetch(_ section: Section) async {
         guard let config = configs[section] else {
             let error = FetchError.noConfigurationFound(section: String(describing: section))
@@ -38,28 +41,36 @@ final class SectionLoader<Section: Hashable> {
             return
         }
         
-        currentTasks[section]?.cancel()
+        let myID = UUID()
+        latestCaller[section] = myID
         
+        if let currentTask = currentTasks[section] {
+            currentTask.cancel()
+            await currentTask.value
+        }
+        
+        guard myID == latestCaller[section] else { return }
+
         let previousState = loadStates[section]
         
         let task = Task {
             defer { currentTasks[section] = nil }
-            
             loadStates[section] = .loading
 
             do {
                 let isEmpty = try await config.fetch()
                 try Task.checkCancellation()
                 loadStates[section] = .loaded(isEmpty: isEmpty)
-            } catch is CancellationError {
-                loadStates[section] = previousState ?? .idle
             } catch {
-                loadStates[section] = .error(error)
+                if Task.isCancelled, myID == latestCaller[section] {
+                    loadStates[section] = previousState ?? .idle
+                } else {
+                    loadStates[section] = .error(error)
+                }
             }
         }
 
         currentTasks[section] = task
-        
         await withTaskCancellationHandler {
             await task.value
         } onCancel: {
