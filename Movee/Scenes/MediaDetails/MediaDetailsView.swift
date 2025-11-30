@@ -20,7 +20,7 @@ struct MediaDetailsView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
                 setupStretchyHeader()
-                LazyVStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 16) {
                     setupDetailsSection()
                     setupVideosSection()
                     setupSeasonsSection()

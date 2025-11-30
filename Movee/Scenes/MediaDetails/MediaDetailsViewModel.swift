@@ -40,8 +40,11 @@ final class MediaDetailsViewModel {
             },
             update: { [weak self] media in
                 self?.media = media
-                self?.loadWatchlistStatus()
                 self?.saveToSearchHistory()
+                
+                if self?.isInWatchlist == nil {
+                    self?.loadWatchlistStatus()
+                }
             }
         ),
         .seasons: .init(
