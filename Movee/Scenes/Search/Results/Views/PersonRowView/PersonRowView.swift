@@ -31,11 +31,13 @@ struct PersonRowView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(data.name)
                     .textStyle(.mediumTitle)
+                    .lineLimit(1)
 
                 if let department = data.department {
                     Text(department)
                         .textStyle(.mediumSubtitle)
                         .fontWeight(.semibold)
+                        .lineLimit(1)
                 }
                 
                 if !knownFor.isEmpty {
