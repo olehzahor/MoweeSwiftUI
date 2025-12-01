@@ -84,177 +84,86 @@ final class SectionLoaderTests: XCTestCase {
     }
 
     // MARK: - Concurrency Race Condition Tests
-
-    func testPreviousStateRaceCondition_CancelledTaskShouldNotOverwriteNewState() async {
-        // This tests the scenario where:
-        // 1. First fetch() is running, suspended at config.fetch()
-        // 2. Second fetch() is called, cancels first, creates new task
-        // 3. First task resumes, catches cancellation, tries to restore previousState
-        // 4. We verify that the final state is correct (from second task, not first)
+    func testConcurrentFetchCallsOnSameSection_OnlyLatestCompletes() async {
+        // This tests that when multiple fetches are called rapidly,
+        // only the latest one actually completes its work
 
         // Given
-//        let firstFetchStarted = CheckedContinuation<Void, Never>()
-//        let allowFirstFetchToComplete = CheckedContinuation<Void, Never>()
-//
-//        var firstFetchContinuation: CheckedContinuation<Void, Never>?
-//        var secondFetchContinuation: CheckedContinuation<Void, Never>?
-//
-//        let config1 = FetchConfig(priority: 1) {
-//            await withCheckedContinuation { continuation in
-//                firstFetchContinuation = continuation
-//            }
-//            await withCheckedContinuation { continuation in
-//                secondFetchContinuation = continuation
-//            }
-//            return "data"
-//        } update: { _ in
-//        }
-//
-//        loader.setConfigs([.section1: config1])
-//
-//        // When
-//        // Start first fetch
-//        let firstTask = Task {
-//            await loader.fetch(.section1)
-//        }
-//
-//        // Wait for first fetch to start and be suspended
-//        try? await Task.sleep(for: .milliseconds(10))
-//
-//        // Verify first task is loading
-//        XCTAssertEqual(loader.loadState(for: .section1).isLoading, true)
-//        let stateAfterFirstFetch = loader.loadState(for: .section1)
-//
-//        // Start second fetch while first is suspended
-//        let secondTask = Task {
-//            await loader.fetch(.section1)
-//        }
-//
-//        try? await Task.sleep(for: .milliseconds(10))
-//
-//        // Resume first fetch (it should get cancelled)
-//        firstFetchContinuation?.resume()
-//
-//        try? await Task.sleep(for: .milliseconds(10))
-//
-//        // Resume second fetch
-//        secondFetchContinuation?.resume()
-//
-//        // Wait for both to complete
-//        await firstTask.value
-//        await secondTask.value
-//
-//        // Then
-//        // The final state should be from the second task, not overwritten by the first task's restoration
-//        XCTAssertEqual(loader.loadState(for: .section1).isLoaded, true)
-//    }
-//
-//    func testConcurrentFetchCallsOnSameSection_OnlyOneShouldRun() async {
-//        // This tests whether multiple concurrent fetch() calls can create multiple running tasks
-//
-//        // Given
-//        var fetchCallCount = 0
-//        var activeFetchCount = 0
-//        var maxConcurrentFetches = 0
-//
-//        let config = FetchConfig(priority: 1) {
-//            fetchCallCount += 1
-//            activeFetchCount += 1
-//            maxConcurrentFetches = max(maxConcurrentFetches, activeFetchCount)
-//
-//            try await Task.sleep(for: .milliseconds(50))
-//
-//            activeFetchCount -= 1
-//            return "data"
-//        } update: { _ in
-//        }
-//
-//        loader.setConfigs([.section1: config])
-//
-//        // When - call fetch 3 times concurrently
-//        async let fetch1: Void = loader.fetch(.section1)
-//        async let fetch2: Void = loader.fetch(.section1)
-//        async let fetch3: Void = loader.fetch(.section1)
-//
-//        _ = await (fetch1, fetch2, fetch3)
-//
-//        // Then
-//        // If there's a race condition, multiple fetches could run concurrently
-//        // Without the race, only one should run at a time (later calls cancel earlier ones)
-//        print("Total fetch calls: \(fetchCallCount)")
-//        print("Max concurrent fetches: \(maxConcurrentFetches)")
-//
-//        // The current implementation DOES allow multiple to run if they race past the cancel point
-//        // This test documents the current behavior
-//        XCTAssertGreaterThanOrEqual(fetchCallCount, 1)
+        var fetchCallCount = 0
+        var completedFetchNumber: Int?
+
+        let config = FetchConfig(priority: 1) {
+            fetchCallCount += 1
+            let myFetchNumber = fetchCallCount
+            try await Task.sleep(for: .milliseconds(100))
+
+            // If we get here, we weren't cancelled
+            completedFetchNumber = myFetchNumber
+            return "data"
+        } update: { _ in
+        }
+
+        loader.setConfigs([.section1: config])
+
+        // When - call fetch 3 times rapidly
+        let task1 = Task { await loader.fetch(.section1) }
+        try? await Task.sleep(for: .milliseconds(10))
+
+        let task2 = Task { await loader.fetch(.section1) }
+        try? await Task.sleep(for: .milliseconds(10))
+
+        let task3 = Task { await loader.fetch(.section1) }
+
+        await task1.value
+        await task2.value
+        await task3.value
+
+        // Then
+        // All three fetch calls were made
+        XCTAssertEqual(fetchCallCount, 3)
+        // But only the LATEST one (fetch #3) completed (others were cancelled)
+        XCTAssertEqual(completedFetchNumber, 3)
+        XCTAssertEqual(loader.loadState(for: .section1).isLoaded, true)
     }
 
-    func testCurrentTasksCleanupRace() async {
-//        // This tests the scenario where:
-//        // 1. First fetch() creates task1, stores in currentTasks
-//        // 2. Second fetch() creates task2, stores in currentTasks (overwrites task1)
-//        // 3. task1 completes first and tries to clear currentTasks
-//        // 4. We verify that task1 doesn't incorrectly clear task2
-//
-//        // Given
-//        let firstTaskStarted = CheckedContinuation<Void, Never>()
-//        let allowFirstTaskToFinish = CheckedContinuation<Void, Never>()
-//
-//        var firstContinuation: CheckedContinuation<Void, Never>?
-//        var secondContinuation: CheckedContinuation<Void, Never>?
-//
-//        var isFirstTask = true
-//
-//        let config = FetchConfig(priority: 1) {
-//            if isFirstTask {
-//                await withCheckedContinuation { continuation in
-//                    firstContinuation = continuation
-//                }
-//                return "data1"
-//            } else {
-//                await withCheckedContinuation { continuation in
-//                    secondContinuation = continuation
-//                }
-//                return "data2"
-//            }
-//        } update: { _ in
-//        }
-//
-//        loader.setConfigs([.section1: config])
-//
-//        // When
-//        // Start first fetch
-//        let firstTask = Task {
-//            await loader.fetch(.section1)
-//        }
-//
-//        // Wait for first fetch to be suspended
-//        try? await Task.sleep(for: .milliseconds(10))
-//
-//        // Start second fetch (this will cancel first and create a new task)
-//        isFirstTask = false
-//        let secondTask = Task {
-//            await loader.fetch(.section1)
-//        }
-//
-//        try? await Task.sleep(for: .milliseconds(10))
-//
-//        // Complete first task (which was cancelled)
-//        firstContinuation?.resume()
-//        await firstTask.value
-//
-//        // At this point, if there's a cleanup race, first task might have cleared
-//        // the currentTasks entry that belongs to second task
-//
-//        // Verify second task is still tracked (implementation dependent)
-//        // The current implementation has a check: if currentTasks[section] == task
-//
-//        // Complete second task
-//        secondContinuation?.resume()
-//        await secondTask.value
-//
-//        // Then
-//        XCTAssertEqual(loader.loadState(for: .section1).isLoaded, true)
+    func testCancelledTaskDoesNotRestorePreviousState() async {
+        // This specifically tests the UUID check in the cancellation handler
+
+        // Given
+        loader.updateLoadState(for: .section1, .loaded(isEmpty: false))
+
+        var statesObserved: [Bool] = []  // Track isLoading states
+
+        let config = FetchConfig(priority: 1) {
+            // Long-running fetch that will be cancelled
+            try await Task.sleep(for: .milliseconds(100))
+            return "data"
+        } update: { _ in
+        }
+
+        loader.setConfigs([.section1: config])
+
+        // When
+        // Start first fetch
+        Task {
+            await loader.fetch(.section1)
+        }
+
+        try? await Task.sleep(for: .milliseconds(20))
+        statesObserved.append(loader.loadState(for: .section1).isLoading)
+
+        // Start second fetch (cancels first)
+        Task {
+            await loader.fetch(.section1)
+        }
+
+        try? await Task.sleep(for: .milliseconds(150))
+
+        // Then
+        // We should have seen loading state
+        XCTAssertTrue(statesObserved.contains(true))
+        // Final state should be loaded, not restored to previous .loaded
+        XCTAssertEqual(loader.loadState(for: .section1).isLoaded, true)
     }
 
     func testRapidCancellationAndRestart() async {

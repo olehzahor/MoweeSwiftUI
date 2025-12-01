@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Movee.xctestplan"
+            reference = "container:MoveeTests/Movee.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
