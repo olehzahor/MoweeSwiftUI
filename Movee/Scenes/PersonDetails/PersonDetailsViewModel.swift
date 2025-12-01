@@ -14,7 +14,7 @@ final class PersonDetailsViewModel {
     var pictureURL: URL?
     var person: MediaPerson
     var bio: String = ""
-    var knownFor = SectionData<Media>(name: "Known for")
+    var knownFor: SectionData<Media>
 
     enum Section: CaseIterable { case details, bio, knownFor }
     let loader: SectionLoader<Section>
@@ -57,6 +57,7 @@ final class PersonDetailsViewModel {
     init(person: MediaPerson) {
         self.person = person
         self.pictureURL = person.largeProfilePictureURL
+        self.knownFor = .init(name: "Known for", fullName: person.name)
 
         self.loader = SectionLoader(sections: Section.allCases, maxConcurrent: 2)
         self.loader.setConfigs(fetchConfigs)

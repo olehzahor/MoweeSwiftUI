@@ -32,7 +32,7 @@ struct MediaReviewsCarouselView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
+            LazyHStack {
                 ForEach(reviews) { review in
                     MediaReviewView(data: .init(review))
                         .containerRelativeFrame(.horizontal)

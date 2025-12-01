@@ -35,7 +35,6 @@ struct PersonDetailsView: View {
                     MediaFactsView(facts: viewModel.person.facts)
                 }
             }
-            .scrollIndicators(.hidden)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             .padding(.bottom)
@@ -43,6 +42,7 @@ struct PersonDetailsView: View {
         .onFirstAppear {
             await viewModel.loader.fetchInitialData()
         }
+        .scrollIndicators(.hidden)
         .navigationTitle(viewModel.person.name)
     }
 
