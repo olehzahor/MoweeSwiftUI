@@ -94,3 +94,6 @@ iOSInjectionProject/
 
 # SPM
 .swiftpm/
+
+# Local secrets
+Movee/Configuration/APIKeys.swift

@@ -11,7 +11,7 @@ struct TMDBInterceptor: NetworkInterceptor {
     let apiKey: String
     let language: String
 
-    init(apiKey: String = "TMDB_API_KEY_REMOVED", language: String = "en-US") {
+    init(apiKey: String = APIKeys.tmdb, language: String = "en-US") {
         self.apiKey = apiKey
         self.language = language
     }
