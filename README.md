@@ -9,6 +9,11 @@ The project includes:
 - a media details screen (overview, seasons, videos, reviews, credits, recommendations, collections),
 - local `Watchlist` and `Search History` powered by SwiftData.
 
+## Screenshots
+<img width="331" height="717" alt="Simulator Screenshot - iPhone 11 - 2026-02-23 at 16 05 53" src="https://github.com/user-attachments/assets/f6402545-03de-4165-beb2-6a1f9f01b23a" />
+<img width="331" height="717" alt="Simulator Screenshot - iPhone 11 - 2026-02-23 at 16 06 12" src="https://github.com/user-attachments/assets/105d33c5-0d9b-41a7-ae7d-fb01fb0144a5" />
+<img width="331" height="717" alt="Simulator Screenshot - iPhone 11 - 2026-02-23 at 16 06 27" src="https://github.com/user-attachments/assets/d8146928-354b-4824-b7f1-256a8b8c9c20" />
+
 ## What's Inside
 
 ### Core Features
